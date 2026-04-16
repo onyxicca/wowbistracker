@@ -2190,39 +2190,173 @@ function GroupPlanner() {
 }
 
 
-function AddonImportBox() {
-  const [addonCode, setAddonCode] = useState("");
-  const [addonMsg, setAddonMsg] = useState("");
+function AddonImportBox({ onCharsLoaded }) {
+  const [code, setCode] = useState("");
+  const [msg, setMsg] = useState(null);
   const [isErr, setIsErr] = useState(false);
+  const [loaded, setLoaded] = useState(false);
+
   const TRACK_CODES = { v:"Veteran", c:"Champion", h:"Hero", m:"Myth" };
-  const SLOT_TO_KEY = { "1":"head","2":"neck","3":"shoulders","5":"chest","6":"waist","7":"legs","8":"feet","9":"wrist","10":"hands","11":"finger1","12":"finger2","13":"trinket1","14":"trinket2","15":"back","16":"mainhand","17":"offhand" };
-  const parse = () => {
-    const entries = addonCode.trim().split("|").filter(Boolean);
-    if (!entries.length) { setIsErr(true); setAddonMsg("Paste your addon export code first."); return; }
-    let count = 0;
-    entries.forEach(entry => {
+  const SPEC_TO_IDS = {
+    // Maps addon spec name → {clsId, specId} for localStorage key building
+    "Restoration": [
+      { cls:"druid", spec:"restoration" },
+      { cls:"shaman", spec:"restoration-sham" }
+    ],
+    "Restoration Shaman": [{ cls:"shaman", spec:"restoration-sham" }],
+    "Guardian":    [{ cls:"druid",   spec:"guardian" }],
+    "Balance":     [{ cls:"druid",   spec:"balance" }],
+    "Feral":       [{ cls:"druid",   spec:"feral" }],
+    "Blood":       [{ cls:"death-knight", spec:"blood" }],
+    "Frost":       [{ cls:"death-knight", spec:"frost-dk" }],
+    "Frost Mage":  [{ cls:"mage",    spec:"frost-mage" }],
+    "Unholy":      [{ cls:"death-knight", spec:"unholy" }],
+    "Havoc":       [{ cls:"demon-hunter", spec:"havoc" }],
+    "Vengeance":   [{ cls:"demon-hunter", spec:"vengeance" }],
+    "Devourer":    [{ cls:"demon-hunter", spec:"devourer" }],
+    "Devastation": [{ cls:"evoker",  spec:"devastation" }],
+    "Preservation":[{ cls:"evoker",  spec:"preservation" }],
+    "Augmentation":[{ cls:"evoker",  spec:"augmentation" }],
+    "Beast Mastery":[{ cls:"hunter", spec:"beast-mastery" }],
+    "Marksmanship":[{ cls:"hunter",  spec:"marksmanship" }],
+    "Survival":    [{ cls:"hunter",  spec:"survival" }],
+    "Arcane":      [{ cls:"mage",    spec:"arcane" }],
+    "Fire":        [{ cls:"mage",    spec:"fire" }],
+    "Brewmaster":  [{ cls:"monk",    spec:"brewmaster" }],
+    "Mistweaver":  [{ cls:"monk",    spec:"mistweaver" }],
+    "Windwalker":  [{ cls:"monk",    spec:"windwalker" }],
+    "Holy":        [
+      { cls:"paladin", spec:"holy-pala" },
+      { cls:"priest",  spec:"holy-priest" }
+    ],
+    "Protection":  [
+      { cls:"paladin", spec:"protection-pala" },
+      { cls:"warrior", spec:"protection-war" }
+    ],
+    "Retribution": [{ cls:"paladin", spec:"retribution" }],
+    "Discipline":  [{ cls:"priest",  spec:"discipline" }],
+    "Shadow":      [{ cls:"priest",  spec:"shadow" }],
+    "Assassination":[{ cls:"rogue",  spec:"assassination" }],
+    "Outlaw":      [{ cls:"rogue",   spec:"outlaw" }],
+    "Subtlety":    [{ cls:"rogue",   spec:"subtlety" }],
+    "Elemental":   [{ cls:"shaman",  spec:"elemental" }],
+    "Enhancement": [{ cls:"shaman",  spec:"enhancement" }],
+    "Affliction":  [{ cls:"warlock", spec:"affliction" }],
+    "Demonology":  [{ cls:"warlock", spec:"demonology" }],
+    "Destruction": [{ cls:"warlock", spec:"destruction" }],
+    "Arms":        [{ cls:"warrior", spec:"arms" }],
+    "Fury":        [{ cls:"warrior", spec:"fury" }],
+  };
+
+  const parseSlots = (slotStr) => {
+    const data = {};
+    slotStr.split("|").filter(Boolean).forEach(entry => {
       const parts = entry.split(":");
       if (parts.length < 4) return;
-      const [sid,,,,] = parts;
-      if (SLOT_TO_KEY[sid]) count++;
+      const [sid, name, src, acq, trCode] = parts;
+      const SLOT_TO_KEY = {"1":"head","2":"neck","3":"shoulders","5":"chest","6":"waist","7":"legs","8":"feet","9":"wrist","10":"hands","11":"finger1","12":"finger2","13":"trinket1","14":"trinket2","15":"back","16":"mainhand","17":"offhand"};
+      const key = SLOT_TO_KEY[sid];
+      if (!key || !name) return;
+      data[key] = {
+        name: name.trim(),
+        src:  src.trim(),
+        done: acq === "1",
+        ...(trCode && TRACK_CODES[trCode] ? { track: TRACK_CODES[trCode] } : {})
+      };
     });
-    if (!count) { setIsErr(true); setAddonMsg("Could not read code. Use the Export button inside the addon."); return; }
-    setIsErr(false);
-    setAddonMsg(`Found ${count} slots. Select your class and spec below, then paste this same code into the SimC Import field to pre-fill your tracker.`);
+    return data;
   };
+
+  const doImport = () => {
+    const raw = code.trim();
+    if (!raw) { setIsErr(true); setMsg("Paste your export code from the addon first."); return; }
+
+    const sections = raw.split("||").filter(Boolean);
+    if (!sections.length) { setIsErr(true); setMsg("Could not read code."); return; }
+
+    // Extract character header if present
+    let charName = "default";
+    let realm = "";
+    const charSection = sections.find(s => s.startsWith("CHAR~"));
+    if (charSection) {
+      const parts = charSection.split("~");
+      charName = (parts[1] || "").trim() || "default";
+      realm    = (parts[2] || "").trim();
+    }
+    const charLabel = realm ? `${charName}-${realm}` : charName;
+
+    const specSections = sections.filter(s => s.startsWith("SPEC~"));
+    if (!specSections.length) {
+      setIsErr(false);
+      setMsg("This looks like a single-spec or old-format code. For best results, use the Export button in the addon which packages all your specs at once.");
+      return;
+    }
+
+    let imported = 0;
+    const loadedSpecs = [];
+
+    specSections.forEach(section => {
+      const parts = section.split("~");
+      if (parts[0] !== "SPEC" || !parts[1] || !parts[2]) return;
+      const specName = parts[1].trim();
+      const slotStr  = parts[2];
+      const data     = parseSlots(slotStr);
+      if (!Object.keys(data).length) return;
+
+      const matches = SPEC_TO_IDS[specName] || [];
+      matches.forEach(({ cls, spec }) => {
+        // Use charLabel as the character name so two chars of same class stay separate
+        const storageKey = `bis-${cls}-${spec}-${charLabel}`;
+        let existing = {};
+        try { existing = JSON.parse(localStorage.getItem(storageKey) || "{}"); } catch {}
+        const merged = { ...existing };
+        Object.entries(data).forEach(([slot, val]) => {
+          merged[slot] = { ...(existing[slot] || {}), ...val };
+        });
+        try {
+          localStorage.setItem(storageKey, JSON.stringify(merged));
+          const ck = `characters-${cls}-${spec}`;
+          const chars = JSON.parse(localStorage.getItem(ck) || "[]");
+          if (!chars.includes(charLabel)) {
+            localStorage.setItem(ck, JSON.stringify([...chars, charLabel]));
+          }
+        } catch {}
+        imported++;
+        loadedSpecs.push(specName);
+      });
+    });
+
+    if (imported === 0) {
+      setIsErr(true);
+      setMsg("Could not match any specs. Make sure you used the Export button inside the addon.");
+      return;
+    }
+    setIsErr(false);
+    setLoaded(true);
+    const who = realm ? `${charName} — ${realm}` : charName;
+    setMsg(`Synced ${imported} spec(s) for ${who}: ${[...new Set(loadedSpecs)].join(", ")}. Your characters now appear below — click one to open the tracker.`);
+    if (onCharsLoaded) onCharsLoaded();
+  };
+
   return (
-    <div style={{ background:"var(--panel)", border:"1px solid var(--bdr)", padding:"1rem 1.25rem", marginBottom:"1.5rem", marginTop:".75rem" }}>
-      <div style={{ fontFamily:"Cinzel,serif", fontSize:".68rem", letterSpacing:".12em", color:"var(--gold)", marginBottom:".4rem" }}>HAVE THE IN-GAME ADDON?</div>
-      <div style={{ fontSize:".82rem", color:"var(--parch-dk)", marginBottom:".65rem", lineHeight:1.6 }}>
-        In the addon, click <strong style={{ color:"var(--parch)" }}>Export</strong> in the Farm Priority tab to generate your progress code. Paste it here to sync your acquired items and gear tracks to this website.
+    <div style={{ background:"var(--panel)", border:"1px solid rgba(201,146,42,.4)", padding:"1.25rem", marginBottom:"1.5rem" }}>
+      <div style={{ fontFamily:"Cinzel,serif", fontSize:".72rem", letterSpacing:".12em", color:"var(--gold)", marginBottom:".4rem" }}>SYNC FROM IN-GAME ADDON</div>
+      <div style={{ fontSize:".85rem", color:"var(--parch-dk)", marginBottom:".85rem", lineHeight:1.65 }}>
+        In the addon, open the <strong style={{ color:"var(--parch)" }}>Farm Priority</strong> tab and click <strong style={{ color:"var(--parch)" }}>Export</strong>. This exports all your specs at once. Paste the code below — your characters will appear automatically, no manual setup needed.
       </div>
       <div style={{ display:"flex", gap:".5rem", flexWrap:"wrap" }}>
-        <input value={addonCode} onChange={e => setAddonCode(e.target.value)}
+        <input value={code} onChange={e => { setCode(e.target.value); setMsg(null); setLoaded(false); }}
           placeholder="Paste your addon export code here..."
-          style={{ flex:1, minWidth:"200px", background:"var(--bg2)", border:"1px solid var(--bdr2)", color:"var(--parch)", fontFamily:"monospace", fontSize:".75rem", padding:".4rem .6rem", outline:"none" }} />
-        <button onClick={parse} style={{ fontFamily:"Cinzel,serif", fontSize:".72rem", letterSpacing:".06em", padding:".4rem .9rem", background:"var(--gold)", border:"none", color:"var(--ink)", cursor:"pointer", fontWeight:700, flexShrink:0 }}>Read Code</button>
+          style={{ flex:1, minWidth:"220px", background:"var(--bg2)", border:`1px solid ${isErr ? "#ff6d6d" : "var(--bdr2)"}`, color:"var(--parch)", fontFamily:"monospace", fontSize:".76rem", padding:".45rem .65rem", outline:"none" }} />
+        <button onClick={doImport} style={{ fontFamily:"Cinzel,serif", fontSize:".72rem", letterSpacing:".06em", padding:".45rem 1rem", background:"var(--gold)", border:"none", color:"var(--ink)", cursor:"pointer", fontWeight:700, flexShrink:0 }}>
+          Sync to Website
+        </button>
       </div>
-      {addonMsg && <div style={{ fontSize:".78rem", color: isErr ? "#ff6d6d" : "var(--green,#66bb6a)", marginTop:".4rem", lineHeight:1.5 }}>{addonMsg}</div>}
+      {msg && (
+        <div style={{ fontSize:".82rem", color: isErr ? "#ff6d6d" : loaded ? "#66bb6a" : "var(--parch-dk)", marginTop:".6rem", lineHeight:1.6 }}>
+          {msg}
+        </div>
+      )}
     </div>
   );
 }
@@ -2271,6 +2405,7 @@ function Home({ onSelectClass, onLoadCharacter }) {
         ))}
       </div>
 
+      <AddonImportBox onCharsLoaded={() => setSavedChars(getSavedCharacters())} />
       <div className="sh">Select Your Class</div>
       <div className="class-grid">
         {filtered.map(cls => (
@@ -2286,7 +2421,7 @@ function Home({ onSelectClass, onLoadCharacter }) {
         ))}
       </div>
 
-      <AddonImportBox />
+
 
       {savedChars.length > 0 && (
         <div style={{ marginBottom:"1.5rem" }}>
@@ -2429,22 +2564,6 @@ function Home({ onSelectClass, onLoadCharacter }) {
         {"  "}The addon exports a code you can paste into the website to sync your in-game progress to the browser view. The website can also export a code back into the addon. Both tools stay in sync without requiring SimC.
       </div>
 
-      <div className="sh">How to Use</div>
-      <div style={{ background: "var(--panel)", border: "1px solid var(--bdr)", padding: "1.25rem 1.5rem", fontSize: ".92rem", lineHeight: 1.7, color: "var(--parch-dk)" }}>
-        {[
-          ["1. SELECT YOUR CLASS",              "Click any class card to see its specializations."],
-          ["2. PICK YOUR SPEC","Your BiS list is already loaded automatically when you log in. Use the website to sync acquired items and gear tracks, or to plan across characters."],
-          ["3. FILL YOUR TRACKER",               "Type item names and sources in each slot. Check items off as you acquire them."],
-          ["4. BiS SUGGESTIONS",                 "Hit \"Load BiS Suggestions\" to pull current Midnight Season 1 recommendations sourced from community guides. Always verify on Wowhead or Icy Veins."],
-          ["5. IMPORT SIMC","After loading BiS, use SimC Import to scan your character. Items you are already wearing that match BiS get checked off automatically — showing exactly what you still need to farm."],
-          ["6. PRINT / PDF",                     "Use the Print button. In your browser choose \"Save as PDF\" to export a clean copy."],
-        ].map(([title, body], i) => (
-          <p key={i} style={{ marginTop: i > 0 ? ".5rem" : 0 }}>
-            <strong style={{ color: "var(--gold-lt)", fontFamily: "Cinzel", fontSize: ".8rem", letterSpacing: ".08em" }}>{title}</strong>
-            {" — "}{body}
-          </p>
-        ))}
-      </div>
     </div>
   );
 }
