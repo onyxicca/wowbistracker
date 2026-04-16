@@ -1373,7 +1373,13 @@ function Tracker({ cls, spec, charName, onBack }) {
   const [data,    setData]    = useState(() => {
     try { const s = localStorage.getItem(storageKey); return s ? JSON.parse(s) : {}; } catch { return {}; }
   });
-  const [wMode,   setWMode]   = useState("2h");
+  const [wMode,   setWMode]   = useState(() => {
+    try {
+      const s = localStorage.getItem(storageKey);
+      if (s) { const d = JSON.parse(s); if (d.mainhand || d.offhand) return "1h"; }
+    } catch {}
+    return "2h";
+  });
   const [loading, setLoading] = useState(false);
   const [sugs,    setSugs]    = useState(null);
   const [showPriority, setShowPriority] = useState(false);
@@ -1564,6 +1570,18 @@ function Tracker({ cls, spec, charName, onBack }) {
             <div style={{ display:"flex", gap:".4rem", flexShrink:0 }}>
               <button onClick={() => setShowPriority(p => !p)} style={{ fontFamily:"Cinzel,serif", fontSize:".72rem", letterSpacing:".06em", padding:".35rem .85rem", background: showPriority ? "var(--gold)" : "transparent", border:"1px solid var(--gold)", color: showPriority ? "var(--ink)" : "var(--gold)", cursor:"pointer", transition:"all .15s" }}>
                 {showPriority ? "▲ Hide" : "▼ Show"}
+              </button>
+              <button onClick={() => {
+                const w = window.open("","_blank");
+                const farmRows = farmPriority();
+                const charLabel = charName && charName !== "default" ? charName + " — " : "";
+                const rowsHtml = farmRows.map(([src,items]) =>
+                  `<h2>${src}</h2>${items.map(i=>`<p>&#8226; ${i.slot}: ${i.item}${i.soft ? ` <em>(upgrading from ${i.track})</em>` : ""}</p>`).join("")}`
+                ).join("");
+                w.document.write(`<!DOCTYPE html><html><head><title>${charLabel}${cls.name} ${spec.name} Farm Priority</title><style>body{font-family:Georgia,serif;max-width:680px;margin:2rem auto;color:#1a0c00;}h1{font-family:serif;font-size:1.1rem;border-bottom:2px solid #c9922a;padding-bottom:.4rem;}h2{font-size:.9rem;color:#c9922a;margin:.8rem 0 .2rem;font-family:serif;}p{margin:.15rem 0;font-size:.85rem;}.meta{font-size:.72rem;color:#888;}@media print{body{margin:.5in;}}</style></head><body><h1>${charLabel}${cls.name} ${spec.name} — Farm Priority</h1><p class="meta">Midnight Season 1 &middot; Target: ${targetTrack} &middot; ${new Date().toLocaleDateString()}</p>${rowsHtml}<p class="meta" style="margin-top:2rem;border-top:1px solid #ddd;padding-top:.4rem;">wowbistracker.com</p></body></html>`);
+                w.document.close(); w.print();
+              }} style={{ fontFamily:"Cinzel,serif", fontSize:".68rem", letterSpacing:".04em", padding:".35rem .7rem", background:"transparent", border:"1px solid var(--bdr2)", color:"var(--parch-dk)", cursor:"pointer", transition:"all .15s", whiteSpace:"nowrap" }}>
+                🖨 Print Farm List
               </button>
               <button onClick={() => window.open("https://wowbistracker.com/#group-planner", "_blank")} style={{ fontFamily:"Cinzel,serif", fontSize:".68rem", letterSpacing:".04em", padding:".35rem .7rem", background:"transparent", border:"1px solid var(--bdr2)", color:"var(--parch-dk)", cursor:"pointer", transition:"all .15s", whiteSpace:"nowrap" }} title="Open Group Farm Planner in a new tab">
                 👥 Plan with group
@@ -2281,59 +2299,82 @@ function Home({ onSelectClass, onLoadCharacter }) {
       <GroupPlanner />
 
       <div style={{ marginTop:"2rem" }} />
-      <div className="sh">Get the In-Game Addon</div>
-      <div style={{ background:"var(--panel)", border:"1px solid var(--bdr2)", padding:"1.25rem 1.5rem", marginBottom:"1.5rem" }}>
-        <div style={{ display:"flex", gap:"1.5rem", flexWrap:"wrap", alignItems:"flex-start" }}>
-          <div style={{ flex:"1", minWidth:"220px" }}>
-            <div style={{ fontFamily:"Cinzel,serif", fontSize:".72rem", letterSpacing:".12em", color:"var(--gold)", marginBottom:".5rem" }}>WOW BIS TRACKER ADDON</div>
-            <p style={{ fontSize:".95rem", color:"var(--parch-dk)", lineHeight:1.65, marginBottom:".75rem" }}>
-              The addon brings your BiS list into the game. See which slots you still need at a glance, scan your equipped gear automatically, and share your farm list with your party so everyone knows which dungeons to run together.
-            </p>
-            <div style={{ display:"grid", gap:".4rem", marginBottom:".85rem" }}>
-              {[
-                ["📋","Import your BiS list from this site — shows inside WoW"],
-                ["⚔","Farm Priority tab — exactly which dungeons to run this week"],
-                ["👥","Group Plan tab — share with party to find shared dungeons"],
-                ["🔍","Scan Gear — auto-checks BiS items you already have equipped"],
-              ].map(([icon,text]) => (
-                <div key={text} style={{ display:"flex", gap:".5rem", fontSize:".88rem", color:"var(--parch-dk)" }}>
-                  <span>{icon}</span><span>{text}</span>
-                </div>
-              ))}
-            </div>
-            <div style={{ background:"rgba(201,146,42,.07)", border:"1px solid var(--bdr2)", padding:".75rem", marginBottom:".75rem", fontSize:".82rem", color:"var(--parch-dk)", lineHeight:1.65 }}>
-              <strong style={{ color:"var(--gold-lt)", fontFamily:"Cinzel,serif", fontSize:".7rem", letterSpacing:".08em" }}>HOW TO INSTALL</strong><br/>
-              1. Download the zip and extract it<br/>
-              2. Move the <code style={{ background:"var(--bg2)", padding:"0 .3rem", fontSize:".75rem" }}>WoWBiSTracker</code> folder to:<br/>
-              <code style={{ background:"var(--bg2)", padding:".2rem .4rem", fontSize:".72rem", display:"block", marginTop:".3rem", wordBreak:"break-all" }}>World of Warcraft\_retail_\Interface\AddOns\</code>
-              <span style={{ display:"block", marginTop:".4rem" }}>3. Log into WoW, type <code style={{ background:"var(--bg2)", padding:"0 .3rem" }}>/wowbis</code> to open</span>
-            </div>
-            <a href="https://github.com/onyxicca/wowbistracker-addon/releases/latest" target="_blank" rel="noreferrer" style={{ fontFamily:"Cinzel,serif", fontSize:".72rem", letterSpacing:".08em", padding:".4rem 1rem", background:"var(--gold)", color:"var(--ink)", textDecoration:"none", display:"inline-block", fontWeight:700, marginRight:".5rem" }}>Download Addon</a>
-            <span style={{ fontSize:".75rem", color:"var(--parch-dk)", fontStyle:"italic" }}>Coming to CurseForge soon</span>
+      <div className="sh">Addon vs Website</div>
+      <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"1rem", marginBottom:"1.5rem" }}>
+
+        {/* Website column */}
+        <div style={{ background:"var(--panel)", border:"1px solid var(--bdr2)", padding:"1.25rem" }}>
+          <div style={{ fontFamily:"Cinzel,serif", fontSize:".72rem", letterSpacing:".14em", color:"var(--gold)", marginBottom:".75rem" }}>THE WEBSITE</div>
+          <div style={{ fontSize:".88rem", color:"var(--parch-dk)", lineHeight:1.7, marginBottom:"1rem" }}>
+            Plan your BiS gear from any browser. No addon required. Best for multi-character management and group coordination outside of the game.
           </div>
-          <div style={{ flexShrink:0, background:"var(--bg2)", border:"1px solid var(--bdr)", padding:"1rem", minWidth:"180px" }}>
-            <div style={{ fontFamily:"Cinzel,serif", fontSize:".65rem", letterSpacing:".12em", color:"var(--gold)", marginBottom:".6rem" }}>SLASH COMMANDS</div>
-            {[
-              ["/wowbis","Open the tracker"],
-              ["/wowbis import","Paste your BiS code"],
-              ["/wowbis scan","Check your gear"],
-              ["/wowbis share","Share with party"],
-              ["/wowbis reset","Clear character data"],
-            ].map(([cmd,desc]) => (
-              <div key={cmd} style={{ marginBottom:".4rem" }}>
-                <div style={{ fontFamily:"monospace", fontSize:".75rem", color:"var(--gold-lt)" }}>{cmd}</div>
-                <div style={{ fontSize:".75rem", color:"var(--parch-dk)" }}>{desc}</div>
-              </div>
+          {[
+            ["All your characters and specs in one dashboard","Compare progress across toons without logging in."],
+            ["SimC import","Paste a SimC string to auto-fill acquired items and gear tracks for all slots at once."],
+            ["Export code for addon","If you use both, export your progress to sync it into the addon."],
+            ["Share farm plans via link","Send a URL to your group on Discord. No addon needed on their end."],
+            ["Print farm priority list","PDF-ready farm list you can reference offline."],
+            ["Visual progress bars","See at a glance which specs and characters are furthest along."],
+          ].map(([title, desc]) => (
+            <div key={title} style={{ marginBottom:".75rem" }}>
+              <div style={{ fontFamily:"Cinzel,serif", fontSize:".72rem", letterSpacing:".04em", color:"var(--parch)", marginBottom:".15rem" }}>{title}</div>
+              <div style={{ fontSize:".78rem", color:"var(--parch-dk)", lineHeight:1.5 }}>{desc}</div>
+            </div>
+          ))}
+          <div style={{ borderTop:"1px solid var(--bdr)", marginTop:"1rem", paddingTop:".75rem" }}>
+            <div style={{ fontFamily:"Cinzel,serif", fontSize:".65rem", letterSpacing:".1em", color:"var(--gold)", marginBottom:".5rem" }}>HOW TO USE</div>
+            {["1. Select your class and spec above","2. Load BiS Suggestions and click Apply All","3. Mark slots as acquired using the checkboxes","4. Set each item's gear track using the track pills","5. Check Farm Priority to see what to run this week"].map(s => (
+              <div key={s} style={{ fontSize:".78rem", color:"var(--parch-dk)", marginBottom:".3rem" }}>{s}</div>
             ))}
           </div>
         </div>
+
+        {/* Addon column */}
+        <div style={{ background:"var(--panel)", border:"1px solid var(--bdr2)", padding:"1.25rem" }}>
+          <div style={{ fontFamily:"Cinzel,serif", fontSize:".72rem", letterSpacing:".14em", color:"var(--gold)", marginBottom:".75rem" }}>THE IN-GAME ADDON</div>
+          <div style={{ fontSize:".88rem", color:"var(--parch-dk)", lineHeight:1.7, marginBottom:"1rem" }}>
+            Works standalone inside WoW. BiS list loads automatically when you log in — no setup, no website required.
+          </div>
+          {[
+            ["Auto-loads your BiS list","Detects your spec on login. Switch specs and it switches instantly."],
+            ["Scan Gear","Reads your equipped items and auto-detects their gear track from the tooltip."],
+            ["Farm Priority tab","Shows which dungeons and raids to run, sorted by how many items you need there."],
+            ["All My Specs farm view","One click shows every dungeon and raid that has BiS items across all your specs — so a single run can gear your Resto, Guardian, and Balance at the same time. No other addon does this."],
+            ["In-game group planning","Type /wowbis share in your party. Others see your farm list and the Group Plan tab shows overlap."],
+            ["Item tooltips","Hover any item anywhere in the game to see its BiS status for your current spec."],
+          ].map(([title, desc]) => (
+            <div key={title} style={{ marginBottom:".75rem" }}>
+              <div style={{ fontFamily:"Cinzel,serif", fontSize:".72rem", letterSpacing:".04em", color:"var(--parch)", marginBottom:".15rem" }}>{title}</div>
+              <div style={{ fontSize:".78rem", color:"var(--parch-dk)", lineHeight:1.5 }}>{desc}</div>
+            </div>
+          ))}
+          <div style={{ borderTop:"1px solid var(--bdr)", marginTop:"1rem", paddingTop:".75rem" }}>
+            <div style={{ fontFamily:"Cinzel,serif", fontSize:".65rem", letterSpacing:".1em", color:"var(--gold)", marginBottom:".5rem" }}>HOW TO INSTALL</div>
+            {[
+              "1. Download the zip below and extract it",
+              "2. Move the WoWBiSTracker folder to:",
+              "   World of Warcraft\_retail_\Interface\AddOns\",
+              "3. Log into WoW — BiS list loads automatically",
+              "4. Click the minimap button or type /wowbis",
+            ].map(s => (
+              <div key={s} style={{ fontSize:".78rem", color:"var(--parch-dk)", marginBottom:".3rem", fontFamily: s.startsWith("   ") ? "monospace" : "inherit", fontSize: s.startsWith("   ") ? ".72rem" : ".78rem", background: s.startsWith("   ") ? "var(--bg2)" : "transparent", padding: s.startsWith("   ") ? ".15rem .4rem" : "0" }}>{s.trim()}</div>
+            ))}
+            <a href="https://github.com/onyxicca/wowbistracker-addon/releases/latest" target="_blank" rel="noreferrer" style={{ display:"inline-block", marginTop:".75rem", fontFamily:"Cinzel,serif", fontSize:".7rem", letterSpacing:".08em", padding:".4rem 1rem", background:"var(--gold)", color:"var(--ink)", textDecoration:"none", fontWeight:700 }}>Download Addon</a>
+            <span style={{ display:"block", marginTop:".4rem", fontSize:".72rem", color:"var(--parch-dk)", fontStyle:"italic" }}>Coming to CurseForge soon</span>
+          </div>
+        </div>
+      </div>
+
+      <div style={{ background:"var(--panel)", border:"1px solid var(--bdr2)", padding:".75rem 1.25rem", marginBottom:"1.5rem", fontSize:".82rem", color:"var(--parch-dk)", lineHeight:1.7 }}>
+        <strong style={{ fontFamily:"Cinzel,serif", fontSize:".68rem", letterSpacing:".1em", color:"var(--gold-lt)" }}>USING BOTH?</strong>
+        {"  "}Use the website to set up your characters and track progress visually. Export a code from the website and import it into the addon using the Sync from Site button. Or export from the addon to the website — the addon generates a code you can paste into the website's Import field to carry your in-game acquired status and gear tracks back to the browser view.
       </div>
 
       <div className="sh">How to Use</div>
       <div style={{ background: "var(--panel)", border: "1px solid var(--bdr)", padding: "1.25rem 1.5rem", fontSize: ".92rem", lineHeight: 1.7, color: "var(--parch-dk)" }}>
         {[
           ["1. SELECT YOUR CLASS",              "Click any class card to see its specializations."],
-          ["2. PICK YOUR SPEC","Load your spec's full Midnight Season 1 best-in-slot list instantly."],
+          ["2. PICK YOUR SPEC","Your BiS list is already loaded automatically when you log in. Use the website to sync acquired items and gear tracks, or to plan across characters."],
           ["3. FILL YOUR TRACKER",               "Type item names and sources in each slot. Check items off as you acquire them."],
           ["4. BiS SUGGESTIONS",                 "Hit \"Load BiS Suggestions\" to pull current Midnight Season 1 recommendations sourced from community guides. Always verify on Wowhead or Icy Veins."],
           ["5. IMPORT SIMC","After loading BiS, use SimC Import to scan your character. Items you are already wearing that match BiS get checked off automatically — showing exactly what you still need to farm."],
