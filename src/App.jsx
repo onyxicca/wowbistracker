@@ -2304,14 +2304,6 @@ function AddonImportBox({ onCharsLoaded }) {
       imported++;
       loadedSpecs.push(specName);
     });
-    const charLabel = realm ? `${charName}-${realm}` : charName;
-
-    const specSections = sections.filter(s => s.startsWith("SPEC~"));
-    if (!specSections.length) {
-      setIsErr(false);
-      setMsg("This looks like a single-spec or old-format code. For best results, use the Export button in the addon which packages all your specs at once.");
-      return;
-    }
 
     if (imported === 0) {
       setIsErr(true);
