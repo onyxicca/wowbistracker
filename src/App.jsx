@@ -1109,7 +1109,7 @@ body{font-family:'Crimson Pro',Georgia,serif;font-size:1.05rem;background:var(--
 .hdr-btns{display:flex;align-items:center;gap:.75rem}
 .btn-site{font-family:'Cinzel',serif;font-size:.75rem;letter-spacing:.08em;padding:.4rem 1.1rem;background:transparent;border:1px solid var(--gold);color:var(--gold-lt);cursor:pointer;transition:all .18s;clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);text-decoration:none;display:inline-block}
 .btn-site:hover{background:var(--gold);color:var(--ink)}
-.btn-sup{font-family:'Cinzel',serif;font-size:.75rem;letter-spacing:.08em;padding:.4rem 1.1rem;background:rgba(155,26,42,.15);border:1px solid var(--crimson);color:#ff8fa0;cursor:pointer;transition:all .18s;clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);text-decoration:none;display:inline-block}
+.btn-addon{font-family:'Cinzel',serif;font-size:.7rem;letter-spacing:.08em;padding:.35rem .85rem;background:rgba(201,146,42,.12);border:1px solid var(--gold);color:var(--gold-lt);text-decoration:none;transition:all .15s;white-space:nowrap}.btn-addon:hover{background:var(--gold);color:var(--ink)}.btn-sup{font-family:'Cinzel',serif;font-size:.75rem;letter-spacing:.08em;padding:.4rem 1.1rem;background:rgba(155,26,42,.15);border:1px solid var(--crimson);color:#ff8fa0;cursor:pointer;transition:all .18s;clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);text-decoration:none;display:inline-block}
 .btn-sup:hover{background:var(--crimson);color:#fff}
 
 .hero{text-align:center;padding:3.5rem 2rem 2.5rem;position:relative;overflow:hidden;background:radial-gradient(ellipse 70% 50% at 50% 0%,rgba(110,64,201,.08),transparent 70%)}
@@ -2249,6 +2249,50 @@ function Home({ onSelectClass, onLoadCharacter }) {
         ))}
       </div>
 
+      {(() => {
+        const [addonCode, setAddonCode] = React.useState("");
+        const [addonErr, setAddonErr] = React.useState("");
+        const parseAddonExport = (code) => {
+          if (!code.trim()) return;
+          const entries = code.trim().split("|");
+          if (!entries.length) { setAddonErr("Could not read code. Use the Export button inside the addon."); return; }
+          const TRACK_CODES = { v:"Veteran", c:"Champion", h:"Hero", m:"Myth" };
+          const SLOT_TO_KEY = { "1":"head","2":"neck","3":"shoulders","5":"chest","6":"waist","7":"legs","8":"feet","9":"wrist","10":"hands","11":"finger1","12":"finger2","13":"trinket1","14":"trinket2","15":"back","16":"mainhand","17":"offhand" };
+          const slots = {};
+          let count = 0;
+          entries.forEach(entry => {
+            const parts = entry.split(":");
+            if (parts.length < 4) return;
+            const [sid, name, src, acq, trCode] = parts;
+            const key = SLOT_TO_KEY[sid];
+            if (!key || !name) return;
+            slots[key] = { name, src, done: acq === "1", track: trCode ? TRACK_CODES[trCode] : undefined };
+            count++;
+          });
+          if (!count) { setAddonErr("No slots found. Make sure you used the Export button inside the addon."); return; }
+          setAddonErr("");
+          alert(`Read ${count} slots from your addon export. Select your class and spec below to open your tracker, then click SimC Import → paste this same code. Your acquired status and gear tracks will be pre-filled.`);
+        };
+        return (
+          <div style={{ background:"var(--panel)", border:"1px solid var(--bdr)", padding:"1rem 1.25rem", marginBottom:"1.5rem", marginTop:".75rem" }}>
+            <div style={{ fontFamily:"Cinzel,serif", fontSize:".68rem", letterSpacing:".12em", color:"var(--gold)", marginBottom:".4rem" }}>HAVE THE IN-GAME ADDON?</div>
+            <div style={{ fontSize:".82rem", color:"var(--parch-dk)", marginBottom:".65rem", lineHeight:1.6 }}>
+              In the addon, open Farm Priority and click <strong style={{ color:"var(--parch)" }}>Export</strong> to get your progress code. Paste it here to sync your acquired items and gear tracks to this website.
+            </div>
+            <div style={{ display:"flex", gap:".5rem", flexWrap:"wrap" }}>
+              <input
+                value={addonCode}
+                onChange={e => setAddonCode(e.target.value)}
+                placeholder="Paste your addon export code here..."
+                style={{ flex:1, minWidth:"200px", background:"var(--bg2)", border:"1px solid var(--bdr2)", color:"var(--parch)", fontFamily:"monospace", fontSize:".75rem", padding:".4rem .6rem", outline:"none" }}
+              />
+              <button onClick={() => parseAddonExport(addonCode)} style={{ fontFamily:"Cinzel,serif", fontSize:".72rem", letterSpacing:".06em", padding:".4rem .9rem", background:"var(--gold)", border:"none", color:"var(--ink)", cursor:"pointer", fontWeight:700, flexShrink:0 }}>Import from Addon</button>
+            </div>
+            {addonErr && <div style={{ fontSize:".78rem", color:"#ff6d6d", marginTop:".4rem" }}>{addonErr}</div>}
+          </div>
+        );
+      })()}
+
       {savedChars.length > 0 && (
         <div style={{ marginBottom:"1.5rem" }}>
           <div className="sh">Your Characters</div>
@@ -2298,76 +2342,96 @@ function Home({ onSelectClass, onLoadCharacter }) {
       <div className="sh" id="group-planner">Group Farm Planner</div>
       <GroupPlanner />
 
-      <div style={{ marginTop:"2rem" }} />
-      <div className="sh">Addon vs Website</div>
-      <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"1rem", marginBottom:"1.5rem" }}>
+      <div style={{ marginTop:"2.5rem" }} />
+      <div className="sh">Website vs In-Game Addon</div>
+      <p style={{ fontSize:".9rem", color:"var(--parch-dk)", marginBottom:"1.5rem", lineHeight:1.7 }}>
+        Both tools are free. Use either one independently, or both together.
+      </p>
+
+      <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"1.25rem", marginBottom:"1rem" }}>
 
         {/* Website column */}
-        <div style={{ background:"var(--panel)", border:"1px solid var(--bdr2)", padding:"1.25rem" }}>
-          <div style={{ fontFamily:"Cinzel,serif", fontSize:".72rem", letterSpacing:".14em", color:"var(--gold)", marginBottom:".75rem" }}>THE WEBSITE</div>
-          <div style={{ fontSize:".88rem", color:"var(--parch-dk)", lineHeight:1.7, marginBottom:"1rem" }}>
-            Plan your BiS gear from any browser. No addon required. Best for multi-character management and group coordination outside of the game.
+        <div style={{ background:"var(--panel)", border:"1px solid var(--bdr2)", display:"flex", flexDirection:"column" }}>
+          <div style={{ background:"rgba(201,146,42,.08)", borderBottom:"1px solid var(--bdr2)", padding:"1rem 1.25rem" }}>
+            <div style={{ fontFamily:"Cinzel,serif", fontSize:".78rem", letterSpacing:".14em", color:"var(--gold)", marginBottom:".3rem" }}>THIS WEBSITE</div>
+            <div style={{ fontSize:".85rem", color:"var(--parch-dk)", lineHeight:1.6 }}>Plan and track your gear from any browser. No download required.</div>
           </div>
-          {[
-            ["All your characters and specs in one dashboard","Compare progress across toons without logging in."],
-            ["SimC import","Paste a SimC string to auto-fill acquired items and gear tracks for all slots at once."],
-            ["Export code for addon","If you use both, export your progress to sync it into the addon."],
-            ["Share farm plans via link","Send a URL to your group on Discord. No addon needed on their end."],
-            ["Print farm priority list","PDF-ready farm list you can reference offline."],
-            ["Visual progress bars","See at a glance which specs and characters are furthest along."],
-          ].map(([title, desc]) => (
-            <div key={title} style={{ marginBottom:".75rem" }}>
-              <div style={{ fontFamily:"Cinzel,serif", fontSize:".72rem", letterSpacing:".04em", color:"var(--parch)", marginBottom:".15rem" }}>{title}</div>
-              <div style={{ fontSize:".78rem", color:"var(--parch-dk)", lineHeight:1.5 }}>{desc}</div>
-            </div>
-          ))}
-          <div style={{ borderTop:"1px solid var(--bdr)", marginTop:"1rem", paddingTop:".75rem" }}>
-            <div style={{ fontFamily:"Cinzel,serif", fontSize:".65rem", letterSpacing:".1em", color:"var(--gold)", marginBottom:".5rem" }}>HOW TO USE</div>
-            {["1. Select your class and spec above","2. Load BiS Suggestions and click Apply All","3. Mark slots as acquired using the checkboxes","4. Set each item's gear track using the track pills","5. Check Farm Priority to see what to run this week"].map(s => (
-              <div key={s} style={{ fontSize:".78rem", color:"var(--parch-dk)", marginBottom:".3rem" }}>{s}</div>
+          <div style={{ padding:"1.25rem", flex:1 }}>
+            {[
+              { title:"All characters at a glance", desc:"Every character and spec tracked in one place without switching between them." },
+              { title:"SimC import", desc:"Paste a SimC string to instantly fill in every item you're wearing and its gear track." },
+              { title:"Export to addon", desc:"Generate a code to push your website progress into the in-game addon." },
+              { title:"Group planning links", desc:"Share a URL on Discord so your party can coordinate farm runs — no addon needed on their end." },
+              { title:"Print farm lists", desc:"Clean printable farm priority list for the week. Works as PDF too." },
+              { title:"Visual progress", desc:"Progress bars across all specs and characters. Good for seeing where you are at a glance." },
+            ].map(({ title, desc }) => (
+              <div key={title} style={{ paddingBottom:"1rem", marginBottom:"1rem", borderBottom:"1px solid var(--bdr)" }}>
+                <div style={{ fontFamily:"Cinzel,serif", fontSize:".72rem", letterSpacing:".06em", color:"var(--parch)", marginBottom:".35rem" }}>{title}</div>
+                <div style={{ fontSize:".82rem", color:"var(--parch-dk)", lineHeight:1.65 }}>{desc}</div>
+              </div>
             ))}
+            <div style={{ background:"rgba(0,0,0,.2)", border:"1px solid var(--bdr2)", padding:"1rem", marginTop:".25rem" }}>
+              <div style={{ fontFamily:"Cinzel,serif", fontSize:".68rem", letterSpacing:".1em", color:"var(--gold)", marginBottom:".75rem" }}>HOW TO USE THIS SITE</div>
+              {[
+                "Select your class and spec below",
+                "Click Load BiS Suggestions → Apply All",
+                "Mark acquired items using the checkboxes",
+                "Set each item's gear track with the track pills",
+                "Check Farm Priority to see what to run this week",
+                "Use SimC Import to auto-fill from your character data",
+              ].map((s, i) => (
+                <div key={s} style={{ display:"flex", gap:".6rem", marginBottom:".5rem", fontSize:".82rem", color:"var(--parch-dk)" }}>
+                  <span style={{ color:"var(--gold)", fontFamily:"Cinzel,serif", fontSize:".7rem", flexShrink:0, marginTop:".1rem" }}>{i+1}.</span>
+                  <span style={{ lineHeight:1.6 }}>{s}</span>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
 
         {/* Addon column */}
-        <div style={{ background:"var(--panel)", border:"1px solid var(--bdr2)", padding:"1.25rem" }}>
-          <div style={{ fontFamily:"Cinzel,serif", fontSize:".72rem", letterSpacing:".14em", color:"var(--gold)", marginBottom:".75rem" }}>THE IN-GAME ADDON</div>
-          <div style={{ fontSize:".88rem", color:"var(--parch-dk)", lineHeight:1.7, marginBottom:"1rem" }}>
-            Works standalone inside WoW. BiS list loads automatically when you log in — no setup, no website required.
+        <div style={{ background:"var(--panel)", border:"1px solid var(--bdr2)", display:"flex", flexDirection:"column" }}>
+          <div style={{ background:"rgba(201,146,42,.08)", borderBottom:"1px solid var(--bdr2)", padding:"1rem 1.25rem" }}>
+            <div style={{ fontFamily:"Cinzel,serif", fontSize:".78rem", letterSpacing:".14em", color:"var(--gold)", marginBottom:".3rem" }}>IN-GAME ADDON</div>
+            <div style={{ fontSize:".85rem", color:"var(--parch-dk)", lineHeight:1.6 }}>Works standalone inside WoW. BiS list loads automatically — no setup, no website needed.</div>
           </div>
-          {[
-            ["Auto-loads your BiS list","Detects your spec on login. Switch specs and it switches instantly."],
-            ["Scan Gear","Reads your equipped items and auto-detects their gear track from the tooltip."],
-            ["Farm Priority tab","Shows which dungeons and raids to run, sorted by how many items you need there."],
-            ["All My Specs farm view","One click shows every dungeon and raid that has BiS items across all your specs — so a single run can gear your Resto, Guardian, and Balance at the same time. No other addon does this."],
-            ["In-game group planning","Type /wowbis share in your party. Others see your farm list and the Group Plan tab shows overlap."],
-            ["Item tooltips","Hover any item anywhere in the game to see its BiS status for your current spec."],
-          ].map(([title, desc]) => (
-            <div key={title} style={{ marginBottom:".75rem" }}>
-              <div style={{ fontFamily:"Cinzel,serif", fontSize:".72rem", letterSpacing:".04em", color:"var(--parch)", marginBottom:".15rem" }}>{title}</div>
-              <div style={{ fontSize:".78rem", color:"var(--parch-dk)", lineHeight:1.5 }}>{desc}</div>
-            </div>
-          ))}
-          <div style={{ borderTop:"1px solid var(--bdr)", marginTop:"1rem", paddingTop:".75rem" }}>
-            <div style={{ fontFamily:"Cinzel,serif", fontSize:".65rem", letterSpacing:".1em", color:"var(--gold)", marginBottom:".5rem" }}>HOW TO INSTALL</div>
+          <div style={{ padding:"1.25rem", flex:1 }}>
             {[
-              "1. Download the zip below and extract it",
-              "2. Move the WoWBiSTracker folder to:",
-              "   World of Warcraft/_retail_/Interface/AddOns/",
-              "3. Log into WoW — BiS list loads automatically",
-              "4. Click the minimap button or type /wowbis",
-            ].map(s => (
-              <div key={s} style={{ fontSize:".78rem", color:"var(--parch-dk)", marginBottom:".3rem", fontFamily: s.startsWith("   ") ? "monospace" : "inherit", fontSize: s.startsWith("   ") ? ".72rem" : ".78rem", background: s.startsWith("   ") ? "var(--bg2)" : "transparent", padding: s.startsWith("   ") ? ".15rem .4rem" : "0" }}>{s.trim()}</div>
+              { title:"Auto-loads for your spec", desc:"Detects your class and spec on login. Switch specs mid-session and it switches instantly." },
+              { title:"Scan Gear", desc:"Reads your equipped items and auto-detects their gear track directly from the in-game tooltip. No guessing." },
+              { title:"Farm Priority", desc:"Shows exactly which dungeons and raids to run this week, sorted by how many items you need there." },
+              { title:"All My Specs farm view", desc:"One click shows every location that has BiS items across all your specs. A single run can gear your Resto, Guardian, and Balance Druid simultaneously. No other addon does this." },
+              { title:"In-game group planning", desc:"Type /wowbis share in your party. The Group Plan tab shows which locations overlap with your party members." },
+              { title:"Item tooltips", desc:"Hover any item anywhere in the game — bags, auction house, loot window — to see its BiS status for your spec." },
+            ].map(({ title, desc }) => (
+              <div key={title} style={{ paddingBottom:"1rem", marginBottom:"1rem", borderBottom:"1px solid var(--bdr)" }}>
+                <div style={{ fontFamily:"Cinzel,serif", fontSize:".72rem", letterSpacing:".06em", color:"var(--parch)", marginBottom:".35rem" }}>{title}</div>
+                <div style={{ fontSize:".82rem", color:"var(--parch-dk)", lineHeight:1.65 }}>{desc}</div>
+              </div>
             ))}
-            <a href="https://github.com/onyxicca/wowbistracker-addon/releases/latest" target="_blank" rel="noreferrer" style={{ display:"inline-block", marginTop:".75rem", fontFamily:"Cinzel,serif", fontSize:".7rem", letterSpacing:".08em", padding:".4rem 1rem", background:"var(--gold)", color:"var(--ink)", textDecoration:"none", fontWeight:700 }}>Download Addon</a>
-            <span style={{ display:"block", marginTop:".4rem", fontSize:".72rem", color:"var(--parch-dk)", fontStyle:"italic" }}>Coming to CurseForge soon</span>
+            <div style={{ background:"rgba(0,0,0,.2)", border:"1px solid var(--bdr2)", padding:"1rem", marginTop:".25rem" }}>
+              <div style={{ fontFamily:"Cinzel,serif", fontSize:".68rem", letterSpacing:".1em", color:"var(--gold)", marginBottom:".75rem" }}>HOW TO INSTALL</div>
+              {[
+                "Download the zip and extract it",
+                "Move the WoWBiSTracker folder to your AddOns directory",
+                "Log in — your BiS list loads automatically",
+                "Click the minimap button or type /wowbis",
+              ].map((s, i) => (
+                <div key={s} style={{ display:"flex", gap:".6rem", marginBottom:".5rem", fontSize:".82rem", color:"var(--parch-dk)" }}>
+                  <span style={{ color:"var(--gold)", fontFamily:"Cinzel,serif", fontSize:".7rem", flexShrink:0, marginTop:".1rem" }}>{i+1}.</span>
+                  <span style={{ lineHeight:1.6 }}>{s}</span>
+                </div>
+              ))}
+              <a href="https://github.com/onyxicca/wowbistracker-addon/releases/tag/v1.0.0" target="_blank" rel="noreferrer" style={{ display:"inline-block", marginTop:".85rem", fontFamily:"Cinzel,serif", fontSize:".72rem", letterSpacing:".08em", padding:".45rem 1.1rem", background:"var(--gold)", color:"var(--ink)", textDecoration:"none", fontWeight:700 }}>Download Addon</a>
+              <span style={{ display:"block", marginTop:".4rem", fontSize:".72rem", color:"var(--parch-dk)", fontStyle:"italic" }}>Coming to CurseForge soon</span>
+            </div>
           </div>
         </div>
       </div>
 
-      <div style={{ background:"var(--panel)", border:"1px solid var(--bdr2)", padding:".75rem 1.25rem", marginBottom:"1.5rem", fontSize:".82rem", color:"var(--parch-dk)", lineHeight:1.7 }}>
+      <div style={{ background:"rgba(201,146,42,.06)", border:"1px solid rgba(201,146,42,.25)", padding:"1rem 1.25rem", marginBottom:"2rem", fontSize:".85rem", color:"var(--parch-dk)", lineHeight:1.7 }}>
         <strong style={{ fontFamily:"Cinzel,serif", fontSize:".68rem", letterSpacing:".1em", color:"var(--gold-lt)" }}>USING BOTH?</strong>
-        {"  "}Use the website to set up your characters and track progress visually. Export a code from the website and import it into the addon using the Sync from Site button. Or export from the addon to the website — the addon generates a code you can paste into the website's Import field to carry your in-game acquired status and gear tracks back to the browser view.
+        {"  "}The addon exports a code you can paste into the website to sync your in-game progress to the browser view. The website can also export a code back into the addon. Both tools stay in sync without requiring SimC.
       </div>
 
       <div className="sh">How to Use</div>
@@ -2409,7 +2473,8 @@ export default function App() {
               <span className="logo-main">WoW BiS Tracker</span>
             </button>
             <div className="hdr-btns">
-              <a className="btn-sup" href="https://embernal.com/pages/support" target="_blank" rel="noreferrer">♥ Like this tool? Support Onyxicca</a>
+              <a className="btn-addon" href="https://github.com/onyxicca/wowbistracker-addon/releases/tag/v1.0.0" target="_blank" rel="noreferrer">⬇ Get the In-Game Addon</a>
+              <a className="btn-sup" href="https://embernal.com/pages/support" target="_blank" rel="noreferrer">♥ Support Onyxicca</a>
             </div>
           </div>
         </header>
