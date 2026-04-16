@@ -2197,9 +2197,10 @@ function AddonImportBox({ onCharsLoaded }) {
   const [loaded, setLoaded] = useState(false);
 
   const TRACK_CODES = { v:"Veteran", c:"Champion", h:"Hero", m:"Myth" };
-  // Unambiguous mapping: class display name → { specName → {cls, spec} }
+  // Unambiguous mapping: class display name → { addonSpecName → websiteSpecId }
+  // websiteSpecId must exactly match the spec id in the CLASSES array
   const CLASS_SPEC_MAP = {
-    "Druid":        { "Balance":"balance","Feral":"feral","Guardian":"guardian","Restoration":"restoration" },
+    "Druid":        { "Balance":"balance","Feral":"feral","Guardian":"guardian","Restoration":"restoration-druid" },
     "Hunter":       { "Beast Mastery":"beast-mastery","Marksmanship":"marksmanship","Survival":"survival" },
     "Mage":         { "Arcane":"arcane","Fire":"fire","Frost Mage":"frost-mage" },
     "Monk":         { "Brewmaster":"brewmaster","Mistweaver":"mistweaver","Windwalker":"windwalker" },
@@ -2213,7 +2214,6 @@ function AddonImportBox({ onCharsLoaded }) {
     "Demon Hunter": { "Havoc":"havoc","Vengeance":"vengeance","Devourer":"devourer" },
     "Evoker":       { "Devastation":"devastation","Preservation":"preservation","Augmentation":"augmentation" },
   };
-  // Also map class display name to cls id
   const CLASS_ID_MAP = {
     "Druid":"druid","Hunter":"hunter","Mage":"mage","Monk":"monk",
     "Paladin":"paladin","Priest":"priest","Rogue":"rogue","Shaman":"shaman",
