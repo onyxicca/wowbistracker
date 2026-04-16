@@ -2313,49 +2313,32 @@ function AddonImportBox({ onCharsLoaded }) {
       return;
     }
 
-    let imported = 0;
-    const loadedSpecs = [];
-
-    specSections.forEach(section => {
-      const parts = section.split("~");
-      if (parts[0] !== "SPEC" || !parts[1] || !parts[2]) return;
-      const specName = parts[1].trim();
-      const slotStr  = parts[2];
-      const data     = parseSlots(slotStr);
-      if (!Object.keys(data).length) return;
-
-      const matches = SPEC_TO_IDS[specName] || [];
-      matches.forEach(({ cls, spec }) => {
-        // Use charLabel as the character name so two chars of same class stay separate
-        const storageKey = `bis-${cls}-${spec}-${charLabel}`;
-        let existing = {};
-        try { existing = JSON.parse(localStorage.getItem(storageKey) || "{}"); } catch {}
-        const merged = { ...existing };
-        Object.entries(data).forEach(([slot, val]) => {
-          merged[slot] = { ...(existing[slot] || {}), ...val };
-        });
-        try {
-          localStorage.setItem(storageKey, JSON.stringify(merged));
-          const ck = `characters-${cls}-${spec}`;
-          const chars = JSON.parse(localStorage.getItem(ck) || "[]");
-          if (!chars.includes(charLabel)) {
-            localStorage.setItem(ck, JSON.stringify([...chars, charLabel]));
-          }
-        } catch {}
-        imported++;
-        loadedSpecs.push(specName);
-      });
-    });
-
     if (imported === 0) {
       setIsErr(true);
       setMsg("Could not match any specs. Make sure you used the Export button inside the addon.");
       return;
     }
+    // Clean up stale entries from wrong-class imports (old format bug)
+    // Remove any bis-WRONGCLS-spec-charLabel keys that don't belong to this class
+    const validKeys = new Set(
+      Object.values(CLASS_SPEC_MAP[className]).map(specId => `bis-${clsId}-${specId}-${charLabel}`)
+    );
+    try {
+      const allKeys = [];
+      for (let i = 0; i < localStorage.length; i++) allKeys.push(localStorage.key(i));
+      allKeys.forEach(k => {
+        if (!k || !k.startsWith("bis-") || !k.endsWith(`-${charLabel}`)) return;
+        if (!validKeys.has(k) && k !== `bis-${clsId}-`) {
+          // This key belongs to a different class — remove it if it was created for this charLabel
+          const parts = k.split("-");
+          if (parts.length >= 4) localStorage.removeItem(k);
+        }
+      });
+    } catch {}
     setIsErr(false);
     setLoaded(true);
     const who = realm2 ? `${charName2} — ${realm2}` : charName2;
-    setMsg(`Synced ${imported} spec(s) for ${who} (${className}): ${[...new Set(loadedSpecs)].join(", ")}. Your characters now appear below — click any spec to open its tracker.`);
+    setMsg(`Synced ${imported} spec(s) for ${who} (${className}): ${[...new Set(loadedSpecs)].join(", ")}. Your characters now appear below.`);
     if (onCharsLoaded) onCharsLoaded();
   };
 
