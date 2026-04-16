@@ -2190,6 +2190,43 @@ function GroupPlanner() {
 }
 
 
+function AddonImportBox() {
+  const [addonCode, setAddonCode] = useState("");
+  const [addonMsg, setAddonMsg] = useState("");
+  const [isErr, setIsErr] = useState(false);
+  const TRACK_CODES = { v:"Veteran", c:"Champion", h:"Hero", m:"Myth" };
+  const SLOT_TO_KEY = { "1":"head","2":"neck","3":"shoulders","5":"chest","6":"waist","7":"legs","8":"feet","9":"wrist","10":"hands","11":"finger1","12":"finger2","13":"trinket1","14":"trinket2","15":"back","16":"mainhand","17":"offhand" };
+  const parse = () => {
+    const entries = addonCode.trim().split("|").filter(Boolean);
+    if (!entries.length) { setIsErr(true); setAddonMsg("Paste your addon export code first."); return; }
+    let count = 0;
+    entries.forEach(entry => {
+      const parts = entry.split(":");
+      if (parts.length < 4) return;
+      const [sid,,,,] = parts;
+      if (SLOT_TO_KEY[sid]) count++;
+    });
+    if (!count) { setIsErr(true); setAddonMsg("Could not read code. Use the Export button inside the addon."); return; }
+    setIsErr(false);
+    setAddonMsg(`Found ${count} slots. Select your class and spec below, then paste this same code into the SimC Import field to pre-fill your tracker.`);
+  };
+  return (
+    <div style={{ background:"var(--panel)", border:"1px solid var(--bdr)", padding:"1rem 1.25rem", marginBottom:"1.5rem", marginTop:".75rem" }}>
+      <div style={{ fontFamily:"Cinzel,serif", fontSize:".68rem", letterSpacing:".12em", color:"var(--gold)", marginBottom:".4rem" }}>HAVE THE IN-GAME ADDON?</div>
+      <div style={{ fontSize:".82rem", color:"var(--parch-dk)", marginBottom:".65rem", lineHeight:1.6 }}>
+        In the addon, click <strong style={{ color:"var(--parch)" }}>Export</strong> in the Farm Priority tab to generate your progress code. Paste it here to sync your acquired items and gear tracks to this website.
+      </div>
+      <div style={{ display:"flex", gap:".5rem", flexWrap:"wrap" }}>
+        <input value={addonCode} onChange={e => setAddonCode(e.target.value)}
+          placeholder="Paste your addon export code here..."
+          style={{ flex:1, minWidth:"200px", background:"var(--bg2)", border:"1px solid var(--bdr2)", color:"var(--parch)", fontFamily:"monospace", fontSize:".75rem", padding:".4rem .6rem", outline:"none" }} />
+        <button onClick={parse} style={{ fontFamily:"Cinzel,serif", fontSize:".72rem", letterSpacing:".06em", padding:".4rem .9rem", background:"var(--gold)", border:"none", color:"var(--ink)", cursor:"pointer", fontWeight:700, flexShrink:0 }}>Read Code</button>
+      </div>
+      {addonMsg && <div style={{ fontSize:".78rem", color: isErr ? "#ff6d6d" : "var(--green,#66bb6a)", marginTop:".4rem", lineHeight:1.5 }}>{addonMsg}</div>}
+    </div>
+  );
+}
+
 function Home({ onSelectClass, onLoadCharacter }) {
   const [roleFilter, setRoleFilter] = useState("All");
   const [resetRegion, setResetRegion] = useState("NA");
@@ -2249,49 +2286,7 @@ function Home({ onSelectClass, onLoadCharacter }) {
         ))}
       </div>
 
-      {(() => {
-        const [addonCode, setAddonCode] = React.useState("");
-        const [addonErr, setAddonErr] = React.useState("");
-        const parseAddonExport = (code) => {
-          if (!code.trim()) return;
-          const entries = code.trim().split("|");
-          if (!entries.length) { setAddonErr("Could not read code. Use the Export button inside the addon."); return; }
-          const TRACK_CODES = { v:"Veteran", c:"Champion", h:"Hero", m:"Myth" };
-          const SLOT_TO_KEY = { "1":"head","2":"neck","3":"shoulders","5":"chest","6":"waist","7":"legs","8":"feet","9":"wrist","10":"hands","11":"finger1","12":"finger2","13":"trinket1","14":"trinket2","15":"back","16":"mainhand","17":"offhand" };
-          const slots = {};
-          let count = 0;
-          entries.forEach(entry => {
-            const parts = entry.split(":");
-            if (parts.length < 4) return;
-            const [sid, name, src, acq, trCode] = parts;
-            const key = SLOT_TO_KEY[sid];
-            if (!key || !name) return;
-            slots[key] = { name, src, done: acq === "1", track: trCode ? TRACK_CODES[trCode] : undefined };
-            count++;
-          });
-          if (!count) { setAddonErr("No slots found. Make sure you used the Export button inside the addon."); return; }
-          setAddonErr("");
-          alert(`Read ${count} slots from your addon export. Select your class and spec below to open your tracker, then click SimC Import → paste this same code. Your acquired status and gear tracks will be pre-filled.`);
-        };
-        return (
-          <div style={{ background:"var(--panel)", border:"1px solid var(--bdr)", padding:"1rem 1.25rem", marginBottom:"1.5rem", marginTop:".75rem" }}>
-            <div style={{ fontFamily:"Cinzel,serif", fontSize:".68rem", letterSpacing:".12em", color:"var(--gold)", marginBottom:".4rem" }}>HAVE THE IN-GAME ADDON?</div>
-            <div style={{ fontSize:".82rem", color:"var(--parch-dk)", marginBottom:".65rem", lineHeight:1.6 }}>
-              In the addon, open Farm Priority and click <strong style={{ color:"var(--parch)" }}>Export</strong> to get your progress code. Paste it here to sync your acquired items and gear tracks to this website.
-            </div>
-            <div style={{ display:"flex", gap:".5rem", flexWrap:"wrap" }}>
-              <input
-                value={addonCode}
-                onChange={e => setAddonCode(e.target.value)}
-                placeholder="Paste your addon export code here..."
-                style={{ flex:1, minWidth:"200px", background:"var(--bg2)", border:"1px solid var(--bdr2)", color:"var(--parch)", fontFamily:"monospace", fontSize:".75rem", padding:".4rem .6rem", outline:"none" }}
-              />
-              <button onClick={() => parseAddonExport(addonCode)} style={{ fontFamily:"Cinzel,serif", fontSize:".72rem", letterSpacing:".06em", padding:".4rem .9rem", background:"var(--gold)", border:"none", color:"var(--ink)", cursor:"pointer", fontWeight:700, flexShrink:0 }}>Import from Addon</button>
-            </div>
-            {addonErr && <div style={{ fontSize:".78rem", color:"#ff6d6d", marginTop:".4rem" }}>{addonErr}</div>}
-          </div>
-        );
-      })()}
+      <AddonImportBox />
 
       {savedChars.length > 0 && (
         <div style={{ marginBottom:"1.5rem" }}>
