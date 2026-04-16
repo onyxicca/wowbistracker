@@ -2197,55 +2197,28 @@ function AddonImportBox({ onCharsLoaded }) {
   const [loaded, setLoaded] = useState(false);
 
   const TRACK_CODES = { v:"Veteran", c:"Champion", h:"Hero", m:"Myth" };
-  const SPEC_TO_IDS = {
-    // Maps addon spec name → {clsId, specId} for localStorage key building
-    "Restoration": [
-      { cls:"druid", spec:"restoration" },
-      { cls:"shaman", spec:"restoration-sham" }
-    ],
-    "Restoration Shaman": [{ cls:"shaman", spec:"restoration-sham" }],
-    "Guardian":    [{ cls:"druid",   spec:"guardian" }],
-    "Balance":     [{ cls:"druid",   spec:"balance" }],
-    "Feral":       [{ cls:"druid",   spec:"feral" }],
-    "Blood":       [{ cls:"death-knight", spec:"blood" }],
-    "Frost":       [{ cls:"death-knight", spec:"frost-dk" }],
-    "Frost Mage":  [{ cls:"mage",    spec:"frost-mage" }],
-    "Unholy":      [{ cls:"death-knight", spec:"unholy" }],
-    "Havoc":       [{ cls:"demon-hunter", spec:"havoc" }],
-    "Vengeance":   [{ cls:"demon-hunter", spec:"vengeance" }],
-    "Devourer":    [{ cls:"demon-hunter", spec:"devourer" }],
-    "Devastation": [{ cls:"evoker",  spec:"devastation" }],
-    "Preservation":[{ cls:"evoker",  spec:"preservation" }],
-    "Augmentation":[{ cls:"evoker",  spec:"augmentation" }],
-    "Beast Mastery":[{ cls:"hunter", spec:"beast-mastery" }],
-    "Marksmanship":[{ cls:"hunter",  spec:"marksmanship" }],
-    "Survival":    [{ cls:"hunter",  spec:"survival" }],
-    "Arcane":      [{ cls:"mage",    spec:"arcane" }],
-    "Fire":        [{ cls:"mage",    spec:"fire" }],
-    "Brewmaster":  [{ cls:"monk",    spec:"brewmaster" }],
-    "Mistweaver":  [{ cls:"monk",    spec:"mistweaver" }],
-    "Windwalker":  [{ cls:"monk",    spec:"windwalker" }],
-    "Holy":        [
-      { cls:"paladin", spec:"holy-pala" },
-      { cls:"priest",  spec:"holy-priest" }
-    ],
-    "Protection":  [
-      { cls:"paladin", spec:"protection-pala" },
-      { cls:"warrior", spec:"protection-war" }
-    ],
-    "Retribution": [{ cls:"paladin", spec:"retribution" }],
-    "Discipline":  [{ cls:"priest",  spec:"discipline" }],
-    "Shadow":      [{ cls:"priest",  spec:"shadow" }],
-    "Assassination":[{ cls:"rogue",  spec:"assassination" }],
-    "Outlaw":      [{ cls:"rogue",   spec:"outlaw" }],
-    "Subtlety":    [{ cls:"rogue",   spec:"subtlety" }],
-    "Elemental":   [{ cls:"shaman",  spec:"elemental" }],
-    "Enhancement": [{ cls:"shaman",  spec:"enhancement" }],
-    "Affliction":  [{ cls:"warlock", spec:"affliction" }],
-    "Demonology":  [{ cls:"warlock", spec:"demonology" }],
-    "Destruction": [{ cls:"warlock", spec:"destruction" }],
-    "Arms":        [{ cls:"warrior", spec:"arms" }],
-    "Fury":        [{ cls:"warrior", spec:"fury" }],
+  // Unambiguous mapping: class display name → { specName → {cls, spec} }
+  const CLASS_SPEC_MAP = {
+    "Druid":        { "Balance":"balance","Feral":"feral","Guardian":"guardian","Restoration":"restoration" },
+    "Hunter":       { "Beast Mastery":"beast-mastery","Marksmanship":"marksmanship","Survival":"survival" },
+    "Mage":         { "Arcane":"arcane","Fire":"fire","Frost Mage":"frost-mage" },
+    "Monk":         { "Brewmaster":"brewmaster","Mistweaver":"mistweaver","Windwalker":"windwalker" },
+    "Paladin":      { "Holy":"holy-pala","Protection":"protection-pala","Retribution":"retribution" },
+    "Priest":       { "Discipline":"discipline","Holy Priest":"holy-priest","Shadow":"shadow" },
+    "Rogue":        { "Assassination":"assassination","Outlaw":"outlaw","Subtlety":"subtlety" },
+    "Shaman":       { "Elemental":"elemental","Enhancement":"enhancement","Restoration Shaman":"restoration-sham" },
+    "Warlock":      { "Affliction":"affliction","Demonology":"demonology","Destruction":"destruction" },
+    "Warrior":      { "Arms":"arms","Fury":"fury","Protection":"protection-war" },
+    "Death Knight": { "Blood":"blood","Frost":"frost-dk","Unholy":"unholy" },
+    "Demon Hunter": { "Havoc":"havoc","Vengeance":"vengeance","Devourer":"devourer" },
+    "Evoker":       { "Devastation":"devastation","Preservation":"preservation","Augmentation":"augmentation" },
+  };
+  // Also map class display name to cls id
+  const CLASS_ID_MAP = {
+    "Druid":"druid","Hunter":"hunter","Mage":"mage","Monk":"monk",
+    "Paladin":"paladin","Priest":"priest","Rogue":"rogue","Shaman":"shaman",
+    "Warlock":"warlock","Warrior":"warrior","Death Knight":"death-knight",
+    "Demon Hunter":"demon-hunter","Evoker":"evoker",
   };
 
   const parseSlots = (slotStr) => {
@@ -2274,15 +2247,63 @@ function AddonImportBox({ onCharsLoaded }) {
     const sections = raw.split("###").filter(Boolean);
     if (!sections.length) { setIsErr(true); setMsg("Could not read code."); return; }
 
-    // Extract character header if present
-    let charName = "default";
-    let realm = "";
-    const charSection = sections.find(s => s.startsWith("CHAR~"));
-    if (charSection) {
-      const parts = charSection.split("~");
-      charName = (parts[1] || "").trim() || "default";
-      realm    = (parts[2] || "").trim();
+    // Extract CHAR header — new format includes class name
+    const charSection2 = sections.find(s => s.startsWith("CHAR~"));
+    if (!charSection2) {
+      setIsErr(true);
+      setMsg("Could not read character info. Update the addon to the latest version and try again.");
+      return;
     }
+    const hParts = charSection2.split("~");
+    const charName2  = (hParts[1] || "").trim() || "default";
+    const realm2     = (hParts[2] || "").trim();
+    const className  = (hParts[3] || "").trim();
+    const charLabel  = realm2 ? `${charName2}-${realm2}` : charName2;
+
+    if (!className || !CLASS_SPEC_MAP[className]) {
+      setIsErr(true);
+      setMsg(`Class "${className || "unknown"}" not recognised. Update the addon and try again.`);
+      return;
+    }
+
+    const specSections = sections.filter(s => s.startsWith("SPEC~"));
+    if (!specSections.length) {
+      setIsErr(true);
+      setMsg("No spec data found. Use the Export button inside the WoW BiS Tracker addon.");
+      return;
+    }
+
+    const clsId = CLASS_ID_MAP[className];
+    let imported = 0;
+    const loadedSpecs = [];
+
+    specSections.forEach(section => {
+      const sParts = section.split("~");
+      if (sParts[0] !== "SPEC" || !sParts[1] || !sParts[2]) return;
+      const specName = sParts[1].trim();
+      const slotStr  = sParts[2];
+      const data     = parseSlots(slotStr);
+      if (!Object.keys(data).length) return;
+      const specId = CLASS_SPEC_MAP[className][specName];
+      if (!specId) return;
+      const storageKey = `bis-${clsId}-${specId}-${charLabel}`;
+      let existing = {};
+      try { existing = JSON.parse(localStorage.getItem(storageKey) || "{}"); } catch {}
+      const merged = { ...existing };
+      Object.entries(data).forEach(([slot, val]) => {
+        merged[slot] = { ...(existing[slot] || {}), ...val };
+      });
+      try {
+        localStorage.setItem(storageKey, JSON.stringify(merged));
+        const ck = `characters-${clsId}-${specId}`;
+        const chars = JSON.parse(localStorage.getItem(ck) || "[]");
+        if (!chars.includes(charLabel)) {
+          localStorage.setItem(ck, JSON.stringify([...chars, charLabel]));
+        }
+      } catch {}
+      imported++;
+      loadedSpecs.push(specName);
+    });
     const charLabel = realm ? `${charName}-${realm}` : charName;
 
     const specSections = sections.filter(s => s.startsWith("SPEC~"));
@@ -2333,8 +2354,8 @@ function AddonImportBox({ onCharsLoaded }) {
     }
     setIsErr(false);
     setLoaded(true);
-    const who = realm ? `${charName} — ${realm}` : charName;
-    setMsg(`Synced ${imported} spec(s) for ${who}: ${[...new Set(loadedSpecs)].join(", ")}. Your characters now appear below — click one to open the tracker.`);
+    const who = realm2 ? `${charName2} — ${realm2}` : charName2;
+    setMsg(`Synced ${imported} spec(s) for ${who} (${className}): ${[...new Set(loadedSpecs)].join(", ")}. Your characters now appear below — click any spec to open its tracker.`);
     if (onCharsLoaded) onCharsLoaded();
   };
 
