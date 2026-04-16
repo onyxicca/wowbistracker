@@ -2418,53 +2418,68 @@ function Home({ onSelectClass, onLoadCharacter }) {
       </div>
 
 
-
-      {savedChars.length > 0 && (
-        <div style={{ marginBottom:"1.5rem" }}>
-          <div className="sh">Your Characters</div>
-          <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(200px,1fr))", gap:".6rem" }}>
-            {savedChars.map(({ key, cls, spec, charName, slotCount, acquired }) => {
-              const pct = slotCount ? Math.round(acquired / slotCount * 100) : 0;
-              const displayName = charName === "default" ? spec.name : charName;
-              return (
-                <div key={key}
-                  style={{ background:"var(--panel)", border:`1px solid ${cls.color}44`, padding:".85rem 1rem", transition:"all .18s", position:"relative", overflow:"hidden", minWidth:0 }}
-                  onMouseEnter={e => e.currentTarget.style.borderColor = cls.color}
-                  onMouseLeave={e => e.currentTarget.style.borderColor = cls.color + "44"}>
-                  <button onClick={e => {
-                    e.stopPropagation();
-                    if (!window.confirm(`Remove ${displayName}? This deletes all tracked data for this character.`)) return;
-                    localStorage.removeItem(key);
-                    try {
-                      const ck = `characters-${cls.id}-${spec.id}`;
-                      const existing = JSON.parse(localStorage.getItem(ck) || "[]");
-                      localStorage.setItem(ck, JSON.stringify(existing.filter(n => n !== charName)));
-                    } catch {}
-                    handleDelete();
-                  }} style={{ position:"absolute", top:".4rem", right:".5rem", background:"transparent", border:"none", color:"var(--parch-dk)", cursor:"pointer", fontSize:"1.1rem", lineHeight:1, padding:".15rem .3rem", zIndex:2 }} title="Remove character">×</button>
-                  <div style={{ position:"absolute", top:0, left:0, right:0, height:"2px", background:cls.color }} />
-                  <div onClick={() => onLoadCharacter(cls, spec, charName)} style={{ cursor:"pointer" }}>
-                    <div style={{ display:"flex", alignItems:"center", gap:".6rem", marginBottom:".5rem" }}>
-                      <span style={{ fontSize:"1.5rem", flexShrink:0 }}>{spec.icon}</span>
-                      <div style={{ minWidth:0 }}>
-                        <div style={{ fontFamily:"Cinzel,serif", fontSize:".85rem", color:cls.color, fontWeight:600, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{displayName}</div>
-                        <div style={{ fontSize:".72rem", color:"var(--parch-dk)", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{cls.name} · {spec.name}</div>
-                      </div>
+      {savedChars.length > 0 && (() => {
+        const groups = {};
+        savedChars.forEach(entry => {
+          const groupKey = `${entry.charName}||${entry.cls.id}`;
+          if (!groups[groupKey]) groups[groupKey] = { charName: entry.charName, cls: entry.cls, specs: [] };
+          groups[groupKey].specs.push(entry);
+        });
+        return (
+          <div style={{ marginBottom:"1.5rem" }}>
+            <div className="sh">Your Characters</div>
+            <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(260px,1fr))", gap:".75rem" }}>
+              {Object.values(groups).map(({ charName, cls, specs }) => {
+                const totalAcq = specs.reduce((s,e) => s + e.acquired, 0);
+                const totalSlots = specs.reduce((s,e) => s + e.slotCount, 0);
+                const pct = totalSlots ? Math.round(totalAcq / totalSlots * 100) : 0;
+                const displayName = charName === "default" ? cls.name : charName;
+                return (
+                  <div key={`${charName}-${cls.id}`}
+                    style={{ background:"var(--panel)", border:`1px solid ${cls.color}44`, padding:".85rem 1rem", position:"relative" }}
+                    onMouseEnter={e => e.currentTarget.style.borderColor = cls.color}
+                    onMouseLeave={e => e.currentTarget.style.borderColor = cls.color + "44"}>
+                    <button onClick={e => {
+                      e.stopPropagation();
+                      if (!window.confirm(`Remove all data for ${displayName} (${cls.name})?`)) return;
+                      specs.forEach(({ key, spec }) => {
+                        localStorage.removeItem(key);
+                        try {
+                          const ck = `characters-${cls.id}-${spec.id}`;
+                          const existing = JSON.parse(localStorage.getItem(ck) || "[]");
+                          localStorage.setItem(ck, JSON.stringify(existing.filter(n => n !== charName)));
+                        } catch {}
+                      });
+                      handleDelete();
+                    }} style={{ position:"absolute", top:".4rem", right:".5rem", background:"transparent", border:"none", color:"var(--parch-dk)", cursor:"pointer", fontSize:"1.1rem", lineHeight:1, padding:".15rem .3rem", zIndex:2 }} title="Remove character">×</button>
+                    <div style={{ position:"absolute", top:0, left:0, right:0, height:"2px", background:cls.color }} />
+                    <div style={{ fontFamily:"Cinzel,serif", fontSize:".88rem", color:cls.color, fontWeight:600, marginBottom:".2rem", paddingRight:"1.5rem" }}>{displayName}</div>
+                    <div style={{ fontSize:".72rem", color:"var(--parch-dk)", marginBottom:".5rem" }}>{cls.name}</div>
+                    <div style={{ display:"flex", flexWrap:"wrap", gap:".3rem", marginBottom:".6rem" }}>
+                      {specs.map(({ spec, charName: cn, acquired, slotCount }) => {
+                        const spct = slotCount ? Math.round(acquired / slotCount * 100) : 0;
+                        return (
+                          <button key={spec.id} onClick={() => onLoadCharacter(cls, spec, cn)}
+                            style={{ display:"flex", alignItems:"center", gap:".3rem", background:"var(--bg2)", border:`1px solid ${cls.color}55`, padding:".2rem .5rem", cursor:"pointer", fontSize:".75rem", color:"var(--parch-dk)", fontFamily:"Cinzel,serif" }}
+                            title={`${spec.name} — ${acquired}/${slotCount} acquired`}>
+                            <span>{spec.icon}</span>
+                            <span style={{ color:cls.color }}>{spec.name}</span>
+                            <span style={{ opacity:.7 }}>{spct}%</span>
+                          </button>
+                        );
+                      })}
                     </div>
-                    <div style={{ background:"var(--bdr)", height:"4px", position:"relative", marginBottom:".25rem" }}>
-                      <div style={{ position:"absolute", left:0, top:0, height:"100%", width:`${pct}%`, background:`hsl(${pct*1.2},60%,50%)`, transition:"width .3s" }} />
+                    <div style={{ background:"var(--bdr)", height:"3px", position:"relative" }}>
+                      <div style={{ position:"absolute", left:0, top:0, height:"100%", width:`${pct}%`, background:cls.color, transition:"width .4s" }} />
                     </div>
-                    <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center" }}>
-                      <span style={{ fontSize:".7rem", color:"var(--parch-dk)" }}>{acquired}/{slotCount} acquired</span>
-                      <span style={{ fontSize:".75rem", color:`hsl(${pct*1.2},60%,60%)`, fontFamily:"Cinzel,serif", fontWeight:600 }}>{pct}%</span>
-                    </div>
+                    <div style={{ fontSize:".7rem", color:"var(--parch-dk)", marginTop:".3rem" }}>{totalAcq}/{totalSlots} total · {pct}%</div>
                   </div>
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
           </div>
-        </div>
-      )}
+        );
+      })()}
       <div className="sh" id="group-planner">Group Farm Planner</div>
       <GroupPlanner />
 
