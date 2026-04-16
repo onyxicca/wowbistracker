@@ -2353,7 +2353,7 @@ function Home({ onSelectClass, onLoadCharacter }) {
             {[
               "1. Download the zip below and extract it",
               "2. Move the WoWBiSTracker folder to:",
-              "   World of Warcraft\_retail_\Interface\AddOns\",
+              "   World of Warcraft/_retail_/Interface/AddOns/",
               "3. Log into WoW — BiS list loads automatically",
               "4. Click the minimap button or type /wowbis",
             ].map(s => (
