@@ -2271,7 +2271,7 @@ function AddonImportBox({ onCharsLoaded }) {
     const raw = code.trim();
     if (!raw) { setIsErr(true); setMsg("Paste your export code from the addon first."); return; }
 
-    const sections = raw.split("||").filter(Boolean);
+    const sections = raw.split("###").filter(Boolean);
     if (!sections.length) { setIsErr(true); setMsg("Could not read code."); return; }
 
     // Extract character header if present
