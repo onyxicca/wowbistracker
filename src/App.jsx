@@ -1548,6 +1548,7 @@ function Tracker({ cls, spec, charName, onBack }) {
   };
 
   const exportForAddon = () => {
+    const cleanField = (v) => (v || "").replace(/[|:\^~#]/g, " ").trim();
     const parts = [];
     allSlotIds.forEach(id => {
       const d = data[id];
@@ -1555,17 +1556,29 @@ function Tracker({ cls, spec, charName, onBack }) {
       if (!slotNum) return;
       let itemName = d?.name;
       let itemSrc = d?.src;
+      let rankBlob = "";
+      let activeIdx = 0;
       if (bisMode === "custom" && d?.ranks) {
-        const activeIdx = d.activeRank ?? 0;
+        activeIdx = d.activeRank ?? 0;
         itemName = d.ranks[activeIdx]?.name || d.name;
         itemSrc = d.ranks[activeIdx]?.src || d.src;
+        const ranked = d.ranks
+          .map(r => ({
+            name: cleanField(r?.name),
+            src: cleanField(r?.src || "Unknown"),
+            have: r?.have ? "1" : "0",
+          }))
+          .filter(r => r.name);
+        if (ranked.length) {
+          rankBlob = "#T" + String(activeIdx + 1) + "#" + ranked.map(r => [r.name, r.src, r.have].join("~")).join("^");
+        }
       }
       if (itemName) {
-        const s = (itemSrc || "Unknown").replace(/[|:]/g, " ");
-        const n = itemName.replace(/[|:]/g, " ");
+        const s = cleanField(itemSrc || "Unknown");
+        const n = cleanField(itemName);
         const acquired = d.done ? "1" : "0";
         const trackCode = d.track ? d.track[0].toLowerCase() : "n";
-        parts.push(slotNum + ":" + n + ":" + s + ":" + acquired + ":" + trackCode);
+        parts.push(slotNum + ":" + n + ":" + s + ":" + acquired + ":" + trackCode + rankBlob);
       }
     });
     if (!parts.length) return null;
