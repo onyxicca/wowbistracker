@@ -1466,14 +1466,30 @@ function Slot({ label, id, data, onChange, targetTrack, bisMode }) {
 
 function Tracker({ cls, spec, charName, onBack }) {
   const storageKey = `bis-${cls.id}-${spec.id}-${charName || "default"}`;
+  const modeStorageKey = (mode) => `${storageKey}-${mode}`;
+  const readModeData = (mode) => {
+    try {
+      const modeKey = modeStorageKey(mode);
+      const modeRaw = localStorage.getItem(modeKey);
+      if (modeRaw) return JSON.parse(modeRaw) || {};
+      const baseRaw = localStorage.getItem(storageKey);
+      return baseRaw ? JSON.parse(baseRaw) : {};
+    } catch {
+      return {};
+    }
+  };
 
   const [data,    setData]    = useState(() => {
-    try { const s = localStorage.getItem(storageKey); return s ? JSON.parse(s) : {}; } catch { return {}; }
+    try {
+      const savedMode = localStorage.getItem(`bismode-${storageKey}`) || "community";
+      return readModeData(savedMode);
+    } catch { return {}; }
   });
   const [wMode,   setWMode]   = useState(() => {
     try {
-      const s = localStorage.getItem(storageKey);
-      if (s) { const d = JSON.parse(s); if (d.mainhand || d.offhand) return "1h"; }
+      const savedMode = localStorage.getItem(`bismode-${storageKey}`) || "community";
+      const d = readModeData(savedMode);
+      if (d.mainhand || d.offhand) return "1h";
     } catch {}
     return "2h";
   });
@@ -1497,8 +1513,14 @@ function Tracker({ cls, spec, charName, onBack }) {
     try { return localStorage.getItem(`bismode-${storageKey}`) || "community"; } catch { return "community"; }
   });
   const switchBisMode = (m) => {
+    try {
+      localStorage.setItem(modeStorageKey(bisMode), JSON.stringify(data || {}));
+      localStorage.setItem(`bismode-${storageKey}`, m);
+    } catch {}
+    const next = readModeData(m);
     setBisMode(m);
-    try { localStorage.setItem(`bismode-${storageKey}`, m); } catch {}
+    setData(next);
+    setWMode(next.mainhand || next.offhand ? "1h" : "2h");
   };
   const [simcStr, setSimcStr] = useState(() => {
     try { return localStorage.getItem(`simc-${storageKey}`) || ""; } catch { return ""; }
@@ -1515,8 +1537,11 @@ function Tracker({ cls, spec, charName, onBack }) {
   };
 
   useEffect(() => {
-    try { localStorage.setItem(storageKey, JSON.stringify(data)); } catch {}
-  }, [data, storageKey]);
+    try {
+      localStorage.setItem(storageKey, JSON.stringify(data));
+      localStorage.setItem(modeStorageKey(bisMode), JSON.stringify(data));
+    } catch {}
+  }, [data, storageKey, bisMode]);
 
   const upSlot = useCallback((id, val) => {
     setData(p => {
@@ -1582,7 +1607,7 @@ function Tracker({ cls, spec, charName, onBack }) {
       }
     });
     if (!parts.length) return null;
-    return parts.join("|");
+    return `WBISMODE=${bisMode};` + parts.join("|");
   };
 
   const loadSuggestions = async () => {
