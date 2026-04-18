@@ -1179,6 +1179,25 @@ body{font-family:'Crimson Pro',Georgia,serif;font-size:1.05rem;background:var(--
 .gear-grid{display:grid;grid-template-columns:1fr 1fr;gap:.55rem;margin-bottom:.55rem}
 @media(max-width:660px){.gear-grid{grid-template-columns:1fr}}
 
+.bis-mode-bar{display:flex;gap:0;border:1px solid var(--bdr);margin-bottom:.75rem;overflow:hidden}
+.bis-mode-btn{flex:1;font-family:Cinzel,serif;font-size:.68rem;letter-spacing:.1em;padding:.45rem .5rem;background:transparent;border:none;color:var(--parch-dk);cursor:pointer;transition:all .15s;text-align:center}
+.bis-mode-btn.active{background:rgba(201,146,42,.18);color:var(--gold-lt);box-shadow:inset 0 -2px 0 var(--gold)}
+.bis-mode-btn:hover:not(.active){background:rgba(255,255,255,.04);color:var(--parch)}
+.bis-mode-divider{width:1px;background:var(--bdr);flex-shrink:0}
+.rank-block{background:var(--panel);border:1px solid var(--bdr);overflow:hidden;transition:border-color .15s;margin-bottom:.35rem}
+.rank-block:last-child{margin-bottom:0}
+.rank-block.rank-active{border-color:var(--gold)}
+.rank-label{display:flex;align-items:center;gap:.5rem;padding:.2rem .5rem;background:rgba(0,0,0,.2);border-bottom:1px solid var(--bdr)}
+.rank-badge{font-family:Cinzel,serif;font-size:.58rem;letter-spacing:.1em;padding:.1rem .4rem;border:1px solid;opacity:.85}
+.rank-badge.r1{color:#e8b84b;border-color:#e8b84b}
+.rank-badge.r2{color:#aaa;border-color:#aaa}
+.rank-badge.r3{color:#a0522d;border-color:#a0522d}
+.rank-set-btn{margin-left:auto;font-family:Cinzel,serif;font-size:.58rem;letter-spacing:.06em;padding:.12rem .45rem;background:rgba(201,146,42,.15);border:1px solid var(--bdr2);color:var(--gold);cursor:pointer;transition:all .12s}
+.rank-set-btn:hover{background:rgba(201,146,42,.3)}
+.rank-have{display:flex;align-items:center;gap:.3rem;font-family:Cinzel,serif;font-size:.58rem;color:var(--parch-dk);cursor:pointer;padding:.12rem .45rem;border:1px solid var(--bdr2);background:transparent;transition:all .12s;margin-left:.4rem}
+.rank-have.done{color:#1EFF00;border-color:#1EFF00;background:rgba(30,255,0,.08)}
+.rank-inputs{padding:.25rem .4rem .3rem}
+.qe-banner{background:rgba(110,64,201,.1);border:1px solid rgba(110,64,201,.3);padding:.75rem;margin-bottom:.75rem;font-size:.85rem;color:var(--parch-dk);line-height:1.6}
 .slot-wrap{display:flex;flex-direction:column;gap:.2rem}
 .slot-lbl{font-family:'Cinzel',serif;font-size:.66rem;letter-spacing:.14em;color:var(--gold);text-transform:uppercase;padding-left:2px}
 .slot-entry{display:flex;align-items:stretch}
@@ -1329,16 +1348,76 @@ function isBiSMatch(worn, bis) {
 
 
 const TRACKS = ["", "Veteran", "Champion", "Hero", "Myth"];
-const TRACK_COLOR = { "Veteran":"#78909c", "Champion":"#66bb6a", "Hero":"#2196f3", "Myth":"#ff6d3a" };
+const TRACK_COLOR = { "Veteran":"#1EFF00", "Champion":"#0070DD", "Hero":"#A335EE", "Myth":"#FF8000" };
 
 const GLOBAL_TRACK_ORDER = ["Veteran","Champion","Hero","Myth"];
 
-function Slot({ label, id, data, onChange, targetTrack }) {
+function Slot({ label, id, data, onChange, targetTrack, bisMode }) {
   const d = data[id] || {};
   const up = (f, v) => onChange(id, { ...d, [f]: v });
   const track = d.track || "";
   const softBisSlot = d.done && track && targetTrack &&
     GLOBAL_TRACK_ORDER.indexOf(track) < GLOBAL_TRACK_ORDER.indexOf(targetTrack);
+
+  if (bisMode === "custom") {
+    const ranks = d.ranks || [{name:"",src:""},{name:"",src:""},{name:"",src:""}];
+    const activeRank = d.activeRank ?? 0;
+    const upRank = (idx, field, val) => {
+      const nr = [...ranks];
+      nr[idx] = { ...nr[idx], [field]: val };
+      onChange(id, { ...d, ranks: nr, name: nr[activeRank]?.name || "", src: nr[activeRank]?.src || "" });
+    };
+    const setActive = (idx) => {
+      onChange(id, { ...d, activeRank: idx, name: ranks[idx]?.name || "", src: ranks[idx]?.src || "" });
+    };
+    const toggleHave = (idx) => {
+      const nr = [...ranks];
+      nr[idx] = { ...nr[idx], have: !nr[idx]?.have };
+      onChange(id, { ...d, ranks: nr });
+    };
+    const RBADGE = ["r1","r2","r3"];
+    const RLABEL = ["BiS","Alt 1","Alt 2"];
+    return (
+      <div className="slot-wrap">
+        <div className="slot-lbl">{label}</div>
+        {ranks.map((r, idx) => (
+          <div key={idx} className={"rank-block" + (idx === activeRank ? " rank-active" : "")}>
+            <div className="rank-label">
+              <span className={"rank-badge " + RBADGE[idx]}>{RLABEL[idx]}</span>
+              {idx !== activeRank && r.name && (
+                <button className="rank-set-btn" onClick={() => setActive(idx)}>Set as target</button>
+              )}
+              {idx === activeRank && r.name && (
+                <span style={{ fontSize:".6rem", color:"var(--gold)", marginLeft:"auto", fontFamily:"Cinzel,serif", letterSpacing:".06em" }}>▸ targeting</span>
+              )}
+              {r.name && (
+                <button className={"rank-have" + (r.have ? " done" : "")} onClick={() => toggleHave(idx)}>
+                  {r.have ? "✓ have" : "have?"}
+                </button>
+              )}
+            </div>
+            <div className="rank-inputs">
+              <input className="sf-name" placeholder={`Rank ${idx+1} item name...`} value={r.name || ""} onChange={e => upRank(idx, "name", e.target.value)} style={{ marginBottom:".2rem" }} />
+              <input className="sf-src" placeholder="Source..." value={r.src || ""} onChange={e => upRank(idx, "src", e.target.value)} />
+            </div>
+          </div>
+        ))}
+        {d.name && (
+          <div style={{ display:"flex", gap:".25rem", padding:".2rem .4rem", background:"rgba(0,0,0,.15)", border:"1px solid var(--bdr)", borderTop:"none" }}>
+            <span style={{ fontFamily:"Cinzel,serif", fontSize:".58rem", color:"var(--parch-dk)", alignSelf:"center", letterSpacing:".06em" }}>TRACK:</span>
+            {TRACKS.filter(t => t).map(t => (
+              <button key={t} onClick={() => up("track", track === t ? "" : t)} style={{ fontFamily:"Cinzel,serif", fontSize:".58rem", letterSpacing:".05em", padding:".1rem .4rem", background: track === t ? TRACK_COLOR[t] : "transparent", border:`1px solid ${track === t ? TRACK_COLOR[t] : "var(--bdr2)"}`, color: track === t ? "#fff" : "var(--parch-dk)", cursor:"pointer", transition:"all .12s", filter: track === t ? "brightness(0.72)" : "none" }}>{t}</button>
+            ))}
+            <div className={"slot-chk" + (d.done && !softBisSlot ? " done" : d.done && softBisSlot ? " soft" : "")} onClick={() => up("done", !d.done)} title={d.done ? "Acquired" : "Mark acquired"} style={{ marginLeft:"auto", width:"28px", height:"28px", fontSize:".85rem" }}>
+              {d.done ? (softBisSlot ? "~" : "✓") : ""}
+            </div>
+          </div>
+        )}
+        {track && <div style={{ height:"2px", background: TRACK_COLOR[track], opacity:.7 }} />}
+      </div>
+    );
+  }
+
   return (
     <div className="slot-wrap">
       <div className="slot-lbl">{label}</div>
@@ -1396,6 +1475,13 @@ function Tracker({ cls, spec, charName, onBack }) {
     return trackRank(d.track) >= trackRank(targetTrack);
   };
   const softBis = d => d?.done && d?.track && trackRank(d.track) < trackRank(targetTrack);
+  const [bisMode, setBisMode] = useState(() => {
+    try { return localStorage.getItem(`bismode-${storageKey}`) || "community"; } catch { return "community"; }
+  });
+  const switchBisMode = (m) => {
+    setBisMode(m);
+    try { localStorage.setItem(`bismode-${storageKey}`, m); } catch {}
+  };
   const [simcStr, setSimcStr] = useState(() => {
     try { return localStorage.getItem(`simc-${storageKey}`) || ""; } catch { return ""; }
   });
@@ -1447,12 +1533,20 @@ function Tracker({ cls, spec, charName, onBack }) {
     allSlotIds.forEach(id => {
       const d = data[id];
       const slotNum = ADDON_SLOT_MAP[id];
-      if (d?.name && slotNum) {
-        const src = (d.src || "Unknown").replace(/[|:]/g, " ");
-        const name = d.name.replace(/[|:]/g, " ");
+      if (!slotNum) return;
+      let itemName = d?.name;
+      let itemSrc = d?.src;
+      if (bisMode === "custom" && d?.ranks) {
+        const activeIdx = d.activeRank ?? 0;
+        itemName = d.ranks[activeIdx]?.name || d.name;
+        itemSrc = d.ranks[activeIdx]?.src || d.src;
+      }
+      if (itemName) {
+        const s = (itemSrc || "Unknown").replace(/[|:]/g, " ");
+        const n = itemName.replace(/[|:]/g, " ");
         const acquired = d.done ? "1" : "0";
         const trackCode = d.track ? d.track[0].toLowerCase() : "n";
-        parts.push(slotNum + ":" + name + ":" + src + ":" + acquired + ":" + trackCode);
+        parts.push(slotNum + ":" + n + ":" + s + ":" + acquired + ":" + trackCode);
       }
     });
     if (!parts.length) return null;
@@ -1518,11 +1612,19 @@ function Tracker({ cls, spec, charName, onBack }) {
   const farmPriority = () => {
     const needed = {};
     allSlotIds.forEach(id => {
-      if (data[id]?.name && !meetsTarget(data[id])) {
-        const src = data[id].src || "Unknown";
+      const d = data[id];
+      let itemName = d?.name;
+      let itemSrc = d?.src;
+      if (bisMode === "custom" && d?.ranks) {
+        const activeIdx = d.activeRank ?? 0;
+        itemName = d.ranks[activeIdx]?.name || d.name;
+        itemSrc = d.ranks[activeIdx]?.src || d.src;
+      }
+      if (itemName && !meetsTarget(d)) {
+        const src = itemSrc || "Unknown";
         if (!needed[src]) needed[src] = [];
         const isSoft = softBis(data[id]);
-        needed[src].push({ slot: SLOT_LABELS[id] || id, item: data[id].name, soft: isSoft, track: data[id].track || null });
+        needed[src].push({ slot: SLOT_LABELS[id] || id, item: itemName, soft: isSoft, track: d.track || null });
       }
     });
     return Object.entries(needed).sort((a, b) => b[1].length - a[1].length);
@@ -1614,16 +1716,52 @@ function Tracker({ cls, spec, charName, onBack }) {
         </div>
       )}
 
-      <div className="bis-bar">
-        <span className="bis-txt">✦ Suggestions sourced from community guides and current patch data</span>
-        <button className="bis-btn" onClick={() => setShowSimC(s => !s)} style={{ marginRight:".4rem", background:"rgba(201,146,42,.15)", borderColor:"var(--gold)", color:"var(--gold-lt)" }}>📋 SimC Import</button>
-        <button className="bis-btn" onClick={loadSuggestions} disabled={loading}>
-          {loading ? <>Loading...</> : sugs ? "↺ Refresh" : "✦ Load BiS Suggestions"}
+      <div className="bis-mode-bar">
+        <button className={"bis-mode-btn" + (bisMode === "community" ? " active" : "")} onClick={() => switchBisMode("community")}>
+          Community BiS
+        </button>
+        <div className="bis-mode-divider" />
+        <button className={"bis-mode-btn" + (bisMode === "simc" ? " active" : "")} onClick={() => switchBisMode("simc")}>
+          SimC Scan
+        </button>
+        <div className="bis-mode-divider" />
+        <button className={"bis-mode-btn" + (bisMode === "custom" ? " active" : "")} onClick={() => switchBisMode("custom")}>
+          Custom Builder
         </button>
       </div>
 
+      {bisMode === "community" && (
+        <div className="bis-bar">
+          <span className="bis-txt">✦ Suggestions sourced from community guides and current patch data</span>
+          {spec.role === "Healer" && (
+            <a href="https://questionablyepic.com" target="_blank" rel="noreferrer" className="bis-btn" style={{ marginRight:".4rem", background:"rgba(110,64,201,.15)", borderColor:"#6e40c9", color:"#c9a0ff", textDecoration:"none" }}>✦ QE Live Rankings</a>
+          )}
+          <button className="bis-btn" onClick={loadSuggestions} disabled={loading}>
+            {loading ? <>Loading...</> : sugs ? "↺ Refresh" : "✦ Load BiS Suggestions"}
+          </button>
+        </div>
+      )}
 
-      {showSimC && (
+      {bisMode === "simc" && (
+        <div className="bis-bar">
+          <span className="bis-txt">✦ Paste your in-game SimC export to scan your equipped gear against your BiS list — checks off items you already have</span>
+          <button className="bis-btn" onClick={() => setShowSimC(s => !s)} style={{ background:"rgba(201,146,42,.15)", borderColor:"var(--gold)", color:"var(--gold-lt)" }}>📋 {showSimC ? "Close" : "Open SimC Scanner"}</button>
+        </div>
+      )}
+
+      {bisMode === "custom" && (
+        <div className="bis-bar" style={{ flexDirection:"column", alignItems:"flex-start", gap:".3rem" }}>
+          <span className="bis-txt" style={{ fontFamily:"Cinzel,serif", letterSpacing:".1em" }}>✦ Custom BiS Builder</span>
+          <span style={{ fontSize:".8rem", color:"var(--parch-dk)", fontStyle:"italic" }}>
+            Build your own ranked list — up to 3 options per slot. Set your target item, mark alternatives you already have. When ready, click Export for Addon and paste the code into the addon's Import BiS panel.
+            {spec.role === "Healer" && <span style={{ display:"block", marginTop:".3rem" }}>Healers: use <a href="https://questionablyepic.com" target="_blank" rel="noreferrer" style={{ color:"#c9a0ff" }}>QE Live</a> for ranked gear options per slot, then fill them in here.</span>}
+            {spec.role !== "Healer" && <span style={{ display:"block", marginTop:".3rem" }}>DPS: reference <a href="https://www.raidbots.com" target="_blank" rel="noreferrer" style={{ color:"var(--gold-lt)" }}>Raidbots Top Gear</a> for sim-ranked options per slot, then fill them in here.</span>}
+          </span>
+        </div>
+      )}
+
+
+      {bisMode === "simc" && showSimC && (
         <div style={{ background:"var(--panel)", border:"1px solid var(--bdr)", padding:"1rem", marginBottom:".75rem" }}>
           <div style={{ fontFamily:"Cinzel,serif", fontSize:".78rem", letterSpacing:".1em", color:"var(--gold)", marginBottom:".5rem" }}>SCAN YOUR CHARACTER</div>
           {!Object.values(data).some(d => d?.name) ? (
@@ -1690,8 +1828,8 @@ function Tracker({ cls, spec, charName, onBack }) {
       <div className="gear-grid">
         {LEFT_SLOTS.map((ls, i) => (
           <div key={ls.id} style={{ display:"contents" }}>
-            <Slot label={ls.name} id={ls.id} data={data} onChange={upSlot} targetTrack={targetTrack} />
-            {RIGHT_SLOTS[i] && <Slot label={RIGHT_SLOTS[i].name} id={RIGHT_SLOTS[i].id} data={data} onChange={upSlot} targetTrack={targetTrack} />}
+            <Slot label={ls.name} id={ls.id} data={data} onChange={upSlot} targetTrack={targetTrack} bisMode={bisMode} />
+            {RIGHT_SLOTS[i] && <Slot label={RIGHT_SLOTS[i].name} id={RIGHT_SLOTS[i].id} data={data} onChange={upSlot} targetTrack={targetTrack} bisMode={bisMode} />}
           </div>
         ))}
       </div>
@@ -1705,18 +1843,18 @@ function Tracker({ cls, spec, charName, onBack }) {
         </div>
       )}
       <div className="gear-grid">
-        {(can2h && (!can1h || wMode === "2h")) && <Slot label="2H Weapon" id="weapon2h" data={data} onChange={upSlot} targetTrack={targetTrack} />}
-        {(can1h && (!can2h || wMode === "1h")) && <Slot label="Main Hand" id="mainhand" data={data} onChange={upSlot} targetTrack={targetTrack} />}
-        {(can1h && (!can2h || wMode === "1h")) && <Slot label="Off Hand" id="offhand" data={data} onChange={upSlot} targetTrack={targetTrack} />}
+        {(can2h && (!can1h || wMode === "2h")) && <Slot label="2H Weapon" id="weapon2h" data={data} onChange={upSlot} targetTrack={targetTrack} bisMode={bisMode} />}
+        {(can1h && (!can2h || wMode === "1h")) && <Slot label="Main Hand" id="mainhand" data={data} onChange={upSlot} targetTrack={targetTrack} bisMode={bisMode} />}
+        {(can1h && (!can2h || wMode === "1h")) && <Slot label="Off Hand" id="offhand" data={data} onChange={upSlot} targetTrack={targetTrack} bisMode={bisMode} />}
       </div>
 
       <div className="sub-sh">Trinkets</div>
       <div className="gear-grid">
-        <Slot label="Trinket 1" id="trinket1" data={data} onChange={upSlot} targetTrack={targetTrack} />
-        <Slot label="Trinket 2" id="trinket2" data={data} onChange={upSlot} targetTrack={targetTrack} />
+        <Slot label="Trinket 1" id="trinket1" data={data} onChange={upSlot} targetTrack={targetTrack} bisMode={bisMode} />
+        <Slot label="Trinket 2" id="trinket2" data={data} onChange={upSlot} targetTrack={targetTrack} bisMode={bisMode} />
       </div>
 
-      {sugs && (
+      {sugs && bisMode !== "custom" && (
         <div className="sug-panel fade" ref={sugRef}>
           <div className="sug-head">
             <span className="sug-title">BiS Suggestions{sugs.patch ? ` — ${sugs.patch}` : ""}</span>
@@ -2607,8 +2745,24 @@ export default function App() {
         {page === "home" && (
           <div className="hero">
             <p className="hero-sub">Track your best in slot gear for every class and spec</p>
-            <p className="hero-sub" style={{ marginTop:".3rem", fontSize:".95rem", opacity:.8 }}>SimC Import · Farm Priority · Group Planner · Weekly Reset · Printable</p>
+            <p className="hero-sub" style={{ marginTop:".3rem", fontSize:".95rem", opacity:.8 }}>Community BiS · SimC Scan · Custom Builder · Farm Priority · Group Planner · Printable</p>
             <div className="exp-badge">🌑 World of Warcraft: Midnight — Season 1</div>
+            {page === "home" && (
+              <div style={{ display:"flex", justifyContent:"center", gap:"2rem", marginTop:"1.25rem", flexWrap:"wrap" }}>
+                {[
+                  { icon:"🌐", label:"Build your list on this site", sub:"Community BiS, Custom Builder, or SimC" },
+                  { icon:"📋", label:"Export for Addon", sub:"One code, all your specs" },
+                  { icon:"🎮", label:"Paste into the addon", sub:"Import BiS button in-game" },
+                  { icon:"✓", label:"Track as you farm", sub:"Farm Priority, Group Plan, Mini overlay" },
+                ].map(({ icon, label, sub }) => (
+                  <div key={label} style={{ textAlign:"center", minWidth:"140px", maxWidth:"180px" }}>
+                    <div style={{ fontSize:"1.5rem", marginBottom:".3rem" }}>{icon}</div>
+                    <div style={{ fontFamily:"Cinzel,serif", fontSize:".72rem", color:"var(--gold-lt)", letterSpacing:".08em" }}>{label}</div>
+                    <div style={{ fontSize:".72rem", color:"var(--parch-dk)", fontStyle:"italic", marginTop:".2rem" }}>{sub}</div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         )}
 
