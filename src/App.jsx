@@ -1761,7 +1761,8 @@ function Tracker({ cls, spec, charName, onBack }) {
         </div>
       )}
 
-      {bisMode === "simc" && (<span data-noprint="1" style={{display:"contents"}}><div className="bis-bar">
+      {bisMode === "simc" && (
+        <div className="bis-bar no-print">
           <span className="bis-txt">✦ Paste your in-game SimC export to scan your equipped gear against your BiS list — checks off items you already have</span>
           <button className="bis-btn" onClick={() => setShowSimC(s => !s)} style={{ background:"rgba(201,146,42,.15)", borderColor:"var(--gold)", color:"var(--gold-lt)" }}>📋 {showSimC ? "Close" : "Open SimC Scanner"}</button>
         </div>
@@ -1777,8 +1778,8 @@ function Tracker({ cls, spec, charName, onBack }) {
       )}
 
 
-      {bisMode === "simc" && showSimC && (<span data-noprint="1" style={{display:"contents"}}>
-        <div style={{ background:"var(--panel)", border:"1px solid var(--bdr)", padding:"1rem", marginBottom:".75rem" }}>
+      {bisMode === "simc" && showSimC && (
+        <div className="no-print" style={{ background:"var(--panel)", border:"1px solid var(--bdr)", padding:"1rem", marginBottom:".75rem" }}>
           <div style={{ fontFamily:"Cinzel,serif", fontSize:".78rem", letterSpacing:".1em", color:"var(--gold)", marginBottom:".5rem" }}>SCAN YOUR CHARACTER</div>
           {!Object.values(data).some(d => d?.name) ? (
             <div style={{ background:"rgba(201,146,42,.08)", border:"1px solid var(--bdr2)", padding:".75rem", fontSize:".88rem", color:"var(--parch-dk)" }}>
