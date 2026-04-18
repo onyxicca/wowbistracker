@@ -2259,38 +2259,34 @@ function GroupPlanner() {
         Each player exports their farm code from their tracker and pastes it here. The planner finds which dungeons and raids your group should run together to maximize everyone's gear progress.
       </div>
 
-      {allSaved.length > 0 && (() => {
-        const charGroups2 = {};
-        allSaved.forEach((c, i) => {
-          const gk = `${c.charName}||${c.cls.id}`;
-          if (!charGroups2[gk]) charGroups2[gk] = { charName: c.charName, cls: c.cls, specs: [] };
-          charGroups2[gk].specs.push({ ...c, idx: i });
-        });
-        const charList = Object.values(charGroups2);
-        return (
+      {allSaved.length > 0 && (
         <div style={{ background:"rgba(201,146,42,.07)", border:"1px solid var(--bdr2)", padding:".75rem .9rem", marginBottom:"1rem" }}>
           <div style={{ fontFamily:"Cinzel,serif", fontSize:".65rem", letterSpacing:".1em", color:"var(--gold)", marginBottom:".5rem" }}>STEP 1 — COPY YOUR FARM CODE</div>
-          {charList.length > 0 && (
-            <div style={{ display:"flex", flexDirection:"column", gap:".5rem", marginBottom:".5rem" }}>
-              {charList.map(({ charName, cls, specs }) => {
-                const displayName = charName === "default" ? cls.name : charName;
-                return (
-                  <div key={`${charName}-${cls.id}`} style={{ display:"flex", alignItems:"center", gap:".4rem", flexWrap:"wrap" }}>
-                    <span style={{ fontFamily:"Cinzel,serif", fontSize:".75rem", color:cls.color, minWidth:"90px" }}>{displayName}</span>
-                    <span style={{ fontSize:".7rem", color:"var(--parch-dk)", opacity:.6 }}>{cls.name}</span>
-                    <div style={{ display:"flex", gap:".25rem", flexWrap:"wrap", marginLeft:".25rem" }}>
-                      {specs.map(s => (
-                        <button key={s.key} onClick={() => setSelectedChar(s.idx)}
-                          style={{ fontFamily:"Cinzel,serif", fontSize:".68rem", letterSpacing:".04em", padding:".18rem .55rem", background: selectedChar === s.idx ? cls.color : "transparent", border:`1px solid ${cls.color}`, color: selectedChar === s.idx ? "#fff" : cls.color, cursor:"pointer", transition:"all .12s" }}>
-                          {s.spec.icon} {s.spec.name}
-                        </button>
-                      ))}
-                    </div>
+          {(() => {
+            const cg = {};
+            allSaved.forEach((c, i) => {
+              const gk = `${c.charName}||${c.cls.id}`;
+              if (!cg[gk]) cg[gk] = { charName: c.charName, cls: c.cls, specs: [] };
+              cg[gk].specs.push({ ...c, idx: i });
+            });
+            return Object.values(cg).map(({ charName, cls, specs }) => {
+              const dn = charName === "default" ? cls.name : charName;
+              return (
+                <div key={`${charName}-${cls.id}`} style={{ display:"flex", alignItems:"center", gap:".4rem", flexWrap:"wrap", marginBottom:".4rem" }}>
+                  <span style={{ fontFamily:"Cinzel,serif", fontSize:".75rem", color:cls.color, minWidth:"90px" }}>{dn}</span>
+                  <span style={{ fontSize:".7rem", color:"var(--parch-dk)", opacity:.6 }}>{cls.name}</span>
+                  <div style={{ display:"flex", gap:".25rem", flexWrap:"wrap", marginLeft:".25rem" }}>
+                    {specs.map(s => (
+                      <button key={s.key} onClick={() => setSelectedChar(s.idx)}
+                        style={{ fontFamily:"Cinzel,serif", fontSize:".68rem", letterSpacing:".04em", padding:".18rem .55rem", background: selectedChar === s.idx ? cls.color : "transparent", border:`1px solid ${cls.color}`, color: selectedChar === s.idx ? "#fff" : cls.color, cursor:"pointer", transition:"all .12s" }}>
+                        {s.spec.icon} {s.spec.name}
+                      </button>
+                    ))}
                   </div>
-                );
-              })}
-            </div>
-          }
+                </div>
+              );
+            });
+          })()}
           {myCode ? (
             <>
               <div style={{ display:"flex", gap:".5rem", alignItems:"center", marginBottom:".35rem" }}>
