@@ -2625,16 +2625,17 @@ function Home({ onSelectClass, onLoadCharacter }) {
 
         <aside className="weekly-sidebar">
           <div style={{ background:"var(--panel)", border:"1px solid var(--bdr2)", padding:"1.25rem", borderRadius:0 }}>
-            <div style={{ display:"flex", alignItems:"center", gap:".6rem", marginBottom:"1rem", flexWrap:"wrap" }}>
+            <div style={{ display:"flex", alignItems:"center", gap:".6rem", marginBottom:".75rem", flexWrap:"wrap" }}>
               <div style={{ fontFamily:"Cinzel,serif", fontSize:".72rem", letterSpacing:".14em", color:"var(--gold)" }}>WEEKLY RESET</div>
-              <div className="exp-badge" style={{ margin:0, padding:".15rem .6rem", fontSize:".6rem" }}>🌑 Midnight · S1</div>
+              <div className="exp-badge" style={{ margin:0, padding:".15rem .6rem", fontSize:".6rem" }}>Midnight · S1</div>
+              <div style={{ display:"flex", gap:".3rem", marginLeft:"auto" }}>
+                {["NA","EU"].map(r => (
+                  <button key={r} onClick={() => setResetRegion(r)} style={{ fontFamily:"Cinzel,serif", fontSize:".65rem", letterSpacing:".08em", padding:".18rem .55rem", background: resetRegion === r ? "var(--gold)" : "transparent", border:"1px solid " + (resetRegion === r ? "var(--gold)" : "var(--bdr2)"), color: resetRegion === r ? "var(--ink)" : "var(--parch-dk)", cursor:"pointer" }}>{r}</button>
+                ))}
+              </div>
             </div>
             <div style={{ fontSize:"2rem", fontFamily:"Cinzel,serif", color:"var(--gold-lt)", letterSpacing:".04em", lineHeight:1, marginBottom:".75rem" }}>{timeLeft}</div>
-            <div style={{ display:"flex", gap:".35rem", marginBottom:".6rem" }}>
-              {["NA","EU"].map(r => (
-                <button key={r} onClick={() => setResetRegion(r)} style={{ fontFamily:"Cinzel,serif", fontSize:".65rem", letterSpacing:".08em", padding:".22rem .65rem", background: resetRegion === r ? "var(--gold)" : "transparent", border:"1px solid " + (resetRegion === r ? "var(--gold)" : "var(--bdr2)"), color: resetRegion === r ? "var(--ink)" : "var(--parch-dk)", cursor:"pointer", clip:"none" }}>{r}</button>
-              ))}
-            </div>
+
             <div style={{ fontSize:".78rem", color:"var(--parch-dk)", fontStyle:"italic", lineHeight:1.5, marginBottom:"1rem" }}>
               {resetRegion === "NA" ? "Tuesday · 8am Pacific" : "Wednesday · 8am CET"}
             </div>
@@ -2718,7 +2719,7 @@ function Home({ onSelectClass, onLoadCharacter }) {
       <div style={{ marginTop:"2.5rem" }} />
       <div id="vs-addon" className="sh">Website vs In-Game Addon</div>
       <p style={{ fontSize:".9rem", color:"var(--parch-dk)", marginBottom:"1.5rem", lineHeight:1.7 }}>
-        Both tools are free. Use either one independently, or both together.
+        Both tools are free. Use either independently, or together — export from the addon to sync your progress to the website.
       </p>
 
       <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"1.25rem", marginBottom:"1rem" }}>
