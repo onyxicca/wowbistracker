@@ -1109,14 +1109,14 @@ body{font-family:'Crimson Pro',Georgia,serif;font-size:1.05rem;background:var(--
 .hdr-btns{display:flex;align-items:center;gap:.75rem}
 .btn-site{font-family:'Cinzel',serif;font-size:.75rem;letter-spacing:.08em;padding:.4rem 1.1rem;background:transparent;border:1px solid var(--gold);color:var(--gold-lt);cursor:pointer;transition:all .18s;clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);text-decoration:none;display:inline-block}
 .btn-site:hover{background:var(--gold);color:var(--ink)}
-.btn-addon{font-family:'Cinzel',serif;font-size:.7rem;letter-spacing:.08em;padding:.35rem .85rem;background:rgba(201,146,42,.12);border:1px solid var(--gold);color:var(--gold-lt);text-decoration:none;transition:all .15s;white-space:nowrap}.btn-addon:hover{background:var(--gold);color:var(--ink)}.btn-sup{font-family:'Cinzel',serif;font-size:.75rem;letter-spacing:.08em;padding:.4rem 1.1rem;background:rgba(155,26,42,.15);border:1px solid var(--crimson);color:#ff8fa0;cursor:pointer;transition:all .18s;clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);text-decoration:none;display:inline-block}
+.btn-addon{font-family:'Cinzel',serif;font-size:.7rem;letter-spacing:.08em;padding:.38rem .9rem;background:rgba(201,146,42,.12);border:1px solid var(--gold);color:var(--gold-lt);text-decoration:none;transition:all .15s;white-space:nowrap;clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);display:inline-block}.btn-addon:hover{background:var(--gold);color:var(--ink)}.btn-sup{font-family:'Cinzel',serif;font-size:.75rem;letter-spacing:.08em;padding:.4rem 1.1rem;background:rgba(155,26,42,.15);border:1px solid var(--crimson);color:#ff8fa0;cursor:pointer;transition:all .18s;clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);text-decoration:none;display:inline-block}
 .btn-sup:hover{background:var(--crimson);color:#fff}
 
 .hero{text-align:center;padding:3.5rem 2rem 2.5rem;position:relative;overflow:hidden;background:radial-gradient(ellipse 70% 50% at 50% 0%,rgba(110,64,201,.08),transparent 70%)}
 .hero::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:60%;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
 .hero::after{content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:80%;height:1px;background:linear-gradient(90deg,transparent,var(--bdr2),transparent)}
 
-.hero-sub{font-family:'Crimson Pro',serif;font-style:italic;font-size:1.15rem;color:var(--parch-dk);margin-top:.5rem}
+.hero-sub{font-family:'Crimson Pro',serif;font-style:italic;font-size:1.3rem;color:var(--parch-dk);margin-top:.5rem}
 .hero-orn{color:var(--gold);font-size:1.2rem;opacity:.5;letter-spacing:.8rem;margin:.6rem 0}
 .exp-badge{display:inline-flex;align-items:center;gap:.4rem;margin-top:.75rem;padding:.3rem 1rem;border:1px solid var(--void);background:rgba(110,64,201,.1);font-family:'Cinzel',serif;font-size:.78rem;letter-spacing:.1em;color:#a78bfa;text-transform:uppercase}
 
@@ -1278,6 +1278,27 @@ input::placeholder{color:rgba(240,222,180,.22);font-style:italic}
 }
 `;
 
+function parseSimCVaultItems(str) {
+  const items = [];
+  const lines = str.replace(/\r\n/g, "\n").replace(/\r/g, "\n").split("\n");
+  let inVault = false;
+  for (const line of lines) {
+    const trimmed = line.trim();
+    if (trimmed === "### Weekly Reward Choices") { inVault = true; continue; }
+    if (trimmed === "### End of Weekly Reward Choices") break;
+    if (!inVault) continue;
+    // Lines look like: # Item Name (ilvl)
+    const m = trimmed.match(/^#\s+(.+?)\s+\((\d+)\)\s*$/);
+    if (m) {
+      const name = m[1].trim();
+      const ilvl = parseInt(m[2]);
+      const track = ilvl >= 276 ? "Myth" : ilvl >= 259 ? "Hero" : ilvl >= 246 ? "Champion" : ilvl >= 233 ? "Veteran" : null;
+      items.push({ name, ilvl, track });
+    }
+  }
+  return items;
+}
+
 async function parseSimC(str) {
   const SIMC_TO_SLOT = {
     head:"head", neck:"neck", shoulder:"shoulders", back:"back",
@@ -1324,10 +1345,7 @@ async function parseSimC(str) {
       try {
         const r = await fetch(`https://nether.wowhead.com/tooltip/item/${id}?json`);
         const j = await r.json();
-        if (j.name) {
-          result[slot] = j.name;
-          if (track) result[slot + "_track"] = track;
-        }
+        if (j.name) { result[slot] = j.name; }
         else result[slot] = `Item #${id}`;
       } catch { result[slot] = `Item #${id}`; }
     }));
@@ -1485,6 +1503,7 @@ function Tracker({ cls, spec, charName, onBack }) {
   const [simcStr, setSimcStr] = useState(() => {
     try { return localStorage.getItem(`simc-${storageKey}`) || ""; } catch { return ""; }
   });
+  const [vaultMatches, setVaultMatches] = useState([]);
   const sugRef = useRef(null);
 
   const SLOT_LABELS = {
@@ -1734,7 +1753,7 @@ function Tracker({ cls, spec, charName, onBack }) {
         <div className="bis-bar">
           <span className="bis-txt">✦ Suggestions sourced from community guides and current patch data</span>
           {spec.role === "Healer" && (
-            <a href="https://questionablyepic.com" target="_blank" rel="noreferrer" className="bis-btn" style={{ marginRight:".4rem", background:"rgba(110,64,201,.15)", borderColor:"#6e40c9", color:"#c9a0ff", textDecoration:"none" }}>✦ QE Live Rankings</a>
+            <a href="https://questionablyepic.com" target="_blank" rel="noreferrer" className="bis-btn" style={{ marginRight:".4rem", background:"rgba(110,64,201,.15)", borderColor:"#6e40c9", color:"#c9a0ff", textDecoration:"none", display:"none" }}>✦ QE Live Rankings</a>
           )}
           <button className="bis-btn" onClick={loadSuggestions} disabled={loading}>
             {loading ? <>Loading...</> : sugs ? "↺ Refresh" : "✦ Load BiS Suggestions"}
@@ -1788,6 +1807,7 @@ function Tracker({ cls, spec, charName, onBack }) {
                   if (!simcStr.trim()) { alert("Paste your SimC string first."); return; }
                   const worn = await parseSimC(simcStr);
                   if (!Object.keys(worn).length) { alert("No gear slots found. Make sure you copied the full SimC string from the SimulationCraft addon in-game (not a sim result). It should contain lines like: head=item_name,id=12345"); return; }
+                  const vaultItems = parseSimCVaultItems(simcStr);
                   let matched = 0;
                   setData(prev => {
                     const next = { ...prev };
@@ -1801,9 +1821,22 @@ function Tracker({ cls, spec, charName, onBack }) {
                     try { localStorage.setItem(storageKey, JSON.stringify(next)); } catch {}
                     return next;
                   });
+                  const vaultHits = [];
+                  setData(current => {
+                    vaultItems.forEach(vi => {
+                      Object.entries(current).forEach(([slot, slotData]) => {
+                        if (slotData?.name && isBiSMatch(vi.name, slotData.name) && !slotData.done) {
+                          vaultHits.push({ slot: SLOT_LABELS[slot] || slot, name: vi.name, ilvl: vi.ilvl, track: vi.track });
+                        }
+                      });
+                    });
+                    return current;
+                  });
+                  setVaultMatches(vaultHits);
                   setShowSimC(false);
                   setSimcStr("");
-                  setTimeout(() => alert(`Scan complete! ${matched} BiS item${matched !== 1 ? "s" : ""} found on your character and checked off.`), 100);
+                  const vaultMsg = vaultHits.length > 0 ? `\n\n🎁 Great Vault: ${vaultHits.length} BiS item${vaultHits.length !== 1 ? "s" : ""} in your vault this week!` : "";
+                  setTimeout(() => alert(`Scan complete! ${matched} BiS item${matched !== 1 ? "s" : ""} found on your character and checked off.${vaultMsg}`), 100);
                 }}>⚔ Scan My Character</button>
                 <button onClick={() => { setShowSimC(false); setSimcStr(""); }} style={{ fontFamily:"Cinzel,serif", fontSize:".72rem", letterSpacing:".06em", padding:".35rem .8rem", background:"transparent", border:"1px solid var(--bdr2)", color:"var(--parch-dk)", cursor:"pointer" }}>Cancel</button>
               </div>
@@ -1820,6 +1853,24 @@ function Tracker({ cls, spec, charName, onBack }) {
               </div>
             </>
           )}
+        </div>
+      )}
+
+      {vaultMatches.length > 0 && (
+        <div style={{ background:"rgba(201,146,42,.1)", border:"1px solid var(--gold)", padding:".75rem 1rem", marginBottom:".75rem", display:"flex", gap:".75rem", alignItems:"flex-start", flexWrap:"wrap" }}>
+          <div style={{ fontFamily:"Cinzel,serif", fontSize:".72rem", letterSpacing:".12em", color:"var(--gold)", flexShrink:0 }}>🎁 GREAT VAULT BiS</div>
+          <div style={{ flex:1 }}>
+            {vaultMatches.map((v, i) => (
+              <div key={i} style={{ fontSize:".88rem", color:"var(--parch-dk)", marginBottom:".2rem" }}>
+                <span style={{ color:"var(--parch-dk)", fontFamily:"Cinzel,serif", fontSize:".65rem", letterSpacing:".08em", textTransform:"uppercase" }}>{v.slot}</span>
+                {" · "}
+                <span style={{ color:"var(--parch)" }}>{v.name}</span>
+                {v.track && <span style={{ color: TRACK_COLOR[v.track] || "var(--gold)", fontFamily:"Cinzel,serif", fontSize:".65rem", marginLeft:".5rem" }}>{v.track} {v.ilvl}</span>}
+              </div>
+            ))}
+            <div style={{ fontSize:".75rem", color:"var(--parch-dk)", fontStyle:"italic", marginTop:".35rem", opacity:.7 }}>These BiS items are available in your Great Vault this week. Claim them before next reset.</div>
+          </div>
+          <button onClick={() => setVaultMatches([])} style={{ fontFamily:"Cinzel,serif", fontSize:".65rem", padding:".2rem .5rem", background:"transparent", border:"1px solid var(--bdr2)", color:"var(--parch-dk)", cursor:"pointer" }}>dismiss</button>
         </div>
       )}
 
@@ -2511,23 +2562,21 @@ function Home({ onSelectClass, onLoadCharacter }) {
     }
   }, []);
 
+  const scrollTo = (id) => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.scrollIntoView({ behavior:"smooth", block:"start" });
+      el.style.outline = "2px solid var(--gold)";
+      setTimeout(() => { el.style.outline = ""; }, 1400);
+    }
+  };
+
   return (
     <div className="fade">
-      <div style={{ background:"var(--panel)", border:"1px solid var(--bdr2)", padding:"1rem 1.25rem", marginBottom:"1.5rem" }}>
-        <div style={{ display:"flex", alignItems:"center", gap:".75rem", marginBottom:".35rem", flexWrap:"wrap" }}>
-          <div style={{ fontFamily:"Cinzel,serif", fontSize:".68rem", letterSpacing:".14em", color:"var(--gold)" }}>WEEKLY RESET</div>
-          <div className="exp-badge" style={{ margin:0, padding:".15rem .65rem", fontSize:".65rem" }}>🌑 Midnight · Season 1</div>
-        </div>
-        <div style={{ fontSize:"1.6rem", fontFamily:"Cinzel,serif", color:"var(--gold-lt)", letterSpacing:".04em", lineHeight:1, marginBottom:".5rem" }}>{timeLeft}</div>
-        <div style={{ display:"flex", gap:".4rem", alignItems:"center", flexWrap:"wrap" }}>
-          {["NA","EU"].map(r => (
-            <button key={r} onClick={() => setResetRegion(r)} style={{ fontFamily:"Cinzel,serif", fontSize:".65rem", letterSpacing:".08em", padding:".18rem .55rem", background: resetRegion === r ? "var(--gold)" : "transparent", border:"1px solid " + (resetRegion === r ? "var(--gold)" : "var(--bdr2)"), color: resetRegion === r ? "var(--ink)" : "var(--parch-dk)", cursor:"pointer" }}>{r}</button>
-          ))}
-          <span style={{ fontSize:".72rem", color:"var(--parch-dk)", fontStyle:"italic" }}>{resetRegion === "NA" ? "Resets every Tuesday at 8am Pacific Time" : "Resets every Wednesday at 8am Central European Time"}</span>
-        </div>
-      </div>
+      <div className="home-layout">
+        <div className="home-main">
 
-      <div className="sh">Filter by Role</div>
+      <div id="select-class" className="sh">Filter by Role</div>
       <div className="role-strip">
         {roles.map(r => (
           <button key={r} className="rpill" onClick={() => setRoleFilter(r)} style={{
@@ -2556,6 +2605,34 @@ function Home({ onSelectClass, onLoadCharacter }) {
         ))}
       </div>
 
+
+        </div>{/* home-main */}
+
+        <aside className="weekly-sidebar">
+          <div style={{ background:"var(--panel)", border:"1px solid var(--bdr2)", padding:"1.25rem", borderRadius:0 }}>
+            <div style={{ display:"flex", alignItems:"center", gap:".6rem", marginBottom:"1rem", flexWrap:"wrap" }}>
+              <div style={{ fontFamily:"Cinzel,serif", fontSize:".72rem", letterSpacing:".14em", color:"var(--gold)" }}>WEEKLY RESET</div>
+              <div className="exp-badge" style={{ margin:0, padding:".15rem .6rem", fontSize:".6rem" }}>🌑 Midnight · S1</div>
+            </div>
+            <div style={{ fontSize:"2rem", fontFamily:"Cinzel,serif", color:"var(--gold-lt)", letterSpacing:".04em", lineHeight:1, marginBottom:".75rem" }}>{timeLeft}</div>
+            <div style={{ display:"flex", gap:".35rem", marginBottom:".6rem" }}>
+              {["NA","EU"].map(r => (
+                <button key={r} onClick={() => setResetRegion(r)} style={{ fontFamily:"Cinzel,serif", fontSize:".65rem", letterSpacing:".08em", padding:".22rem .65rem", background: resetRegion === r ? "var(--gold)" : "transparent", border:"1px solid " + (resetRegion === r ? "var(--gold)" : "var(--bdr2)"), color: resetRegion === r ? "var(--ink)" : "var(--parch-dk)", cursor:"pointer", clip:"none" }}>{r}</button>
+              ))}
+            </div>
+            <div style={{ fontSize:".78rem", color:"var(--parch-dk)", fontStyle:"italic", lineHeight:1.5, marginBottom:"1rem" }}>
+              {resetRegion === "NA" ? "Tuesday · 8am Pacific" : "Wednesday · 8am CET"}
+            </div>
+            <div style={{ borderTop:"1px solid var(--bdr)", paddingTop:".85rem" }}>
+              <div style={{ fontFamily:"Cinzel,serif", fontSize:".65rem", letterSpacing:".1em", color:"var(--gold)", marginBottom:".5rem" }}>GREAT VAULT</div>
+              <div style={{ fontSize:".82rem", color:"var(--parch-dk)", lineHeight:1.6 }}>
+                Open your Great Vault in-game after each reset. The <strong style={{ color:"var(--gold-lt)" }}>WoW BiS Tracker addon</strong> will automatically highlight any vault options that match your BiS list — including gear track.
+              </div>
+            </div>
+          </div>
+        </aside>
+
+      </div>{/* home-layout */}
 
       {savedChars.length > 0 && (() => {
         const groups = {};
@@ -2749,18 +2826,30 @@ export default function App() {
             <p className="hero-sub">Plan your BiS list. Track your farm. Beat the reset.</p>
 
             {page === "home" && (
-              <div style={{ display:"flex", justifyContent:"center", gap:"1.5rem", marginTop:"1.25rem", flexWrap:"wrap" }}>
+              <div style={{ display:"flex", justifyContent:"center", gap:"1rem", marginTop:"1.4rem", flexWrap:"wrap" }}>
                 {[
-                  { icon:"📖", label:"Browse BiS by class & spec", sub:"Community guides, every spec" },
-                  { icon:"🗺", label:"Plan your farm", sub:"Farm Priority · Raid vs Dungeon" },
-                  { icon:"👥", label:"Group planning", sub:"Share farm lists · See who needs what" },
-                  { icon:"✏️", label:"Build your own list", sub:"Up to 3 options per slot, any source" },
-                  { icon:"🎮", label:"Track it in-game", sub:"Free addon · Mini overlay · Consumables" },
-                ].map(({ icon, label, sub }) => (
-                  <div key={label} style={{ textAlign:"center", minWidth:"120px", maxWidth:"160px" }}>
-                    <div style={{ fontSize:"1.4rem", marginBottom:".3rem" }}>{icon}</div>
-                    <div style={{ fontFamily:"Cinzel,serif", fontSize:".7rem", color:"var(--gold-lt)", letterSpacing:".07em" }}>{label}</div>
-                    <div style={{ fontSize:".7rem", color:"var(--parch-dk)", fontStyle:"italic", marginTop:".2rem" }}>{sub}</div>
+                  { icon:"📖", line1:"Browse BiS by", line2:"class & spec", sub:"Community guides, every spec", scrollId:"select-class" },
+                  { icon:"🗺", line1:"Plan your", line2:"farm", sub:"Farm Priority · Raid vs Dungeon", scrollId:"select-class" },
+                  { icon:"👥", line1:"Group", line2:"planning", sub:"Share farm lists · See who needs what", scrollId:"group-planner" },
+                  { icon:"✏️", line1:"Build your", line2:"own list", sub:"Up to 3 options per slot", scrollId:"select-class" },
+                  { icon:"🎮", line1:"Track", line2:"in-game", sub:"Free addon · Mini overlay", href:"https://github.com/onyxicca/wowbistracker-addon/releases/tag/v1.0.0" },
+                ].map(({ icon, line1, line2, sub, scrollId, href }) => (
+                  <div key={line1+line2}
+                    onClick={() => {
+                      if (href) { window.open(href, "_blank"); return; }
+                      if (scrollId) {
+                        const el = document.getElementById(scrollId);
+                        if (el) { el.scrollIntoView({ behavior:"smooth", block:"start" }); el.style.outline="2px solid var(--gold)"; setTimeout(()=>{ el.style.outline=""; },1400); }
+                      }
+                    }}
+                    style={{ textAlign:"center", minWidth:"100px", maxWidth:"140px", cursor:"pointer", padding:".65rem .5rem", border:"1px solid var(--bdr)", background:"rgba(201,146,42,.04)", transition:"all .18s" }}
+                    onMouseEnter={e=>{ e.currentTarget.style.borderColor="var(--gold)"; e.currentTarget.style.background="rgba(201,146,42,.10)"; }}
+                    onMouseLeave={e=>{ e.currentTarget.style.borderColor="var(--bdr)"; e.currentTarget.style.background="rgba(201,146,42,.04)"; }}
+                  >
+                    <div style={{ fontSize:"1.5rem", marginBottom:".35rem" }}>{icon}</div>
+                    <div style={{ fontFamily:"Cinzel,serif", fontSize:".72rem", color:"var(--gold-lt)", letterSpacing:".07em", lineHeight:1.3 }}>{line1}<br/>{line2}</div>
+                    <div style={{ fontSize:".68rem", color:"var(--parch-dk)", fontStyle:"italic", marginTop:".3rem", lineHeight:1.3 }}>{sub}</div>
+                    <div style={{ fontSize:".6rem", color:"var(--gold)", marginTop:".3rem", opacity:.7 }}>↓ click</div>
                   </div>
                 ))}
               </div>
@@ -2776,8 +2865,16 @@ export default function App() {
           )}
         </main>
 
+        <button
+          onClick={() => window.scrollTo({ top: 0, behavior:"smooth" })}
+          style={{ position:"fixed", bottom:"1.5rem", right:"1.5rem", zIndex:200, fontFamily:"Cinzel,serif", fontSize:".72rem", letterSpacing:".08em", padding:".45rem .8rem", background:"var(--panel)", border:"1px solid var(--gold)", color:"var(--gold-lt)", cursor:"pointer", clipPath:"polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%)", transition:"all .18s", boxShadow:"0 2px 12px rgba(0,0,0,.5)" }}
+          onMouseEnter={e=>e.currentTarget.style.background="var(--gold)"}
+          onMouseLeave={e=>e.currentTarget.style.background="var(--panel)"}
+          title="Back to top"
+        >↑ Top</button>
+
         <footer className="ftr">
-          <span>Art & Design by <a href="https://embernal.com" style={{ color: "var(--gold)", textDecoration: "none" }} target="_blank" rel="noreferrer">Onyxicca</a></span>
+          <span>Art &amp; Design by <a href="https://embernal.com" style={{ color: "var(--gold)", textDecoration: "none" }} target="_blank" rel="noreferrer">Onyxicca</a></span>
           <span>Not affiliated with Blizzard Entertainment</span>
           <span>wowbistracker.com</span>
         </footer>
