@@ -1106,11 +1106,11 @@ body{font-family:'Crimson Pro',Georgia,serif;font-size:1.05rem;background:var(--
 .logo{display:flex;align-items:center;gap:.42rem;cursor:pointer;border:none;background:none;padding:0;min-width:0;flex:1 1 auto;overflow:hidden}
 .logo-main{font-family:'Cinzel Decorative',serif;font-size:1rem;color:var(--gold-lt);text-shadow:0 0 20px rgba(201,146,42,.25);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .logo-exp{font-family:'Cinzel',serif;font-size:.75rem;letter-spacing:.12em;color:var(--void);text-transform:uppercase}
-.logo-icon{width:34px;height:34px;object-fit:contain;flex:0 0 auto}
-.hdr-btns{display:flex;align-items:center;gap:.42rem;flex-shrink:0}
+.logo-icon{width:28px;height:28px;object-fit:contain;flex:0 0 auto}
+.hdr-btns{display:flex;align-items:center;gap:.35rem;flex-shrink:0;flex-wrap:wrap;justify-content:flex-end}
 .btn-site{font-family:'Cinzel',serif;font-size:.75rem;letter-spacing:.08em;padding:.4rem 1.1rem;background:transparent;border:1px solid var(--gold);color:var(--gold-lt);cursor:pointer;transition:all .18s;clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);text-decoration:none;display:inline-block}
 .btn-site:hover{background:var(--gold);color:var(--ink)}
-.btn-addon{font-family:'Cinzel',serif;font-size:.66rem;letter-spacing:.07em;padding:.34rem .72rem;background:rgba(201,146,42,.12);border:1px solid var(--gold);color:var(--gold-lt);text-decoration:none;transition:all .15s;white-space:nowrap;clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);display:inline-block}.btn-addon:hover{background:var(--gold);color:var(--ink)}.btn-sup{font-family:'Cinzel',serif;font-size:.68rem;letter-spacing:.07em;padding:.34rem .82rem;background:rgba(155,26,42,.15);border:1px solid var(--crimson);color:#ff8fa0;cursor:pointer;transition:all .18s;clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);text-decoration:none;display:inline-block}
+.btn-addon{font-family:'Cinzel',serif;font-size:.62rem;letter-spacing:.06em;padding:.32rem .62rem;background:rgba(201,146,42,.12);border:1px solid var(--gold);color:var(--gold-lt);text-decoration:none;transition:all .15s;white-space:nowrap;clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);display:inline-block}.btn-addon:hover{background:var(--gold);color:var(--ink)}.btn-sup{font-family:'Cinzel',serif;font-size:.64rem;letter-spacing:.06em;padding:.32rem .72rem;background:rgba(155,26,42,.15);border:1px solid var(--crimson);color:#ff8fa0;cursor:pointer;transition:all .18s;clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);text-decoration:none;display:inline-block}
 .btn-sup:hover{background:var(--crimson);color:#fff}
 
 .hero{text-align:center;padding:3.5rem 2rem 2.5rem;position:relative;overflow:hidden;background:radial-gradient(ellipse 70% 50% at 50% 0%,rgba(110,64,201,.08),transparent 70%)}
@@ -1250,32 +1250,43 @@ input::placeholder{color:rgba(240,222,180,.22);font-style:italic}
 @media print {
   @page { margin: 1.2cm; size: A4; }
   :root {
-    --parch: #000; --parch-dk: #333; --gold: #444; --gold-lt: #000;
-    --bg: #fff; --bg2: #fff; --panel: #fff; --bdr: #bbb; --bdr2: #aaa;
-    --crimson: #333; --void: #333; --ink: #000;
+    --parch: #000; --parch-dk: #111; --gold: #000; --gold-lt: #000;
+    --bg: #fff; --bg2: #fff; --panel: #fff; --bdr: #000; --bdr2: #000;
+    --crimson: #000; --void: #000; --ink: #000;
   }
   .hdr, .hero, .bis-bar, .bis-mode-bar, .tactions, .back, .sug-panel, .ftr, .farm-priority-section, .no-print, [data-noprint] { display: none !important; }
   body, html, .app { background: #fff !important; }
   body { color: #000 !important; }
   * { background: transparent !important; box-shadow: none !important; text-shadow: none !important; clip-path: none !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  input, textarea, select, button { -webkit-text-fill-color:#000 !important; color:#000 !important; opacity:1 !important; }
+  input::placeholder, textarea::placeholder { color: transparent !important; }
   .tracker { max-width: 100%; }
-  .info-bar { display: flex !important; flex-wrap: wrap; gap: .4rem; margin-bottom: .8rem; border: 1px solid #aaa !important; padding: .4rem; }
+  .info-bar { display: flex !important; flex-wrap: wrap; gap: .4rem; margin-bottom: .8rem; border: 1.5px solid #000 !important; padding: .5rem; }
   .ib { flex: 1; min-width: 80px; border: none !important; padding: .2rem .4rem; }
-  .ib-l { font-size: .58rem !important; color: #666 !important; display: block; letter-spacing: .1em; text-transform: uppercase; font-family: Cinzel, serif; }
-  .ib-v { font-size: .85rem !important; color: #000 !important; font-weight: 600; }
-  .gear-grid { display: grid !important; grid-template-columns: 1fr 1fr; gap: .3rem; }
-  .slot-wrap { break-inside: avoid; margin-bottom: .2rem; }
-  .slot-lbl { font-size: .58rem !important; color: #555 !important; letter-spacing: .1em; text-transform: uppercase; font-family: Cinzel, serif; padding-left: 2px; display: block; margin-bottom: 1px; }
-  .slot-entry { display: flex !important; border: 1px solid #aaa !important; }
-  .slot-fields { flex: 1; }
-  .sf-name { font-size: .88rem !important; color: #000 !important; padding: .28rem .4rem; display: block; border-bottom: 1px solid #ddd !important; }
-  .sf-src { font-size: .72rem !important; color: #444 !important; padding: .2rem .4rem; display: block; font-style: italic; }
-  .slot-chk { width: 26px; flex-shrink: 0; border-left: 1px solid #aaa !important; display: flex !important; align-items: center; justify-content: center; font-size: 1rem; }
+  .ib-l { font-size: .58rem !important; color: #333 !important; display: block; letter-spacing: .1em; text-transform: uppercase; font-family: Cinzel, serif; }
+  .ib-v { font-size: .9rem !important; color: #000 !important; font-weight: 700; }
+  .gear-grid { display: grid !important; grid-template-columns: 1fr 1fr; gap: .35rem; }
+  .slot-wrap { break-inside: avoid; margin-bottom: .25rem; }
+  .slot-lbl { font-size: .6rem !important; color: #222 !important; letter-spacing: .1em; text-transform: uppercase; font-family: Cinzel, serif; padding-left: 2px; display: block; margin-bottom: 2px; }
+  .slot-entry, .rank-block { display: flex !important; border: 1.5px solid #000 !important; }
+  .slot-fields, .rank-inputs { flex: 1; }
+  .sf-name { font-size: .9rem !important; color: #000 !important; padding: .32rem .45rem; display: block; border-bottom: 1px solid #000 !important; font-weight: 600; }
+  .sf-src { font-size: .74rem !important; color: #111 !important; padding: .24rem .45rem; display: block; font-style: italic; }
+  .slot-chk { width: 26px; flex-shrink: 0; border-left: 1px solid #000 !important; display: flex !important; align-items: center; justify-content: center; font-size: 1rem; }
   .slot-chk:not(.done) { color: transparent !important; }
-  .slot-chk.done { color: #000 !important; }
-  .slot-chk.soft { color: #000 !important; background: rgba(232,184,75,.15) !important; }
-  .sub-sh { font-size: .65rem !important; color: #555 !important; letter-spacing: .15em; text-transform: uppercase; font-family: Cinzel, serif; border-bottom: 1px solid #ccc !important; padding-bottom: .2rem; margin: .6rem 0 .3rem; display: block !important; }
-  input { color: #000 !important; }
+  .slot-chk.done, .slot-chk.soft { color: #000 !important; background: transparent !important; }
+  .sub-sh { font-size: .66rem !important; color: #111 !important; letter-spacing: .15em; text-transform: uppercase; font-family: Cinzel, serif; border-bottom: 1px solid #000 !important; padding-bottom: .2rem; margin: .6rem 0 .3rem; display: block !important; }
+  .rank-badge, .rank-set-btn, .rank-have, .slot-track-row button, .rank-block button {
+    color: #000 !important; background: #fff !important; border: 1.5px solid #000 !important; font-weight: 700 !important; opacity:1 !important;
+  }
+  .rank-badge.r1, .rank-badge.r2, .rank-badge.r3 { color:#000 !important; border-color:#000 !important; }
+  .slot-track-row button[data-selected="true"], .rank-block button[data-selected="true"] {
+    border: 3px solid #000 !important; color: #000 !important; font-weight: 800 !important; background:#fff !important;
+  }
+  .rank-active, .rank-block.rank-active { border: 2px solid #000 !important; }
+  .sf-name, .sf-src, .rank-inputs input { color: #000 !important; font-weight:700 !important; opacity:1 !important; }
+  .sf-src { font-style: normal !important; }
+  .tbtn.sec { background:#fff !important; color:#000 !important; border:2px solid #000 !important; }
 }
 `;
 
@@ -1622,7 +1633,7 @@ function Tracker({ cls, spec, charName, onBack }) {
         }
       }
       const n = cleanField(itemName);
-      if (n && !(bisMode === 'custom' && isPlaceholderName(n))) {
+      if (n) {
         const s = cleanField(itemSrc || "Unknown");
         const acquired = d.done ? "1" : "0";
         const trackCode = d.track ? d.track[0].toLowerCase() : "n";
@@ -1759,7 +1770,7 @@ function Tracker({ cls, spec, charName, onBack }) {
                 const rowsHtml = farmRows.map(([src,items]) =>
                   `<h2>${src}</h2>${items.map(i=>`<p>&#8226; ${i.slot}: ${i.item}${i.soft ? ` <em>(upgrading from ${i.track})</em>` : ""}</p>`).join("")}`
                 ).join("");
-                w.document.write(`<!DOCTYPE html><html><head><title>${charLabel}${cls.name} ${spec.name} Farm Priority</title><style>body{font-family:Georgia,serif;max-width:680px;margin:2rem auto;color:#1a0c00;}h1{font-family:serif;font-size:1.1rem;border-bottom:2px solid #c9922a;padding-bottom:.4rem;}h2{font-size:.9rem;color:#c9922a;margin:.8rem 0 .2rem;font-family:serif;}p{margin:.15rem 0;font-size:.85rem;}.meta{font-size:.72rem;color:#888;}@media print{body{margin:.5in;}}</style></head><body><h1>${charLabel}${cls.name} ${spec.name} — Farm Priority</h1><p class="meta">Midnight Season 1 &middot; Target: ${targetTrack} &middot; ${new Date().toLocaleDateString()}</p>${rowsHtml}<p class="meta" style="margin-top:2rem;border-top:1px solid #ddd;padding-top:.4rem;">wowbistracker.com</p></body></html>`);
+                w.document.write(`<!DOCTYPE html><html><head><title>${charLabel}${cls.name} ${spec.name} Farm Priority</title><style>body{font-family:Georgia,serif;max-width:700px;margin:2rem auto;color:#000;background:#fff;}h1{font-family:serif;font-size:1.1rem;border-bottom:2px solid #000;padding-bottom:.4rem;color:#000;}h2{font-size:.9rem;color:#000;margin:.85rem 0 .25rem;font-family:serif;font-weight:700;}p{margin:.2rem 0;font-size:.88rem;color:#000;line-height:1.45;}.meta{font-size:.74rem;color:#000;font-weight:600;}strong,b{color:#000;}@media print{body{margin:.5in;color:#000;background:#fff;}}</style></head><body><h1>${charLabel}${cls.name} ${spec.name} — Farm Priority</h1><p class="meta">Midnight Season 1 &middot; Target: ${targetTrack} &middot; ${new Date().toLocaleDateString()}</p>${rowsHtml}<p class="meta" style="margin-top:2rem;border-top:1px solid #000;padding-top:.4rem;">wowbistracker.com</p></body></html>`);
                 w.document.close(); w.print();
               }} style={{ fontFamily:"Cinzel,serif", fontSize:".68rem", letterSpacing:".04em", padding:".35rem .7rem", background:"transparent", border:"1px solid var(--bdr2)", color:"var(--parch-dk)", cursor:"pointer", transition:"all .15s", whiteSpace:"nowrap" }}>
                 🖨 Print Farm List
@@ -2020,7 +2031,7 @@ function Tracker({ cls, spec, charName, onBack }) {
         }}>{bisMode === 'custom' ? 'Save Custom' : bisMode === 'community' ? 'Save Community' : 'Save Scan'}</button>
         <button className="tbtn sec" onClick={() => {
           const code = exportForAddon();
-          if (!code) { alert("Load your BiS list first before exporting."); return; }
+          if (!code) { alert("Apply All, save your custom list, or enter at least one item before exporting."); return; }
           window.__wowbisExportCode = code;
           const modal = document.createElement("div");
           modal.style.cssText = "position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.85);z-index:9999;display:flex;align-items:center;justify-content:center;";
@@ -2199,6 +2210,18 @@ function useResetTimer(region) {
   return timeLeft;
 }
 
+
+const SAVE_MODE_ORDER = ["community","custom","simc","scan"];
+function splitSaveLabel(charName) {
+  const m = String(charName || "default").match(/^(.*?)(?:-(community|custom|simc|scan))?$/i);
+  const base = (m?.[1] || charName || "default").replace(/[-_]+$/,"");
+  const mode = (m?.[2] || "community").toLowerCase();
+  return { base, mode };
+}
+function modeNice(m) {
+  return ({ community:"Community", custom:"Custom", simc:"SimC", scan:"Scan" }[m] || m);
+}
+
 function getSavedCharacters() {
   const chars = [];
   const seen = new Set();
@@ -2313,8 +2336,21 @@ function GroupPlanner() {
   };
 
   const allSaved = getSavedCharacters();
-  const [selectedChar, setSelectedChar] = useState(0);
-  const selectedSaved = allSaved[selectedChar];
+  const groupedSaves = (() => {
+    const grouped = {};
+    allSaved.forEach(entry => {
+      const { base, mode } = splitSaveLabel(entry.charName);
+      const key = `${base}||${entry.cls.id}`;
+      if (!grouped[key]) grouped[key] = { key, base, cls: entry.cls, saves: {} };
+      grouped[key].saves[mode] = entry;
+    });
+    return Object.values(grouped);
+  })();
+  const [selectedGroupKey, setSelectedGroupKey] = useState("");
+  const [groupMode, setGroupMode] = useState({});
+  const activeGroup = groupedSaves.find(g => g.key === selectedGroupKey) || groupedSaves[0];
+  const activeMode = activeGroup ? (groupMode[activeGroup.key] || (activeGroup.saves.community ? "community" : Object.keys(activeGroup.saves)[0])) : "";
+  const selectedSaved = activeGroup ? activeGroup.saves[activeMode] : null;
   const myCode = selectedSaved ? encodeFarmList(JSON.parse(localStorage.getItem(selectedSaved.key) || "{}")) : "";
 
   const copyCode = () => {
@@ -2335,34 +2371,31 @@ function GroupPlanner() {
         Each player exports their farm code from their tracker and pastes it here. The planner finds which dungeons and raids your group should run together to maximize everyone's gear progress.
       </div>
 
-      {allSaved.length > 0 && (
+      {groupedSaves.length > 0 && (
         <div style={{ background:"rgba(201,146,42,.07)", border:"1px solid var(--bdr2)", padding:".75rem .9rem", marginBottom:"1rem" }}>
           <div style={{ fontFamily:"Cinzel,serif", fontSize:".65rem", letterSpacing:".1em", color:"var(--gold)", marginBottom:".5rem" }}>STEP 1 — COPY YOUR FARM CODE</div>
-          {(() => {
-            const cg = {};
-            allSaved.forEach((c, i) => {
-              const gk = `${c.charName}||${c.cls.id}`;
-              if (!cg[gk]) cg[gk] = { charName: c.charName, cls: c.cls, specs: [] };
-              cg[gk].specs.push({ ...c, idx: i });
-            });
-            return Object.values(cg).map(({ charName, cls, specs }) => {
-              const dn = charName === "default" ? cls.name : charName;
+          <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit,minmax(260px,1fr))", gap:".55rem", marginBottom:".7rem" }}>
+            {groupedSaves.map(group => {
+              const defaultMode = group.saves.community ? "community" : Object.keys(group.saves)[0];
+              const active = groupMode[group.key] || defaultMode;
+              const entry = group.saves[active] || group.saves[defaultMode];
               return (
-                <div key={`${charName}-${cls.id}`} style={{ display:"flex", alignItems:"center", gap:".4rem", flexWrap:"wrap", marginBottom:".4rem" }}>
-                  <span style={{ fontFamily:"Cinzel,serif", fontSize:".75rem", color:cls.color, minWidth:"90px" }}>{dn}</span>
-                  <span style={{ fontSize:".7rem", color:"var(--parch-dk)", opacity:.6 }}>{cls.name}</span>
-                  <div style={{ display:"flex", gap:".25rem", flexWrap:"wrap", marginLeft:".25rem" }}>
-                    {specs.map(s => (
-                      <button key={s.key} onClick={() => setSelectedChar(s.idx)}
-                        style={{ fontFamily:"Cinzel,serif", fontSize:".68rem", letterSpacing:".04em", padding:".18rem .55rem", background: selectedChar === s.idx ? cls.color : "transparent", border:`1px solid ${cls.color}`, color: selectedChar === s.idx ? "#fff" : cls.color, cursor:"pointer", transition:"all .12s" }}>
-                        {s.spec.icon} {s.spec.name}
-                      </button>
-                    ))}
+                <div key={group.key} style={{ border:`1px solid ${group.cls.color}44`, background:"rgba(0,0,0,.12)", padding:".65rem .75rem" }}>
+                  <div style={{ display:"flex", alignItems:"center", gap:".4rem", marginBottom:".35rem" }}>
+                    <div style={{ fontFamily:"Cinzel,serif", fontSize:".78rem", color:group.cls.color }}>{group.base === "default" ? group.cls.name : group.base}</div>
+                    <button onClick={() => setSelectedGroupKey(group.key)} style={{ marginLeft:"auto", fontFamily:"Cinzel,serif", fontSize:".64rem", letterSpacing:".05em", padding:".18rem .5rem", background:selectedGroupKey === group.key || (!selectedGroupKey && groupedSaves[0]?.key === group.key) ? "var(--gold)" : "transparent", color:selectedGroupKey === group.key || (!selectedGroupKey && groupedSaves[0]?.key === group.key) ? "var(--ink)" : "var(--gold-lt)", border:"1px solid var(--gold)", cursor:"pointer" }}>Use</button>
+                  </div>
+                  <div style={{ fontSize:".7rem", color:"var(--parch-dk)", marginBottom:".4rem" }}>{group.cls.name}</div>
+                  <div style={{ display:"flex", gap:".35rem", alignItems:"center", flexWrap:"wrap" }}>
+                    <select value={active} onChange={e => setGroupMode(prev => ({ ...prev, [group.key]: e.target.value }))} style={{ background:"var(--bg2)", border:"1px solid var(--bdr2)", color:"var(--parch)", padding:".2rem .45rem", fontFamily:"Cinzel,serif", fontSize:".66rem" }}>
+                      {SAVE_MODE_ORDER.filter(mode => group.saves[mode]).map(mode => <option key={mode} value={mode}>{modeNice(mode)}</option>)}
+                    </select>
+                    <div style={{ fontSize:".72rem", color:"var(--parch)" }}>{entry?.spec?.icon} {entry?.spec?.name}</div>
                   </div>
                 </div>
               );
-            });
-          })()}
+            })}
+          </div>
           {myCode ? (
             <>
               <div style={{ display:"flex", gap:".5rem", alignItems:"center", marginBottom:".35rem" }}>
@@ -2466,6 +2499,33 @@ function GroupPlanner() {
   );
 }
 
+
+
+function WeeklyResetPanel({ compact = false }) {
+  return (
+    <div id="weekly-reset" style={{ background:"var(--panel)", border:"1px solid var(--bdr2)", padding: compact ? "1rem" : "1.25rem", borderRadius:0, marginBottom: compact ? 0 : "1.5rem" }}>
+      <div style={{ display:"flex", alignItems:"center", gap:".6rem", marginBottom:".75rem", flexWrap:"wrap" }}>
+        <div style={{ fontFamily:"Cinzel,serif", fontSize:".72rem", letterSpacing:".14em", color:"var(--gold)" }}>WEEKLY RESET</div>
+        <div className="exp-badge" style={{ margin:0, padding:".15rem .6rem", fontSize:".6rem" }}>Midnight · S1</div>
+        <div style={{ display:"flex", gap:".3rem", marginLeft:"auto" }}>
+          {["NA","EU"].map(r => (
+            <button key={r} onClick={() => setResetRegion(r)} style={{ fontFamily:"Cinzel,serif", fontSize:".65rem", letterSpacing:".08em", padding:".18rem .55rem", background: resetRegion === r ? "var(--gold)" : "transparent", border:"1px solid " + (resetRegion === r ? "var(--gold)" : "var(--bdr2)"), color: resetRegion === r ? "var(--ink)" : "var(--parch-dk)", cursor:"pointer" }}>{r}</button>
+          ))}
+        </div>
+      </div>
+      <div style={{ fontSize:"2rem", fontFamily:"Cinzel,serif", color:"var(--gold-lt)", letterSpacing:".04em", lineHeight:1, marginBottom:".75rem" }}>{timeLeft}</div>
+      <div style={{ fontSize:".78rem", color:"var(--parch-dk)", fontStyle:"italic", lineHeight:1.5, marginBottom:"1rem" }}>
+        {resetRegion === "NA" ? "Tuesday · 8am Pacific" : "Wednesday · 8am CET"}
+      </div>
+      <div style={{ borderTop:"1px solid var(--bdr)", paddingTop:".85rem" }}>
+        <div style={{ fontFamily:"Cinzel,serif", fontSize:".65rem", letterSpacing:".1em", color:"var(--gold)", marginBottom:".5rem" }}>GREAT VAULT</div>
+        <div style={{ fontSize:".92rem", color:"var(--parch-dk)", lineHeight:1.6 }}>
+          Open your Great Vault in-game after each reset. The <strong style={{ color:"var(--gold-lt)" }}>WoW BiS Tracker addon</strong> will automatically highlight any vault options that match your BiS list — including gear track.
+        </div>
+      </div>
+    </div>
+  );
+}
 
 function AddonImportBox({ onCharsLoaded }) {
   const [code, setCode] = useState("");
@@ -2612,7 +2672,7 @@ function AddonImportBox({ onCharsLoaded }) {
   };
 
   return (
-    <div style={{ background:"var(--panel)", border:"1px solid rgba(201,146,42,.4)", padding:"1.25rem", marginBottom:"1.5rem" }}>
+    <div id="addon-sync" style={{ background:"var(--panel)", border:"1px solid rgba(201,146,42,.4)", padding:"1.25rem", marginBottom:"1.5rem" }}>
       <div style={{ fontFamily:"Cinzel,serif", fontSize:".72rem", letterSpacing:".12em", color:"var(--gold)", marginBottom:".4rem" }}>SYNC FROM IN-GAME ADDON</div>
       <div style={{ fontSize:".85rem", color:"var(--parch-dk)", marginBottom:".85rem", lineHeight:1.65 }}>
         In the addon, open the <strong style={{ color:"var(--parch)" }}>Farm Priority</strong> tab and click <strong style={{ color:"var(--parch)" }}>Export</strong>. This exports all your specs at once. Paste the code below — your characters will appear automatically, no manual setup needed.
@@ -2636,11 +2696,10 @@ function AddonImportBox({ onCharsLoaded }) {
 
 function Home({ onSelectClass, onLoadCharacter }) {
   const [roleFilter, setRoleFilter] = useState("All");
-  const [resetRegion, setResetRegion] = useState("NA");
   const [savedChars, setSavedChars] = useState(() => getSavedCharacters());
+  const [cardMode, setCardMode] = useState({});
   const roles = ["All", "Tank", "Healer", "DPS"];
   const filtered = CLASSES.filter(c => roleFilter === "All" || c.roles.includes(roleFilter));
-  const timeLeft = useResetTimer(resetRegion);
   const handleDelete = () => setSavedChars(getSavedCharacters());
 
   useEffect(() => {
@@ -2663,9 +2722,6 @@ function Home({ onSelectClass, onLoadCharacter }) {
 
   return (
     <div className="fade">
-      <div className="home-layout">
-        <div className="home-main">
-
       <div id="select-class" className="sh">Filter by Role</div>
       <div className="role-strip">
         {roles.map(r => (
@@ -2679,7 +2735,6 @@ function Home({ onSelectClass, onLoadCharacter }) {
         ))}
       </div>
 
-      <AddonImportBox onCharsLoaded={() => setSavedChars(getSavedCharacters())} />
       <div className="sh">Select Your Class</div>
       <div className="class-grid">
         {filtered.map(cls => (
@@ -2695,92 +2750,67 @@ function Home({ onSelectClass, onLoadCharacter }) {
         ))}
       </div>
 
-
-        </div>{/* home-main */}
-
-        <aside className="weekly-sidebar">
-          <div style={{ background:"var(--panel)", border:"1px solid var(--bdr2)", padding:"1.25rem", borderRadius:0 }}>
-            <div style={{ display:"flex", alignItems:"center", gap:".6rem", marginBottom:".75rem", flexWrap:"wrap" }}>
-              <div style={{ fontFamily:"Cinzel,serif", fontSize:".72rem", letterSpacing:".14em", color:"var(--gold)" }}>WEEKLY RESET</div>
-              <div className="exp-badge" style={{ margin:0, padding:".15rem .6rem", fontSize:".6rem" }}>Midnight · S1</div>
-              <div style={{ display:"flex", gap:".3rem", marginLeft:"auto" }}>
-                {["NA","EU"].map(r => (
-                  <button key={r} onClick={() => setResetRegion(r)} style={{ fontFamily:"Cinzel,serif", fontSize:".65rem", letterSpacing:".08em", padding:".18rem .55rem", background: resetRegion === r ? "var(--gold)" : "transparent", border:"1px solid " + (resetRegion === r ? "var(--gold)" : "var(--bdr2)"), color: resetRegion === r ? "var(--ink)" : "var(--parch-dk)", cursor:"pointer" }}>{r}</button>
-                ))}
-              </div>
-            </div>
-            <div style={{ fontSize:"2rem", fontFamily:"Cinzel,serif", color:"var(--gold-lt)", letterSpacing:".04em", lineHeight:1, marginBottom:".75rem" }}>{timeLeft}</div>
-
-            <div style={{ fontSize:".78rem", color:"var(--parch-dk)", fontStyle:"italic", lineHeight:1.5, marginBottom:"1rem" }}>
-              {resetRegion === "NA" ? "Tuesday · 8am Pacific" : "Wednesday · 8am CET"}
-            </div>
-            <div style={{ borderTop:"1px solid var(--bdr)", paddingTop:".85rem" }}>
-              <div style={{ fontFamily:"Cinzel,serif", fontSize:".65rem", letterSpacing:".1em", color:"var(--gold)", marginBottom:".5rem" }}>GREAT VAULT</div>
-              <div style={{ fontSize:".92rem", color:"var(--parch-dk)", lineHeight:1.6 }}>
-                Open your Great Vault in-game after each reset. The <strong style={{ color:"var(--gold-lt)" }}>WoW BiS Tracker addon</strong> will automatically highlight any vault options that match your BiS list — including gear track.
-              </div>
-            </div>
-          </div>
-        </aside>
-
-      </div>{/* home-layout */}
-
-      <div style={{ height:"2rem" }} />
+      <div style={{ height:"1.75rem" }} />
       {savedChars.length > 0 && (() => {
         const groups = {};
         savedChars.forEach(entry => {
-          const groupKey = `${entry.charName}||${entry.cls.id}`;
-          if (!groups[groupKey]) groups[groupKey] = { charName: entry.charName, cls: entry.cls, specs: [] };
-          groups[groupKey].specs.push(entry);
+          const { base, mode } = splitSaveLabel(entry.charName);
+          const groupKey = `${base}||${entry.cls.id}`;
+          if (!groups[groupKey]) groups[groupKey] = { base, cls: entry.cls, saves: {} };
+          groups[groupKey].saves[mode] = entry;
         });
         return (
           <div style={{ marginBottom:"1.5rem" }}>
             <div className="sh">Your Characters</div>
-            <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(260px,1fr))", gap:".75rem" }}>
-              {Object.values(groups).map(({ charName, cls, specs }) => {
-                const totalAcq = specs.reduce((s,e) => s + e.acquired, 0);
-                const totalSlots = specs.reduce((s,e) => s + e.slotCount, 0);
+            <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(300px,1fr))", gap:".75rem" }}>
+              {Object.values(groups).map(({ base, cls, saves }) => {
+                const saveOrder = ["community","custom","simc","scan"].filter(k => saves[k]);
+                const defaultMode = saveOrder.includes("community") ? "community" : saveOrder[0];
+                const activeMode = cardMode[`${base}||${cls.id}`] || defaultMode;
+                const active = saves[activeMode] || saves[defaultMode];
+                const totalAcq = active?.acquired || 0;
+                const totalSlots = active?.slotCount || 0;
                 const pct = totalSlots ? Math.round(totalAcq / totalSlots * 100) : 0;
-                const displayName = charName === "default" ? cls.name : charName;
                 return (
-                  <div key={`${charName}-${cls.id}`}
-                    style={{ background:"var(--panel)", border:`1px solid ${cls.color}44`, padding:".85rem 1rem", position:"relative" }}
-                    onMouseEnter={e => e.currentTarget.style.borderColor = cls.color}
-                    onMouseLeave={e => e.currentTarget.style.borderColor = cls.color + "44"}>
-                    <button onClick={e => {
-                      e.stopPropagation();
-                      if (!window.confirm(`Remove all data for ${displayName} (${cls.name})?`)) return;
-                      specs.forEach(({ key, spec }) => {
-                        localStorage.removeItem(key);
-                        try {
-                          const ck = `characters-${cls.id}-${spec.id}`;
-                          const existing = JSON.parse(localStorage.getItem(ck) || "[]");
-                          localStorage.setItem(ck, JSON.stringify(existing.filter(n => n !== charName)));
-                        } catch {}
-                      });
-                      handleDelete();
-                    }} style={{ position:"absolute", top:".4rem", right:".5rem", background:"transparent", border:"none", color:"var(--parch-dk)", cursor:"pointer", fontSize:"1.1rem", lineHeight:1, padding:".15rem .3rem", zIndex:2 }} title="Remove character">×</button>
+                  <div key={`${base}-${cls.id}`} style={{ background:"var(--panel)", border:`1px solid ${cls.color}44`, padding:".85rem 1rem", position:"relative" }}>
                     <div style={{ position:"absolute", top:0, left:0, right:0, height:"2px", background:cls.color }} />
-                    <div style={{ fontFamily:"Cinzel,serif", fontSize:".88rem", color:cls.color, fontWeight:600, marginBottom:".2rem", paddingRight:"1.5rem" }}>{displayName}</div>
-                    <div style={{ fontSize:".72rem", color:"var(--parch-dk)", marginBottom:".5rem" }}>{cls.name}</div>
-                    <div style={{ display:"flex", flexWrap:"wrap", gap:".3rem", marginBottom:".6rem" }}>
-                      {specs.map(({ spec, charName: cn, acquired, slotCount }) => {
-                        const spct = slotCount ? Math.round(acquired / slotCount * 100) : 0;
-                        return (
-                          <button key={spec.id} onClick={() => onLoadCharacter(cls, spec, cn)}
-                            style={{ display:"flex", alignItems:"center", gap:".3rem", background:"var(--bg2)", border:`1px solid ${cls.color}55`, padding:".2rem .5rem", cursor:"pointer", fontSize:".75rem", color:"var(--parch-dk)", fontFamily:"Cinzel,serif" }}
-                            title={`${spec.name} — ${acquired}/${slotCount} acquired`}>
-                            <span>{spec.icon}</span>
-                            <span style={{ color:cls.color }}>{spec.name}</span>
-                            <span style={{ opacity:.7 }}>{spct}%</span>
-                          </button>
-                        );
-                      })}
+                    <div style={{ fontFamily:"Cinzel,serif", fontSize:".88rem", color:cls.color, fontWeight:600, marginBottom:".2rem", paddingRight:"1.5rem" }}>{base === "default" ? cls.name : base}</div>
+                    <div style={{ display:"flex", alignItems:"center", gap:".5rem", flexWrap:"wrap", marginBottom:".45rem" }}>
+                      <div style={{ fontSize:".72rem", color:"var(--parch-dk)" }}>{cls.name}</div>
+                      <select value={activeMode} onChange={e => setCardMode(prev => ({ ...prev, [`${base}||${cls.id}`]: e.target.value }))} style={{ marginLeft:"auto", background:"var(--bg2)", border:"1px solid var(--bdr2)", color:"var(--parch)", padding:".2rem .45rem", fontFamily:"Cinzel,serif", fontSize:".68rem" }}>
+                        {saveOrder.map(mode => <option key={mode} value={mode}>{modeNice(mode)}</option>)}
+                      </select>
+                      <button onClick={() => {
+                        const target = saves[activeMode];
+                        if (!target) return;
+                        if (!window.confirm(`Delete ${modeNice(activeMode)} save for ${base}?`)) return;
+                        localStorage.removeItem(target.key);
+                        try {
+                          const ck = `characters-${cls.id}-${target.spec.id}`;
+                          const existing = JSON.parse(localStorage.getItem(ck) || "[]");
+                          localStorage.setItem(ck, JSON.stringify(existing.filter(n => n !== target.charName)));
+                        } catch {}
+                        handleDelete();
+                      }} style={{ background:"transparent", border:"none", color:"var(--parch-dk)", cursor:"pointer", fontSize:"1rem", lineHeight:1, padding:".1rem .25rem" }} title="Delete active save">×</button>
                     </div>
-                    <div style={{ background:"var(--bdr)", height:"3px", position:"relative" }}>
-                      <div style={{ position:"absolute", left:0, top:0, height:"100%", width:`${pct}%`, background:cls.color, transition:"width .4s" }} />
-                    </div>
-                    <div style={{ fontSize:".7rem", color:"var(--parch-dk)", marginTop:".3rem" }}>{totalAcq}/{totalSlots} total · {pct}%</div>
+                    {active && (
+                      <>
+                        <button onClick={() => onLoadCharacter(cls, active.spec, active.charName)} style={{ display:"flex", alignItems:"center", gap:".35rem", background:"var(--bg2)", border:`1px solid ${cls.color}55`, padding:".25rem .55rem", cursor:"pointer", fontSize:".78rem", color:"var(--parch-dk)", fontFamily:"Cinzel,serif", marginBottom:".6rem" }} title={`Open ${modeNice(activeMode)} save`}>
+                          <span>{active.spec.icon}</span>
+                          <span style={{ color:cls.color }}>{active.spec.name}</span>
+                          <span style={{ opacity:.8 }}>{pct}%</span>
+                        </button>
+                        <div style={{ display:"flex", gap:".35rem", flexWrap:"wrap", marginBottom:".55rem" }}>
+                          {saveOrder.map(mode => (
+                            <button key={mode} onClick={() => setCardMode(prev => ({ ...prev, [`${base}||${cls.id}`]: mode }))} style={{ background: activeMode === mode ? cls.color : "transparent", color: activeMode === mode ? "#120700" : "var(--parch-dk)", border:`1px solid ${activeMode === mode ? cls.color : "var(--bdr2)"}`, padding:".18rem .42rem", fontFamily:"Cinzel,serif", fontSize:".62rem", cursor:"pointer" }}>{modeNice(mode)}</button>
+                          ))}
+                        </div>
+                        <div style={{ background:"var(--bdr)", height:"3px", position:"relative" }}>
+                          <div style={{ position:"absolute", left:0, top:0, height:"100%", width:`${pct}%`, background:cls.color, transition:"width .4s" }} />
+                        </div>
+                        <div style={{ fontSize:".7rem", color:"var(--parch-dk)", marginTop:".3rem" }}>{totalAcq}/{totalSlots} total · {pct}%</div>
+                      </>
+                    )}
                   </div>
                 );
               })}
@@ -2788,6 +2818,9 @@ function Home({ onSelectClass, onLoadCharacter }) {
           </div>
         );
       })()}
+
+      <AddonImportBox onCharsLoaded={() => setSavedChars(getSavedCharacters())} />
+      <WeeklyResetPanel />
       <div className="sh" id="group-planner">Group Farm Planner</div>
       <GroupPlanner />
 
@@ -2922,10 +2955,11 @@ export default function App() {
               <div style={{ display:"flex", justifyContent:"center", gap:"1rem", marginTop:"1.4rem", flexWrap:"wrap" }}>
                 {[
                   { icon:"📖", line1:"Browse BiS by", line2:"class & spec", sub:"Community guides, every spec", scrollId:"select-class" },
-                  { icon:"🗺", line1:"Plan your", line2:"farm", sub:"Farm Priority · Raid vs Dungeon", scrollId:"select-class" },
+                  { icon:"🗺", line1:"Plan your", line2:"farm", sub:"Farm Priority · Raid vs Dungeon", scrollId:"group-planner" },
                   { icon:"👥", line1:"Group", line2:"planning", sub:"Share farm lists · See who needs what", scrollId:"group-planner" },
                   { icon:"✏️", line1:"Build your", line2:"own list", sub:"Up to 3 options per slot", scrollId:"select-class" },
-                  { icon:"🎮", line1:"Track", line2:"in-game", sub:"Free addon · Mini overlay", scrollId:"vs-addon" },
+                  { icon:"🎮", line1:"Track", line2:"in-game", sub:"Free addon · Mini overlay", scrollId:"addon-sync" },
+                  { icon:"🗓", line1:"Weekly reset", line2:"& Great Vault", sub:"Reset timer · Vault highlight", scrollId:"weekly-reset" },
                 ].map(({ icon, line1, line2, sub, scrollId, href }) => (
                   <div key={line1+line2}
                     onClick={() => {
