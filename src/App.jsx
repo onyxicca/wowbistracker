@@ -1311,7 +1311,6 @@ function parseSimCVaultItems(str) {
     if (trimmed === "### Weekly Reward Choices") { inVault = true; continue; }
     if (trimmed === "### End of Weekly Reward Choices") break;
     if (!inVault) continue;
-    // Lines look like: # Item Name (ilvl)
     const m = trimmed.match(/^#\s+(.+?)\s+\((\d+)\)\s*$/);
     if (m) {
       const name = m[1].trim();
@@ -1394,9 +1393,44 @@ const TRACK_COLOR = { "Veteran":"#1EFF00", "Champion":"#0070DD", "Hero":"#A335EE
 
 const GLOBAL_TRACK_ORDER = ["Veteran","Champion","Hero","Myth"];
 const SOURCE_TYPE_OPTIONS = ["", "Raid", "Dungeon", "Other"];
-const CURRENT_SEASON_DUNGEONS = ["Algeth'ar Academy", "Pit of Saron", "Seat of the Triumvirate", "Nexus Point Xenas", "Windrunner Spire", "Skyreach", "Magister's Terrace", "Maisara Caverns"];
-const CURRENT_SEASON_RAIDS = ["The Voidspire", "The Dreamrift", "March on Quel'Danas"];
-const OTHER_SOURCE_OPTIONS = ["Delves", "World Quests", "Renown", "Prey", "Crafted", "PvP", "Tier Set — Raid | Catalyst | Vault"];
+const SEASON_MANIFEST = {
+  seasonId: "midnight-s1",
+  label: "Midnight · Season 1",
+  raids: [
+    { id: "the-voidspire", name: "The Voidspire" },
+    { id: "the-dreamrift", name: "The Dreamrift" },
+    { id: "march-on-queldanas", name: "March on Quel'Danas" }
+  ],
+  dungeons: [
+    { id: "algethar-academy", name: "Algeth'ar Academy" },
+    { id: "pit-of-saron", name: "Pit of Saron" },
+    { id: "seat-of-the-triumvirate", name: "Seat of the Triumvirate" },
+    { id: "nexus-point-xenas", name: "Nexus Point Xenas" },
+    { id: "windrunner-spire", name: "Windrunner Spire" },
+    { id: "skyreach", name: "Skyreach" },
+    { id: "magisters-terrace", name: "Magister's Terrace" },
+    { id: "maisara-caverns", name: "Maisara Caverns" }
+  ],
+  otherSources: [
+    { id: "delves", name: "Delves" },
+    { id: "world-quests", name: "World Quests" },
+    { id: "renown", name: "Renown" },
+    { id: "prey", name: "Prey" },
+    { id: "crafted", name: "Crafted" },
+    { id: "pvp", name: "PvP" },
+    { id: "tier-set", name: "Tier Set — Raid | Catalyst | Vault" }
+  ]
+};
+const CURRENT_SEASON_DUNGEONS = SEASON_MANIFEST.dungeons.map(v => v.name);
+const CURRENT_SEASON_RAIDS = SEASON_MANIFEST.raids.map(v => v.name);
+const OTHER_SOURCE_OPTIONS = SEASON_MANIFEST.otherSources.map(v => v.name);
+function getSpecificSourceOptions(sourceType) {
+  if (sourceType === 'Raid') return CURRENT_SEASON_RAIDS;
+  if (sourceType === 'Dungeon') return CURRENT_SEASON_DUNGEONS;
+  if (sourceType === 'Other') return OTHER_SOURCE_OPTIONS;
+  return [];
+}
+
 function inferSourceType(src) {
   const s = (src || '').toLowerCase();
   if (s.includes('raid') || CURRENT_SEASON_RAIDS.some(v => s.includes(v.toLowerCase()))) return 'Raid';
@@ -2743,8 +2777,6 @@ function AddonImportBox({ onCharsLoaded }) {
   const [loaded, setLoaded] = useState(false);
 
   const TRACK_CODES = { v:"Veteran", c:"Champion", h:"Hero", m:"Myth" };
-  // Unambiguous mapping: class display name → { addonSpecName → websiteSpecId }
-  // websiteSpecId must exactly match the spec id in the CLASSES array
   const CLASS_SPEC_MAP = {
     "Druid":        { "Balance":"balance","Feral":"feral","Guardian":"guardian","Restoration":"restoration-druid" },
     "Hunter":       { "Beast Mastery":"beast-mastery","Marksmanship":"marksmanship","Survival":"survival" },
@@ -2793,7 +2825,6 @@ function AddonImportBox({ onCharsLoaded }) {
     const sections = raw.split("###").filter(Boolean);
     if (!sections.length) { setIsErr(true); setMsg("Could not read code."); return; }
 
-    // Extract CHAR header — new format includes class name
     const charSection2 = sections.find(s => s.startsWith("CHAR~"));
     if (!charSection2) {
       setIsErr(true);
@@ -2857,8 +2888,6 @@ function AddonImportBox({ onCharsLoaded }) {
       setMsg("Could not match any specs. Make sure you used the Export button inside the addon.");
       return;
     }
-    // Clean up stale entries from wrong-class imports (old format bug)
-    // Remove any bis-WRONGCLS-spec-charLabel keys that don't belong to this class
     const validKeys = new Set(
       Object.values(CLASS_SPEC_MAP[className]).map(specId => `bis-${clsId}-${specId}-${charLabel}`)
     );
@@ -2868,7 +2897,6 @@ function AddonImportBox({ onCharsLoaded }) {
       allKeys.forEach(k => {
         if (!k || !k.startsWith("bis-") || !k.endsWith(`-${charLabel}`)) return;
         if (!validKeys.has(k) && k !== `bis-${clsId}-`) {
-          // This key belongs to a different class — remove it if it was created for this charLabel
           const parts = k.split("-");
           if (parts.length >= 4) localStorage.removeItem(k);
         }
@@ -3037,7 +3065,7 @@ function Home({ onSelectClass, onLoadCharacter }) {
 
       <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"1.25rem", marginBottom:"1rem" }}>
 
-        {/* Website column */}
+        
         <div style={{ background:"var(--panel)", border:"1px solid var(--bdr2)", display:"flex", flexDirection:"column" }}>
           <div style={{ background:"rgba(201,146,42,.08)", borderBottom:"1px solid var(--bdr2)", padding:"1rem 1.25rem" }}>
             <div style={{ fontFamily:"Cinzel,serif", fontSize:".78rem", letterSpacing:".14em", color:"var(--gold)", marginBottom:".3rem" }}>THIS WEBSITE</div>
@@ -3076,7 +3104,7 @@ function Home({ onSelectClass, onLoadCharacter }) {
           </div>
         </div>
 
-        {/* Addon column */}
+        
         <div style={{ background:"var(--panel)", border:"1px solid var(--bdr2)", display:"flex", flexDirection:"column" }}>
           <div style={{ background:"rgba(201,146,42,.08)", borderBottom:"1px solid var(--bdr2)", padding:"1rem 1.25rem" }}>
             <div style={{ fontFamily:"Cinzel,serif", fontSize:".78rem", letterSpacing:".14em", color:"var(--gold)", marginBottom:".3rem" }}>IN-GAME ADDON</div>
