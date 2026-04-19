@@ -1,4 +1,5 @@
 import { useState, useCallback, useEffect, useRef } from "react";
+import seasonManifest from "./data/season_manifest_midnight_s1.json";
 
 const HERO_TALENTS = {
   "blood":              ["Deathbringer","San'layn"],
@@ -1393,34 +1394,7 @@ const TRACK_COLOR = { "Veteran":"#1EFF00", "Champion":"#0070DD", "Hero":"#A335EE
 
 const GLOBAL_TRACK_ORDER = ["Veteran","Champion","Hero","Myth"];
 const SOURCE_TYPE_OPTIONS = ["", "Raid", "Dungeon", "Other"];
-const SEASON_MANIFEST = {
-  seasonId: "midnight-s1",
-  label: "Midnight · Season 1",
-  raids: [
-    { id: "the-voidspire", name: "The Voidspire" },
-    { id: "the-dreamrift", name: "The Dreamrift" },
-    { id: "march-on-queldanas", name: "March on Quel'Danas" }
-  ],
-  dungeons: [
-    { id: "algethar-academy", name: "Algeth'ar Academy" },
-    { id: "pit-of-saron", name: "Pit of Saron" },
-    { id: "seat-of-the-triumvirate", name: "Seat of the Triumvirate" },
-    { id: "nexus-point-xenas", name: "Nexus Point Xenas" },
-    { id: "windrunner-spire", name: "Windrunner Spire" },
-    { id: "skyreach", name: "Skyreach" },
-    { id: "magisters-terrace", name: "Magister's Terrace" },
-    { id: "maisara-caverns", name: "Maisara Caverns" }
-  ],
-  otherSources: [
-    { id: "delves", name: "Delves" },
-    { id: "world-quests", name: "World Quests" },
-    { id: "renown", name: "Renown" },
-    { id: "prey", name: "Prey" },
-    { id: "crafted", name: "Crafted" },
-    { id: "pvp", name: "PvP" },
-    { id: "tier-set", name: "Tier Set — Raid | Catalyst | Vault" }
-  ]
-};
+const SEASON_MANIFEST = seasonManifest;
 const CURRENT_SEASON_DUNGEONS = SEASON_MANIFEST.dungeons.map(v => v.name);
 const CURRENT_SEASON_RAIDS = SEASON_MANIFEST.raids.map(v => v.name);
 const OTHER_SOURCE_OPTIONS = SEASON_MANIFEST.otherSources.map(v => v.name);
@@ -1727,10 +1701,11 @@ function Tracker({ cls, spec, charName, initialMode = "", onBack }) {
             name: cleanField(r?.name),
             src: cleanField(r?.src || "Unknown"),
             have: r?.have ? "1" : "0",
+            itemId: r?.itemId ? String(r.itemId).replace(/[^0-9]/g, "") : "",
           }))
           .filter(r => r.name);
         if (ranked.length) {
-          rankBlob = "#T" + String(activeIdx + 1) + "#" + ranked.map(r => [r.name, r.src, r.have].join("~")).join("^");
+          rankBlob = "#T" + String(activeIdx + 1) + "#" + ranked.map(r => [r.name, r.src, r.have, r.itemId].join("~")).join("^");
         }
       }
       const n = cleanField(itemName);

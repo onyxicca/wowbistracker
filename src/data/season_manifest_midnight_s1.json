@@ -1,0 +1,92 @@
+{
+  "seasonId": "midnight-s1",
+  "label": "Midnight \u00b7 Season 1",
+  "raids": [
+    {
+      "id": "the-voidspire",
+      "name": "The Voidspire"
+    },
+    {
+      "id": "the-dreamrift",
+      "name": "The Dreamrift"
+    },
+    {
+      "id": "march-on-queldanas",
+      "name": "March on Quel'Danas"
+    }
+  ],
+  "dungeons": [
+    {
+      "id": "algethar-academy",
+      "name": "Algeth'ar Academy"
+    },
+    {
+      "id": "pit-of-saron",
+      "name": "Pit of Saron"
+    },
+    {
+      "id": "seat-of-the-triumvirate",
+      "name": "Seat of the Triumvirate"
+    },
+    {
+      "id": "nexus-point-xenas",
+      "name": "Nexus Point Xenas"
+    },
+    {
+      "id": "windrunner-spire",
+      "name": "Windrunner Spire"
+    },
+    {
+      "id": "skyreach",
+      "name": "Skyreach"
+    },
+    {
+      "id": "magisters-terrace",
+      "name": "Magister's Terrace"
+    },
+    {
+      "id": "maisara-caverns",
+      "name": "Maisara Caverns"
+    }
+  ],
+  "otherSources": [
+    {
+      "id": "delves",
+      "name": "Delves"
+    },
+    {
+      "id": "world-quests",
+      "name": "World Quests"
+    },
+    {
+      "id": "renown",
+      "name": "Renown"
+    },
+    {
+      "id": "prey",
+      "name": "Prey"
+    },
+    {
+      "id": "crafted",
+      "name": "Crafted"
+    },
+    {
+      "id": "pvp",
+      "name": "PvP"
+    },
+    {
+      "id": "tier-set",
+      "name": "Tier Set \u2014 Raid | Catalyst | Vault"
+    }
+  ],
+  "itemRecordShape": {
+    "itemId": "number|null",
+    "itemName": "string",
+    "sourceType": "Raid|Dungeon|Other|Crafting|Unknown",
+    "sourceId": "string|null",
+    "sourceLabel": "string",
+    "bossName": "string|null",
+    "raidName": "string|null",
+    "dungeonName": "string|null"
+  }
+}
