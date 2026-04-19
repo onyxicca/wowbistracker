@@ -1477,11 +1477,11 @@ function Slot({ label, id, data, onChange, targetTrack, bisMode }) {
                   upRank(idx, "src", buildSourceLabel(t, detail));
                 }}>
                   <option value="">Specific source</option>
-                  {((r.sourceType || inferSourceType(r.src)) === 'Raid' ? CURRENT_RAID_BOSSES : (r.sourceType || inferSourceType(r.src)) === 'Dungeon' ? CURRENT_SEASON_DUNGEONS : OTHER_SOURCE_OPTIONS).map(opt => <option key={opt} value={opt}>{opt}</option>)}
+                  {((r.sourceType || inferSourceType(r.src)) === 'Raid' ? CURRENT_SEASON_RAIDS : (r.sourceType || inferSourceType(r.src)) === 'Dungeon' ? CURRENT_SEASON_DUNGEONS : OTHER_SOURCE_OPTIONS).map(opt => <option key={opt} value={opt}>{opt}</option>)}
                 </select>
                 <input className="sf-src" style={{ gridColumn:"1 / span 2" }} list={`src-list-${id}-${idx}`} placeholder="Final source line..." value={r.src || ""} onChange={e => upRank(idx, "src", e.target.value)} />
                 <datalist id={`src-list-${id}-${idx}`}>
-                  {CURRENT_RAID_BOSSES.map(v => <option key={v} value={`${v} (Raid)`} />)}
+                  {CURRENT_SEASON_RAIDS.map(v => <option key={v} value={`${v} (Raid)`} />)}
                   {CURRENT_SEASON_DUNGEONS.map(v => <option key={v} value={`Dungeon • ${v}`} />)}
                   {OTHER_SOURCE_OPTIONS.map(v => <option key={v} value={v} />)}
                 </datalist>
