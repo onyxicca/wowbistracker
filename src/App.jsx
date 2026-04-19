@@ -1381,6 +1381,28 @@ const TRACKS = ["", "Veteran", "Champion", "Hero", "Myth"];
 const TRACK_COLOR = { "Veteran":"#1EFF00", "Champion":"#0070DD", "Hero":"#A335EE", "Myth":"#FF8000" };
 
 const GLOBAL_TRACK_ORDER = ["Veteran","Champion","Hero","Myth"];
+const SOURCE_TYPE_OPTIONS = ["", "Raid", "Dungeon", "Other"];
+const CURRENT_SEASON_DUNGEONS = ["Algeth'ar Academy", "Pit of Saron", "Seat of the Triumvirate", "Nexus Point Xenas", "Windrunner Spire", "Skyreach", "Magister's Terrace", "Maisara Caverns"];
+const CURRENT_RAID_BOSSES = ["Lightblinded Vanguard", "War Chaplain Senn", "Midnight Falls", "Belo'ren", "Vaelgor & Ezzorak", "Imperator Averzian", "Chimaerus", "Vorasius", "Fallen-King Salhadaar", "Crown of the Cosmos"];
+const OTHER_SOURCE_OPTIONS = ["Delves", "World Quests", "Renown", "Prey", "Crafted", "PvP", "Tier Set — Raid | Catalyst | Vault"];
+function inferSourceType(src) {
+  const s = (src || '').toLowerCase();
+  if (s.includes('raid') || CURRENT_RAID_BOSSES.some(v => s.includes(v.toLowerCase()))) return 'Raid';
+  if (s.includes('dungeon') || CURRENT_SEASON_DUNGEONS.some(v => s.includes(v.toLowerCase()))) return 'Dungeon';
+  if (OTHER_SOURCE_OPTIONS.some(v => s.includes(v.toLowerCase()))) return 'Other';
+  return '';
+}
+function inferSourceDetail(src, type) {
+  const s = (src || '').toLowerCase();
+  const pool = type === 'Raid' ? CURRENT_RAID_BOSSES : type === 'Dungeon' ? CURRENT_SEASON_DUNGEONS : OTHER_SOURCE_OPTIONS;
+  return pool.find(v => s.includes(v.toLowerCase())) || '';
+}
+function buildSourceLabel(type, detail) {
+  if (!type && !detail) return '';
+  if (type === 'Raid' && detail) return `${detail} (Raid)`;
+  if (type === 'Dungeon' && detail) return `Dungeon • ${detail}`;
+  return detail || type || '';
+}
 
 function Slot({ label, id, data, onChange, targetTrack, bisMode }) {
   const d = data[id] || {};
@@ -1428,20 +1450,31 @@ function Slot({ label, id, data, onChange, targetTrack, bisMode }) {
             </div>
             <div className="rank-inputs">
               <input className="sf-name" placeholder={`Rank ${idx+1} item name...`} value={r.name || ""} onChange={e => upRank(idx, "name", e.target.value)} style={{ marginBottom:".2rem" }} />
-              <>
-                <input className="sf-src" list={`src-list-${id}-${idx}`} placeholder="Source... (Raid, Dungeon, Delves, Crafted, PvP)" value={r.src || ""} onChange={e => upRank(idx, "src", e.target.value)} />
+              <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:".35rem", marginBottom:".25rem" }}>
+                <select className="sf-src" value={r.sourceType || inferSourceType(r.src)} onChange={e => {
+                  const t = e.target.value;
+                  const detail = inferSourceDetail(r.src, t);
+                  upRank(idx, "sourceType", t);
+                  upRank(idx, "src", buildSourceLabel(t, detail));
+                }}>
+                  {SOURCE_TYPE_OPTIONS.map(opt => <option key={opt} value={opt}>{opt || 'Source Type'}</option>)}
+                </select>
+                <select className="sf-src" value={r.sourceDetail || inferSourceDetail(r.src, r.sourceType || inferSourceType(r.src))} onChange={e => {
+                  const detail = e.target.value;
+                  const t = r.sourceType || inferSourceType(r.src);
+                  upRank(idx, "sourceDetail", detail);
+                  upRank(idx, "src", buildSourceLabel(t, detail));
+                }}>
+                  <option value="">Specific source</option>
+                  {((r.sourceType || inferSourceType(r.src)) === 'Raid' ? CURRENT_RAID_BOSSES : (r.sourceType || inferSourceType(r.src)) === 'Dungeon' ? CURRENT_SEASON_DUNGEONS : OTHER_SOURCE_OPTIONS).map(opt => <option key={opt} value={opt}>{opt}</option>)}
+                </select>
+                <input className="sf-src" style={{ gridColumn:"1 / span 2" }} list={`src-list-${id}-${idx}`} placeholder="Source... (editable)" value={r.src || ""} onChange={e => upRank(idx, "src", e.target.value)} />
                 <datalist id={`src-list-${id}-${idx}`}>
-                  <option value="Raid" />
-                  <option value="Dungeon" />
-                  <option value="Delves" />
-                  <option value="World Quests" />
-                  <option value="Renown" />
-                  <option value="Prey" />
-                  <option value="Crafted" />
-                  <option value="PvP" />
-                  <option value="Tier Set — Raid | Catalyst | Vault" />
+                  {CURRENT_RAID_BOSSES.map(v => <option key={v} value={`${v} (Raid)`} />)}
+                  {CURRENT_SEASON_DUNGEONS.map(v => <option key={v} value={`Dungeon • ${v}`} />)}
+                  {OTHER_SOURCE_OPTIONS.map(v => <option key={v} value={v} />)}
                 </datalist>
-              </>
+              </div>
             </div>
           </div>
         ))}
@@ -1591,6 +1624,7 @@ function Tracker({ cls, spec, charName, initialMode = "", onBack }) {
       try {
         localStorage.setItem(modeStorageKey(bisMode), JSON.stringify(data || {}));
         localStorage.setItem(`bismode-${storageKey}`, bisMode);
+        if (hasMeaningfulTrackerData(data || {})) registerCharacterSave(cls.id, spec.id, charName || "default", bisMode);
         setSaveState('saved');
       } catch {
         setSaveState('error');
@@ -2045,10 +2079,11 @@ function Tracker({ cls, spec, charName, initialMode = "", onBack }) {
       )}
 
       <div className="tactions">
-        <button className="tbtn dan" onClick={() => { if (window.confirm("Clear all entries for this mode?")) { setData({}); try { localStorage.removeItem(modeStorageKey(bisMode)); setSaveState('saved'); } catch {} } }}>Clear All</button>
+        <button className="tbtn dan" onClick={() => { if (window.confirm("Clear all entries for this mode?")) { setData({}); try { localStorage.removeItem(modeStorageKey(bisMode)); unregisterCharacterSave(cls.id, spec.id, charName || "default", bisMode); setSaveState('saved'); } catch {} } }}>Clear All</button>
         <button className="tbtn pri" onClick={() => {
           if (writeModeData(bisMode, data || {})) {
             try { localStorage.setItem(`bismode-${storageKey}`, bisMode); } catch {}
+            if (hasMeaningfulTrackerData(data || {})) registerCharacterSave(cls.id, spec.id, charName || "default", bisMode);
             alert(`${modeLabel(bisMode)} saved.`);
           } else {
             alert("Could not save this list in your browser.");
@@ -2249,6 +2284,43 @@ function modeNice(m) {
   return ({ community:"Community", custom:"Custom", simc:"SimC", scan:"Scan" }[m] || m);
 }
 
+const SAVE_REGISTRY_KEY = "wbt-save-registry-v3";
+function readSaveRegistry() {
+  try {
+    const raw = localStorage.getItem(SAVE_REGISTRY_KEY);
+    return raw ? JSON.parse(raw) || {} : {};
+  } catch {
+    return {};
+  }
+}
+function writeSaveRegistry(reg) {
+  try {
+    localStorage.setItem(SAVE_REGISTRY_KEY, JSON.stringify(reg || {}));
+    return true;
+  } catch {
+    return false;
+  }
+}
+function registerCharacterSave(clsId, specId, charBase, mode) {
+  const base = (charBase || "default").trim() || "default";
+  const reg = readSaveRegistry();
+  if (!reg[base]) reg[base] = { name: base, specs: {} };
+  const specKey = `${clsId}||${specId}`;
+  if (!reg[base].specs[specKey]) reg[base].specs[specKey] = { clsId, specId, modes: {} };
+  reg[base].specs[specKey].modes[mode] = true;
+  writeSaveRegistry(reg);
+}
+function unregisterCharacterSave(clsId, specId, charBase, mode) {
+  const base = (charBase || "default").trim() || "default";
+  const reg = readSaveRegistry();
+  const specKey = `${clsId}||${specId}`;
+  if (!reg[base]?.specs?.[specKey]) return;
+  delete reg[base].specs[specKey].modes[mode];
+  if (!Object.keys(reg[base].specs[specKey].modes || {}).length) delete reg[base].specs[specKey];
+  if (!Object.keys(reg[base].specs || {}).length) delete reg[base];
+  writeSaveRegistry(reg);
+}
+
 function hasMeaningfulTrackerData(data) {
   if (!data || typeof data !== "object") return false;
   return Object.values(data).some(d => {
@@ -2277,52 +2349,75 @@ function getTrackerCounts(data) {
 }
 function getSavedCharacters() {
   const bestByKey = new Map();
-  try {
-    const baseKeys = [];
-    for (let i = 0; i < localStorage.length; i++) {
-      const key = localStorage.key(i);
-      if (!key || !key.startsWith("bis-")) continue;
-      if (/(?:-community|-custom|-simc|-scan)$/.test(key)) continue;
-      baseKeys.push(key);
-    }
-    baseKeys.forEach((baseKey) => {
-      const cls = CLASSES.reduce((best, c) => {
-        if (!baseKey.includes(c.id)) return best;
-        return (!best || c.id.length > best.id.length) ? c : best;
-      }, null);
-      if (!cls) return;
-      const prefix = "bis-" + cls.id + "-";
-      if (!baseKey.startsWith(prefix)) return;
-      const rest = baseKey.slice(prefix.length);
-      const spec = cls.specs.reduce((best, s) => {
-        if (!rest.startsWith(s.id)) return best;
-        return (!best || s.id.length > best.id.length) ? s : best;
-      }, null);
-      if (!spec) return;
-      const rawCharName = rest.slice(spec.id.length + 1) || "default";
-      const { base } = splitSaveLabel(rawCharName);
 
-      SAVE_MODE_ORDER.forEach((mode) => {
-        const modeKey = `${baseKey}-${mode}`;
-        const effectiveKey = mode === "community" && !localStorage.getItem(modeKey) ? baseKey : modeKey;
-        const raw = localStorage.getItem(effectiveKey);
-        if (!raw) return;
-        let data;
-        try { data = JSON.parse(raw); } catch { return; }
-        if (!hasMeaningfulTrackerData(data)) return;
-        const { slotCount, acquired } = getTrackerCounts(data);
-        const dedupeKey = `${cls.id}||${spec.id}||${base}||${mode}`;
-        const candidate = { key: effectiveKey, baseKey, cls, spec, charName: base, slotCount, acquired, mode, rawCharName: base };
-        const existing = bestByKey.get(dedupeKey);
-        if (!existing || candidate.slotCount > existing.slotCount || candidate.acquired > existing.acquired) {
-          bestByKey.set(dedupeKey, candidate);
+  const collect = (cls, spec, base, mode, key) => {
+    const raw = localStorage.getItem(key);
+    if (!raw) return;
+    let data;
+    try { data = JSON.parse(raw); } catch { return; }
+    if (!hasMeaningfulTrackerData(data)) return;
+    const { slotCount, acquired } = getTrackerCounts(data);
+    const dedupeKey = `${base}||${cls.id}||${spec.id}||${mode}`;
+    const candidate = { key, cls, spec, charName: base, slotCount, acquired, mode };
+    const existing = bestByKey.get(dedupeKey);
+    if (!existing || candidate.slotCount > existing.slotCount || candidate.acquired > existing.acquired) {
+      bestByKey.set(dedupeKey, candidate);
+    }
+  };
+
+  const parseAnyBisKey = (key) => {
+    if (!key || !key.startsWith("bis-")) return null;
+    for (const cls of CLASSES) {
+      const clsPrefix = `bis-${cls.id}-`;
+      if (!key.startsWith(clsPrefix)) continue;
+      const rest = key.slice(clsPrefix.length);
+      for (const spec of [...cls.specs].sort((a,b)=>b.id.length-a.id.length)) {
+        const specPrefix = `${spec.id}-`;
+        if (!rest.startsWith(specPrefix)) continue;
+        let tail = rest.slice(specPrefix.length);
+        let mode = "community";
+        const mm = tail.match(/^(.*?)-(community|custom|simc|scan)$/i);
+        if (mm) {
+          tail = mm[1];
+          mode = mm[2].toLowerCase();
         }
+        const base = splitSaveLabel(tail || "default").base || "default";
+        return { cls, spec, base, mode, key };
+      }
+    }
+    return null;
+  };
+
+  try {
+    const registry = readSaveRegistry();
+    Object.entries(registry || {}).forEach(([base, entry]) => {
+      Object.values(entry?.specs || {}).forEach((specEntry) => {
+        const cls = CLASSES.find(c => c.id === specEntry.clsId);
+        const spec = cls?.specs?.find(s => s.id === specEntry.specId);
+        if (!cls || !spec) return;
+        SAVE_MODE_ORDER.forEach((mode) => {
+          if (!specEntry?.modes?.[mode]) return;
+          const key = `bis-${cls.id}-${spec.id}-${base}-${mode}`;
+          collect(cls, spec, base, mode, key);
+        });
       });
     });
   } catch {}
-  return Array.from(bestByKey.values()).sort((a, b) => b.acquired - a.acquired || a.charName.localeCompare(b.charName));
+
+  try {
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      const parsed = parseAnyBisKey(key);
+      if (!parsed) continue;
+      collect(parsed.cls, parsed.spec, parsed.base, parsed.mode, parsed.key);
+    }
+  } catch {}
+
+  return Array.from(bestByKey.values()).sort((a, b) => a.charName.localeCompare(b.charName) || a.cls.name.localeCompare(b.cls.name) || a.spec.name.localeCompare(b.spec.name));
 }
+
 function normalizeSrc(src) {
+
   if (!src) return "Unknown";
   const s = src.trim();
   if (s === "Tier Set" || s === "Raid | Catalyst | Vault" || s === "Catalyst|Raid|Vault" ||
@@ -2735,6 +2830,7 @@ function AddonImportBox({ onCharsLoaded }) {
       });
       try {
         localStorage.setItem(storageKey, JSON.stringify(merged));
+        registerCharacterSave(clsId, specId, charLabel, mode || 'scan');
         const ck = `characters-${clsId}-${specId}`;
         const chars = JSON.parse(localStorage.getItem(ck) || "[]");
         if (!chars.includes(charLabel)) {
@@ -2857,66 +2953,61 @@ function Home({ onSelectClass, onLoadCharacter }) {
       {savedChars.length > 0 && (() => {
         const groups = {};
         savedChars.forEach(entry => {
-          const { base, mode } = splitSaveLabel(entry.charName);
-          const groupKey = `${base}||${entry.cls.id}`;
-          if (!groups[groupKey]) groups[groupKey] = { base, cls: entry.cls, saves: {} };
-          groups[groupKey].saves[mode] = entry;
+          const base = splitSaveLabel(entry.charName).base;
+          if (!groups[base]) groups[base] = { base, specs: {} };
+          const specKey = `${entry.cls.id}||${entry.spec.id}`;
+          if (!groups[base].specs[specKey]) groups[base].specs[specKey] = { cls: entry.cls, spec: entry.spec, saves: {} };
+          groups[base].specs[specKey].saves[entry.mode] = entry;
         });
         return (
           <div style={{ marginBottom:"1.5rem" }}>
             <div className="sh">Your Characters</div>
-            <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(300px,1fr))", gap:".75rem" }}>
-              {Object.values(groups).map(({ base, cls, saves }) => {
-                const saveOrder = ["community","custom","simc","scan"].filter(k => saves[k]);
-                const defaultMode = saveOrder.includes("community") ? "community" : saveOrder[0];
-                const activeMode = cardMode[`${base}||${cls.id}`] || defaultMode;
-                const active = saves[activeMode] || saves[defaultMode];
-                const totalAcq = active?.acquired || 0;
-                const totalSlots = active?.slotCount || 0;
-                const pct = totalSlots ? Math.round(totalAcq / totalSlots * 100) : 0;
-                return (
-                  <div key={`${base}-${cls.id}`} style={{ background:"var(--panel)", border:`1px solid ${cls.color}44`, padding:".85rem 1rem", position:"relative" }}>
-                    <div style={{ position:"absolute", top:0, left:0, right:0, height:"2px", background:cls.color }} />
-                    <div style={{ fontFamily:"Cinzel,serif", fontSize:".88rem", color:cls.color, fontWeight:600, marginBottom:".2rem", paddingRight:"1.5rem" }}>{base === "default" ? cls.name : base}</div>
-                    <div style={{ display:"flex", alignItems:"center", gap:".5rem", flexWrap:"wrap", marginBottom:".45rem" }}>
-                      <div style={{ fontSize:".72rem", color:"var(--parch-dk)" }}>{cls.name}</div>
-                      <select value={activeMode} onChange={e => setCardMode(prev => ({ ...prev, [`${base}||${cls.id}`]: e.target.value }))} style={{ marginLeft:"auto", background:"var(--bg2)", border:"1px solid var(--bdr2)", color:"var(--parch)", padding:".2rem .45rem", fontFamily:"Cinzel,serif", fontSize:".68rem" }}>
-                        {saveOrder.map(mode => <option key={mode} value={mode}>{modeNice(mode)}</option>)}
-                      </select>
-                      <button onClick={() => {
-                        const target = saves[activeMode];
-                        if (!target) return;
-                        if (!window.confirm(`Delete ${modeNice(activeMode)} save for ${base}?`)) return;
-                        localStorage.removeItem(target.key);
-                        try {
-                          const ck = `characters-${cls.id}-${target.spec.id}`;
-                          const existing = JSON.parse(localStorage.getItem(ck) || "[]");
-                          localStorage.setItem(ck, JSON.stringify(existing.filter(n => n !== target.charName)));
-                        } catch {}
-                        handleDelete();
-                      }} style={{ background:"transparent", border:"none", color:"var(--parch-dk)", cursor:"pointer", fontSize:"1rem", lineHeight:1, padding:".1rem .25rem" }} title="Delete active save">×</button>
-                    </div>
-                    {active && (
-                      <>
-                        <button onClick={() => onLoadCharacter(cls, active.spec, active.charName, activeMode)} style={{ display:"flex", alignItems:"center", gap:".35rem", background:"var(--bg2)", border:`1px solid ${cls.color}55`, padding:".25rem .55rem", cursor:"pointer", fontSize:".78rem", color:"var(--parch-dk)", fontFamily:"Cinzel,serif", marginBottom:".6rem" }} title={`Open ${modeNice(activeMode)} save`}>
-                          <span>{active.spec.icon}</span>
-                          <span style={{ color:cls.color }}>{active.spec.name}</span>
-                          <span style={{ opacity:.8 }}>{pct}%</span>
-                        </button>
-                        <div style={{ display:"flex", gap:".35rem", flexWrap:"wrap", marginBottom:".55rem" }}>
-                          {saveOrder.map(mode => (
-                            <button key={mode} onClick={() => { setCardMode(prev => ({ ...prev, [`${base}||${cls.id}`]: mode })); onLoadCharacter(cls, saves[mode].spec, saves[mode].charName, mode); }} style={{ background: activeMode === mode ? cls.color : "transparent", color: activeMode === mode ? "#120700" : "var(--parch-dk)", border:`1px solid ${activeMode === mode ? cls.color : "var(--bdr2)"}`, padding:".18rem .42rem", fontFamily:"Cinzel,serif", fontSize:".62rem", cursor:"pointer" }}>{modeNice(mode)}</button>
-                          ))}
+            <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(340px,1fr))", gap:".75rem" }}>
+              {Object.values(groups).map(({ base, specs }) => (
+                <div key={base} style={{ background:"var(--panel)", border:`1px solid var(--bdr2)`, padding:".85rem 1rem" }}>
+                  <div style={{ fontFamily:"Cinzel,serif", fontSize:".92rem", color:"var(--gold-lt)", fontWeight:600, marginBottom:".65rem" }}>{base === "default" ? "Unnamed Character" : base}</div>
+                  <div style={{ display:"grid", gap:".65rem" }}>
+                    {Object.values(specs).sort((a,b) => a.cls.name.localeCompare(b.cls.name) || a.spec.name.localeCompare(b.spec.name)).map(({ cls, spec, saves }) => {
+                      const rowKey = `${base}||${cls.id}||${spec.id}`;
+                      const saveOrder = ["community","custom","simc","scan"].filter(k => saves[k]);
+                      const defaultMode = saveOrder.includes("community") ? "community" : saveOrder[0];
+                      const activeMode = cardMode[rowKey] || defaultMode;
+                      const active = saves[activeMode] || saves[defaultMode];
+                      const totalAcq = active?.acquired || 0;
+                      const totalSlots = active?.slotCount || 0;
+                      const pct = totalSlots ? Math.round(totalAcq / totalSlots * 100) : 0;
+                      return (
+                        <div key={rowKey} style={{ border:`1px solid ${cls.color}44`, padding:".55rem .6rem", background:"rgba(255,255,255,.01)" }}>
+                          <div style={{ display:"flex", alignItems:"center", gap:".5rem", marginBottom:".35rem", flexWrap:"wrap" }}>
+                            <button onClick={() => onLoadCharacter(cls, spec, base, activeMode)} style={{ display:"flex", alignItems:"center", gap:".35rem", background:"var(--bg2)", border:`1px solid ${cls.color}55`, padding:".22rem .5rem", cursor:"pointer", fontSize:".76rem", color:"var(--parch-dk)", fontFamily:"Cinzel,serif" }}>
+                              <span>{spec.icon}</span><span style={{ color:cls.color }}>{spec.name}</span><span style={{ opacity:.85 }}>{pct}%</span>
+                            </button>
+                            <div style={{ fontSize:".68rem", color:"var(--parch-dk)" }}>{cls.name}</div>
+                            <select value={activeMode} onChange={e => setCardMode(prev => ({ ...prev, [rowKey]: e.target.value }))} style={{ marginLeft:"auto", background:"var(--bg2)", border:"1px solid var(--bdr2)", color:"var(--parch)", padding:".18rem .45rem", fontFamily:"Cinzel,serif", fontSize:".66rem" }}>
+                              {saveOrder.map(mode => <option key={mode} value={mode}>{modeNice(mode)}</option>)}
+                            </select>
+                            <button onClick={() => {
+                              const target = saves[activeMode];
+                              if (!target) return;
+                              if (!window.confirm(`Delete ${modeNice(activeMode)} save for ${base} ${spec.name}?`)) return;
+                              localStorage.removeItem(target.key);
+                              unregisterCharacterSave(cls.id, spec.id, base, activeMode);
+                              handleDelete();
+                            }} style={{ background:"transparent", border:"none", color:"var(--parch-dk)", cursor:"pointer", fontSize:"1rem", lineHeight:1, padding:".1rem .25rem" }} title="Delete active save">×</button>
+                          </div>
+                          <div style={{ display:"flex", gap:".35rem", flexWrap:"wrap", marginBottom:".45rem" }}>
+                            {saveOrder.map(mode => (
+                              <button key={mode} onClick={() => { setCardMode(prev => ({ ...prev, [rowKey]: mode })); onLoadCharacter(cls, spec, base, mode); }} style={{ background: activeMode === mode ? cls.color : "transparent", color: activeMode === mode ? "#120700" : "var(--parch-dk)", border:`1px solid ${activeMode === mode ? cls.color : "var(--bdr2)"}`, padding:".16rem .42rem", fontFamily:"Cinzel,serif", fontSize:".62rem", cursor:"pointer" }}>{modeNice(mode)}</button>
+                            ))}
+                          </div>
+                          <div style={{ background:"var(--bdr)", height:"3px", position:"relative" }}><div style={{ position:"absolute", left:0, top:0, height:"100%", width:`${pct}%`, background:cls.color }} /></div>
+                          <div style={{ fontSize:".7rem", color:"var(--parch-dk)", marginTop:".25rem" }}>{totalAcq}/{totalSlots} total · {pct}%</div>
                         </div>
-                        <div style={{ background:"var(--bdr)", height:"3px", position:"relative" }}>
-                          <div style={{ position:"absolute", left:0, top:0, height:"100%", width:`${pct}%`, background:cls.color, transition:"width .4s" }} />
-                        </div>
-                        <div style={{ fontSize:".7rem", color:"var(--parch-dk)", marginTop:".3rem" }}>{totalAcq}/{totalSlots} total · {pct}%</div>
-                      </>
-                    )}
+                      );
+                    })}
                   </div>
-                );
-              })}
+                </div>
+              ))}
             </div>
           </div>
         );
