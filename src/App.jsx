@@ -1640,7 +1640,10 @@ function Tracker({ cls, spec, charName, onBack }) {
         parts.push(slotNum + ":" + n + ":" + s + ":" + acquired + ":" + trackCode + rankBlob);
       }
     });
-    if (!parts.length) return null;
+    if (!parts.length) {
+      const hasRankedDraft = bisMode === "custom" && allSlotIds.some(id => (data[id]?.ranks || []).some(r => (r?.name || "").trim().length > 0));
+      if (!hasRankedDraft) return null;
+    }
     return `WBISMODE=${bisMode};` + parts.join("|");
   };
 
@@ -2502,6 +2505,42 @@ function GroupPlanner() {
 
 
 function WeeklyResetPanel({ compact = false }) {
+  const [resetRegion, setResetRegion] = useState("NA");
+  const getNextReset = useCallback((region) => {
+    const now = new Date();
+    const next = new Date(now);
+    if (region === "NA") {
+      next.setUTCHours(15, 0, 0, 0); // Tuesday 8am Pacific approx standard reference
+      const day = next.getUTCDay();
+      let add = (2 - day + 7) % 7;
+      if (add === 0 && now >= next) add = 7;
+      next.setUTCDate(next.getUTCDate() + add);
+    } else {
+      next.setUTCHours(7, 0, 0, 0); // Wednesday 8am CET approx standard reference
+      const day = next.getUTCDay();
+      let add = (3 - day + 7) % 7;
+      if (add === 0 && now >= next) add = 7;
+      next.setUTCDate(next.getUTCDate() + add);
+    }
+    return next;
+  }, []);
+  const formatRemaining = useCallback((target) => {
+    const ms = Math.max(0, target - new Date());
+    const total = Math.floor(ms / 1000);
+    const d = Math.floor(total / 86400);
+    const h = Math.floor((total % 86400) / 3600);
+    const m = Math.floor((total % 3600) / 60);
+    const s = total % 60;
+    return `${d}d ${h}h ${m}m ${s}s`;
+  }, []);
+  const [timeLeft, setTimeLeft] = useState(() => formatRemaining(getNextReset("NA")));
+  useEffect(() => {
+    const tick = () => setTimeLeft(formatRemaining(getNextReset(resetRegion)));
+    tick();
+    const id = setInterval(tick, 1000);
+    return () => clearInterval(id);
+  }, [resetRegion, getNextReset, formatRemaining]);
+
   return (
     <div id="weekly-reset" style={{ background:"var(--panel)", border:"1px solid var(--bdr2)", padding: compact ? "1rem" : "1.25rem", borderRadius:0, marginBottom: compact ? 0 : "1.5rem" }}>
       <div style={{ display:"flex", alignItems:"center", gap:".6rem", marginBottom:".75rem", flexWrap:"wrap" }}>
