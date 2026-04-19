@@ -1428,7 +1428,20 @@ function Slot({ label, id, data, onChange, targetTrack, bisMode }) {
             </div>
             <div className="rank-inputs">
               <input className="sf-name" placeholder={`Rank ${idx+1} item name...`} value={r.name || ""} onChange={e => upRank(idx, "name", e.target.value)} style={{ marginBottom:".2rem" }} />
-              <input className="sf-src" placeholder="Source..." value={r.src || ""} onChange={e => upRank(idx, "src", e.target.value)} />
+              <>
+                <input className="sf-src" list={`src-list-${id}-${idx}`} placeholder="Source... (Raid, Dungeon, Delves, Crafted, PvP)" value={r.src || ""} onChange={e => upRank(idx, "src", e.target.value)} />
+                <datalist id={`src-list-${id}-${idx}`}>
+                  <option value="Raid" />
+                  <option value="Dungeon" />
+                  <option value="Delves" />
+                  <option value="World Quests" />
+                  <option value="Renown" />
+                  <option value="Prey" />
+                  <option value="Crafted" />
+                  <option value="PvP" />
+                  <option value="Tier Set — Raid | Catalyst | Vault" />
+                </datalist>
+              </>
             </div>
           </div>
         ))}
@@ -1476,7 +1489,7 @@ function Slot({ label, id, data, onChange, targetTrack, bisMode }) {
   );
 }
 
-function Tracker({ cls, spec, charName, onBack }) {
+function Tracker({ cls, spec, charName, initialMode = "", onBack }) {
   const storageKey = `bis-${cls.id}-${spec.id}-${charName || "default"}`;
   const modeStorageKey = (mode) => `${storageKey}-${mode}`;
   const modeLabel = (mode) => mode === "custom" ? "Custom Builder" : mode === "community" ? "Community BiS" : "Character Scan";
@@ -1525,7 +1538,7 @@ function Tracker({ cls, spec, charName, onBack }) {
   };
   const softBis = d => d?.done && d?.track && trackRank(d.track) < trackRank(targetTrack);
   const [bisMode, setBisMode] = useState(() => {
-    try { return localStorage.getItem(`bismode-${storageKey}`) || "community"; } catch { return "community"; }
+    try { return initialMode || localStorage.getItem(`bismode-${storageKey}`) || "community"; } catch { return initialMode || "community"; }
   });
   const switchBisMode = (m) => {
     try {
@@ -1543,6 +1556,15 @@ function Tracker({ cls, spec, charName, onBack }) {
   const [vaultMatches, setVaultMatches] = useState([]);
   const [saveState, setSaveState] = useState('saved');
   const sugRef = useRef(null);
+  useEffect(() => {
+    if (!initialMode) return;
+    const next = readModeData(initialMode);
+    setBisMode(initialMode);
+    setData(next);
+    setWMode(next.mainhand || next.offhand ? "1h" : "2h");
+    try { localStorage.setItem(`bismode-${storageKey}`, initialMode); } catch {}
+  }, [initialMode, storageKey]);
+
 
   const writeModeData = useCallback((mode, next) => {
     try {
@@ -1853,7 +1875,7 @@ function Tracker({ cls, spec, charName, onBack }) {
         <div className="bis-bar" style={{ flexDirection:"column", alignItems:"flex-start", gap:".3rem" }}>
           <span className="bis-txt" style={{ fontFamily:"Cinzel,serif", letterSpacing:".1em" }}>✦ Custom BiS Builder</span>
           <span style={{ fontSize:".8rem", color:"var(--parch-dk)", fontStyle:"italic" }}>
-            Build your own ranked list — up to 3 options per slot. Community, Character Scan, and Custom Builder each save into their own separate browser vault. Tip: click <strong style={{color:"var(--gold-lt)"}}>Load BiS Suggestions → Apply All</strong> first to pre-fill a base list, then override individual slots with your own research. Export sends the active mode only.
+            Build your own ranked list — up to 3 options per slot. Community, Character Scan, and Custom Builder now live under one character card with separate mode saves. Tip: click <strong style={{color:"var(--gold-lt)"}}>Load BiS Suggestions → Apply All</strong> first to pre-fill a base list, then override individual slots with your own research. For custom sources, use clear labels like <strong style={{color:"var(--gold-lt)"}}>Raid</strong>, <strong style={{color:"var(--gold-lt)"}}>Dungeon</strong>, <strong style={{color:"var(--gold-lt)"}}>Delves</strong>, <strong style={{color:"var(--gold-lt)"}}>World Quests</strong>, <strong style={{color:"var(--gold-lt)"}}>Renown</strong>, <strong style={{color:"var(--gold-lt)"}}>Prey</strong>, <strong style={{color:"var(--gold-lt)"}}>Crafted</strong>, or <strong style={{color:"var(--gold-lt)"}}>PvP</strong>. Export sends the active mode only.
           </span>
         </div>
       )}
@@ -2034,7 +2056,7 @@ function Tracker({ cls, spec, charName, onBack }) {
         }}>{bisMode === 'custom' ? 'Save Custom' : bisMode === 'community' ? 'Save Community' : 'Save Scan'}</button>
         <button className="tbtn sec" onClick={() => {
           const code = exportForAddon();
-          if (!code) { alert("Nothing exportable found yet. Load suggestions only previews them. Click Apply All, or enter and save at least one real item before exporting."); return; }
+          if (!code) { alert("Nothing exportable found yet for this mode. Load suggestions only previews them. Click Apply All, or enter and save at least one real item before exporting."); return; }
           window.__wowbisExportCode = code;
           const modal = document.createElement("div");
           modal.style.cssText = "position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.85);z-index:9999;display:flex;align-items:center;justify-content:center;";
@@ -2227,40 +2249,76 @@ function modeNice(m) {
   return ({ community:"Community", custom:"Custom", simc:"SimC", scan:"Scan" }[m] || m);
 }
 
+function hasMeaningfulTrackerData(data) {
+  if (!data || typeof data !== "object") return false;
+  return Object.values(data).some(d => {
+    if (!d || typeof d !== "object") return false;
+    if ((d?.name || "").trim()) return true;
+    if ((d?.src || "").trim()) return true;
+    if (d?.done || d?.track) return true;
+    if (Array.isArray(d?.ranks)) {
+      return d.ranks.some(r => ((r?.name || "").trim() || (r?.src || "").trim() || r?.have));
+    }
+    return false;
+  });
+}
+function getTrackerCounts(data) {
+  if (!data || typeof data !== "object") return { slotCount: 0, acquired: 0 };
+  const values = Object.values(data).filter(d => {
+    if (!d || typeof d !== "object") return false;
+    if ((d?.name || "").trim()) return true;
+    if (Array.isArray(d?.ranks) && d.ranks.some(r => (r?.name || "").trim())) return true;
+    return false;
+  });
+  return {
+    slotCount: values.length,
+    acquired: values.filter(d => d?.done).length,
+  };
+}
 function getSavedCharacters() {
   const bestByKey = new Map();
   try {
+    const baseKeys = [];
     for (let i = 0; i < localStorage.length; i++) {
       const key = localStorage.key(i);
-      if (!key || !key.startsWith("bis-") || key.endsWith("-community") || key.endsWith("-custom") || key.endsWith("-simc") || key.endsWith("-scan")) continue;
-      const raw = localStorage.getItem(key);
-      if (!raw) continue;
-      const data = JSON.parse(raw);
-      const slotCount = Object.keys(data).length;
-      if (!slotCount) continue;
-      const acquired = Object.values(data).filter(d => d?.done).length;
+      if (!key || !key.startsWith("bis-")) continue;
+      if (/(?:-community|-custom|-simc|-scan)$/.test(key)) continue;
+      baseKeys.push(key);
+    }
+    baseKeys.forEach((baseKey) => {
       const cls = CLASSES.reduce((best, c) => {
-        if (!key.includes(c.id)) return best;
+        if (!baseKey.includes(c.id)) return best;
         return (!best || c.id.length > best.id.length) ? c : best;
       }, null);
-      if (!cls) continue;
+      if (!cls) return;
       const prefix = "bis-" + cls.id + "-";
-      if (!key.startsWith(prefix)) continue;
-      const rest = key.slice(prefix.length);
+      if (!baseKey.startsWith(prefix)) return;
+      const rest = baseKey.slice(prefix.length);
       const spec = cls.specs.reduce((best, s) => {
         if (!rest.startsWith(s.id)) return best;
         return (!best || s.id.length > best.id.length) ? s : best;
       }, null);
-      if (!spec) continue;
+      if (!spec) return;
       const rawCharName = rest.slice(spec.id.length + 1) || "default";
-      const { base, mode } = splitSaveLabel(rawCharName);
-      const dedupeKey = `${cls.id}||${spec.id}||${base}||${mode}`;
-      const candidate = { key, cls, spec, charName: base, slotCount, acquired, mode, rawCharName };
-      const existing = bestByKey.get(dedupeKey);
-      if (!existing || candidate.slotCount > existing.slotCount || candidate.acquired > existing.acquired) {
-        bestByKey.set(dedupeKey, candidate);
-      }
-    }
+      const { base } = splitSaveLabel(rawCharName);
+
+      SAVE_MODE_ORDER.forEach((mode) => {
+        const modeKey = `${baseKey}-${mode}`;
+        const effectiveKey = mode === "community" && !localStorage.getItem(modeKey) ? baseKey : modeKey;
+        const raw = localStorage.getItem(effectiveKey);
+        if (!raw) return;
+        let data;
+        try { data = JSON.parse(raw); } catch { return; }
+        if (!hasMeaningfulTrackerData(data)) return;
+        const { slotCount, acquired } = getTrackerCounts(data);
+        const dedupeKey = `${cls.id}||${spec.id}||${base}||${mode}`;
+        const candidate = { key: effectiveKey, baseKey, cls, spec, charName: base, slotCount, acquired, mode, rawCharName: base };
+        const existing = bestByKey.get(dedupeKey);
+        if (!existing || candidate.slotCount > existing.slotCount || candidate.acquired > existing.acquired) {
+          bestByKey.set(dedupeKey, candidate);
+        }
+      });
+    });
   } catch {}
   return Array.from(bestByKey.values()).sort((a, b) => b.acquired - a.acquired || a.charName.localeCompare(b.charName));
 }
@@ -2840,14 +2898,14 @@ function Home({ onSelectClass, onLoadCharacter }) {
                     </div>
                     {active && (
                       <>
-                        <button onClick={() => onLoadCharacter(cls, active.spec, active.charName)} style={{ display:"flex", alignItems:"center", gap:".35rem", background:"var(--bg2)", border:`1px solid ${cls.color}55`, padding:".25rem .55rem", cursor:"pointer", fontSize:".78rem", color:"var(--parch-dk)", fontFamily:"Cinzel,serif", marginBottom:".6rem" }} title={`Open ${modeNice(activeMode)} save`}>
+                        <button onClick={() => onLoadCharacter(cls, active.spec, active.charName, activeMode)} style={{ display:"flex", alignItems:"center", gap:".35rem", background:"var(--bg2)", border:`1px solid ${cls.color}55`, padding:".25rem .55rem", cursor:"pointer", fontSize:".78rem", color:"var(--parch-dk)", fontFamily:"Cinzel,serif", marginBottom:".6rem" }} title={`Open ${modeNice(activeMode)} save`}>
                           <span>{active.spec.icon}</span>
                           <span style={{ color:cls.color }}>{active.spec.name}</span>
                           <span style={{ opacity:.8 }}>{pct}%</span>
                         </button>
                         <div style={{ display:"flex", gap:".35rem", flexWrap:"wrap", marginBottom:".55rem" }}>
                           {saveOrder.map(mode => (
-                            <button key={mode} onClick={() => setCardMode(prev => ({ ...prev, [`${base}||${cls.id}`]: mode }))} style={{ background: activeMode === mode ? cls.color : "transparent", color: activeMode === mode ? "#120700" : "var(--parch-dk)", border:`1px solid ${activeMode === mode ? cls.color : "var(--bdr2)"}`, padding:".18rem .42rem", fontFamily:"Cinzel,serif", fontSize:".62rem", cursor:"pointer" }}>{modeNice(mode)}</button>
+                            <button key={mode} onClick={() => { setCardMode(prev => ({ ...prev, [`${base}||${cls.id}`]: mode })); onLoadCharacter(cls, saves[mode].spec, saves[mode].charName, mode); }} style={{ background: activeMode === mode ? cls.color : "transparent", color: activeMode === mode ? "#120700" : "var(--parch-dk)", border:`1px solid ${activeMode === mode ? cls.color : "var(--bdr2)"}`, padding:".18rem .42rem", fontFamily:"Cinzel,serif", fontSize:".62rem", cursor:"pointer" }}>{modeNice(mode)}</button>
                           ))}
                         </div>
                         <div style={{ background:"var(--bdr)", height:"3px", position:"relative" }}>
@@ -2970,9 +3028,10 @@ export default function App() {
   const [cls,     setCls]     = useState(null);
   const [spec,    setSpec]    = useState(null);
   const [charName, setCharName] = useState("default");
-  const goHome  = () => { setPage("home"); setCls(null); setSpec(null); setCharName("default"); };
+  const [openMode, setOpenMode] = useState("");
+  const goHome  = () => { setPage("home"); setCls(null); setSpec(null); setCharName("default"); setOpenMode(""); };
   const goClass = c  => { setCls(c); setPage("spec"); };
-  const goTrack = (sp, cn) => { const normalized = splitSaveLabel(cn || "default").base || "default"; setSpec(sp); setCharName(normalized); setPage("tracker"); };
+  const goTrack = (sp, cn, mode = "") => { const normalized = splitSaveLabel(cn || "default").base || "default"; setSpec(sp); setCharName(normalized); setOpenMode(mode || ""); setPage("tracker"); };
 
   return (
     <>
@@ -3030,10 +3089,10 @@ export default function App() {
         )}
 
         <main className="main">
-          {page === "home"    && <Home onSelectClass={goClass} onLoadCharacter={(cls, spec, cn) => { setCls(cls); goTrack(spec, cn); }} />}
+          {page === "home"    && <Home onSelectClass={goClass} onLoadCharacter={(cls, spec, cn, mode) => { setCls(cls); goTrack(spec, cn, mode); }} />}
           {page === "spec"    && cls  && <SpecPage cls={cls} onBack={goHome} onGo={goTrack} />}
           {page === "tracker" && cls  && spec && (
-            <Tracker key={`${cls.id}-${spec.id}-${charName}`} cls={cls} spec={spec} charName={charName} onBack={() => setPage("spec")} />
+            <Tracker key={`${cls.id}-${spec.id}-${charName}-${openMode || "default"}`} cls={cls} spec={spec} charName={charName} initialMode={openMode} onBack={() => setPage("spec")} />
           )}
         </main>
 
