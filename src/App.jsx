@@ -1242,6 +1242,17 @@ input::placeholder{color:rgba(240,222,180,.22);font-style:italic}
 
 .ftr{border-top:1px solid var(--bdr);padding:1.25rem 2rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.75rem;font-size:.78rem;color:var(--parch-dk);opacity:.6}
 
+.rank-inputs select,
+.rank-inputs option {
+  background: #120a05;
+  color: var(--gold-lt);
+  border: 1px solid var(--bdr);
+}
+.rank-inputs select:focus {
+  outline: none;
+  box-shadow: 0 0 0 1px rgba(212, 163, 69, 0.35);
+}
+
 .spin{display:inline-block;width:16px;height:16px;border:2px solid rgba(167,139,250,.2);border-top-color:#a78bfa;border-radius:50%;animation:rot .75s linear infinite;vertical-align:middle;margin-right:.4rem}
 @keyframes rot{to{transform:rotate(360deg)}}
 .fade{animation:fadeup .25s ease}
@@ -1270,8 +1281,8 @@ input::placeholder{color:rgba(240,222,180,.22);font-style:italic}
   .slot-lbl { font-size: .6rem !important; color: #222 !important; letter-spacing: .1em; text-transform: uppercase; font-family: Cinzel, serif; padding-left: 2px; display: block; margin-bottom: 2px; }
   .slot-entry, .rank-block { display: flex !important; border: 1.5px solid #000 !important; }
   .slot-fields, .rank-inputs { flex: 1; }
-  .sf-name { font-size: .9rem !important; color: #000 !important; padding: .32rem .45rem; display: block; border-bottom: 1px solid #000 !important; font-weight: 600; }
-  .sf-src { font-size: .74rem !important; color: #111 !important; padding: .24rem .45rem; display: block; font-style: italic; }
+  .sf-name { font-size: .82rem !important; color: #000 !important; padding: .32rem .45rem; display: block; border-bottom: 1px solid #000 !important; font-weight: 700; white-space: normal !important; overflow: visible !important; text-overflow: clip !important; line-height: 1.22 !important; min-height: 2.1em; word-break: break-word; }
+  .sf-src { font-size: .76rem !important; color: #000 !important; padding: .24rem .45rem; display: block; font-style: normal !important; white-space: normal !important; overflow: visible !important; text-overflow: clip !important; line-height: 1.2 !important; word-break: break-word; }
   .slot-chk { width: 26px; flex-shrink: 0; border-left: 1px solid #000 !important; display: flex !important; align-items: center; justify-content: center; font-size: 1rem; }
   .slot-chk:not(.done) { color: transparent !important; }
   .slot-chk.done, .slot-chk.soft { color: #000 !important; background: transparent !important; }
@@ -1285,6 +1296,7 @@ input::placeholder{color:rgba(240,222,180,.22);font-style:italic}
   }
   .rank-active, .rank-block.rank-active { border: 2px solid #000 !important; }
   .sf-name, .sf-src, .rank-inputs input { color: #000 !important; font-weight:700 !important; opacity:1 !important; }
+  .rank-inputs select, .rank-inputs datalist { display:none !important; }
   .sf-src { font-style: normal !important; }
   .tbtn.sec { background:#fff !important; color:#000 !important; border:2px solid #000 !important; }
 }
@@ -1383,24 +1395,23 @@ const TRACK_COLOR = { "Veteran":"#1EFF00", "Champion":"#0070DD", "Hero":"#A335EE
 const GLOBAL_TRACK_ORDER = ["Veteran","Champion","Hero","Myth"];
 const SOURCE_TYPE_OPTIONS = ["", "Raid", "Dungeon", "Other"];
 const CURRENT_SEASON_DUNGEONS = ["Algeth'ar Academy", "Pit of Saron", "Seat of the Triumvirate", "Nexus Point Xenas", "Windrunner Spire", "Skyreach", "Magister's Terrace", "Maisara Caverns"];
-const CURRENT_RAID_BOSSES = ["Lightblinded Vanguard", "War Chaplain Senn", "Midnight Falls", "Belo'ren", "Vaelgor & Ezzorak", "Imperator Averzian", "Chimaerus", "Vorasius", "Fallen-King Salhadaar", "Crown of the Cosmos"];
+const CURRENT_SEASON_RAIDS = ["The Voidspire", "The Dreamrift", "March on Quel'Danas"];
 const OTHER_SOURCE_OPTIONS = ["Delves", "World Quests", "Renown", "Prey", "Crafted", "PvP", "Tier Set — Raid | Catalyst | Vault"];
 function inferSourceType(src) {
   const s = (src || '').toLowerCase();
-  if (s.includes('raid') || CURRENT_RAID_BOSSES.some(v => s.includes(v.toLowerCase()))) return 'Raid';
+  if (s.includes('raid') || CURRENT_SEASON_RAIDS.some(v => s.includes(v.toLowerCase()))) return 'Raid';
   if (s.includes('dungeon') || CURRENT_SEASON_DUNGEONS.some(v => s.includes(v.toLowerCase()))) return 'Dungeon';
   if (OTHER_SOURCE_OPTIONS.some(v => s.includes(v.toLowerCase()))) return 'Other';
   return '';
 }
 function inferSourceDetail(src, type) {
   const s = (src || '').toLowerCase();
-  const pool = type === 'Raid' ? CURRENT_RAID_BOSSES : type === 'Dungeon' ? CURRENT_SEASON_DUNGEONS : OTHER_SOURCE_OPTIONS;
+  const pool = type === 'Raid' ? CURRENT_SEASON_RAIDS : type === 'Dungeon' ? CURRENT_SEASON_DUNGEONS : OTHER_SOURCE_OPTIONS;
   return pool.find(v => s.includes(v.toLowerCase())) || '';
 }
 function buildSourceLabel(type, detail) {
   if (!type && !detail) return '';
-  if (type === 'Raid' && detail) return `${detail} (Raid)`;
-  if (type === 'Dungeon' && detail) return `Dungeon • ${detail}`;
+  if ((type === 'Raid' || type === 'Dungeon') && detail) return detail;
   return detail || type || '';
 }
 
@@ -1468,7 +1479,7 @@ function Slot({ label, id, data, onChange, targetTrack, bisMode }) {
                   <option value="">Specific source</option>
                   {((r.sourceType || inferSourceType(r.src)) === 'Raid' ? CURRENT_RAID_BOSSES : (r.sourceType || inferSourceType(r.src)) === 'Dungeon' ? CURRENT_SEASON_DUNGEONS : OTHER_SOURCE_OPTIONS).map(opt => <option key={opt} value={opt}>{opt}</option>)}
                 </select>
-                <input className="sf-src" style={{ gridColumn:"1 / span 2" }} list={`src-list-${id}-${idx}`} placeholder="Source... (editable)" value={r.src || ""} onChange={e => upRank(idx, "src", e.target.value)} />
+                <input className="sf-src" style={{ gridColumn:"1 / span 2" }} list={`src-list-${id}-${idx}`} placeholder="Final source line..." value={r.src || ""} onChange={e => upRank(idx, "src", e.target.value)} />
                 <datalist id={`src-list-${id}-${idx}`}>
                   {CURRENT_RAID_BOSSES.map(v => <option key={v} value={`${v} (Raid)`} />)}
                   {CURRENT_SEASON_DUNGEONS.map(v => <option key={v} value={`Dungeon • ${v}`} />)}
