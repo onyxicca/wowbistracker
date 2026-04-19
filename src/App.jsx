@@ -1102,14 +1102,15 @@ body{font-family:'Crimson Pro',Georgia,serif;font-size:1.05rem;background:var(--
 .app{display:flex;flex-direction:column;min-height:100vh}
 
 .hdr{background:linear-gradient(180deg,#000,var(--bg2));border-bottom:1px solid var(--bdr2);position:sticky;top:0;z-index:100}
-.hdr-in{max-width:1280px;margin:0 auto;padding:.6rem 2rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap}
-.logo{display:flex;align-items:baseline;gap:.6rem;cursor:pointer;border:none;background:none;padding:0}
-.logo-main{font-family:'Cinzel Decorative',serif;font-size:1.25rem;color:var(--gold-lt);text-shadow:0 0 20px rgba(201,146,42,.25)}
+.hdr-in{max-width:1280px;margin:0 auto;padding:.45rem 1.1rem;display:flex;align-items:center;justify-content:space-between;gap:.55rem;flex-wrap:nowrap}
+.logo{display:flex;align-items:center;gap:.42rem;cursor:pointer;border:none;background:none;padding:0;min-width:0;flex:1 1 auto;overflow:hidden}
+.logo-main{font-family:'Cinzel Decorative',serif;font-size:1rem;color:var(--gold-lt);text-shadow:0 0 20px rgba(201,146,42,.25);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .logo-exp{font-family:'Cinzel',serif;font-size:.75rem;letter-spacing:.12em;color:var(--void);text-transform:uppercase}
-.hdr-btns{display:flex;align-items:center;gap:.75rem}
+.logo-icon{width:34px;height:34px;object-fit:contain;flex:0 0 auto}
+.hdr-btns{display:flex;align-items:center;gap:.42rem;flex-shrink:0}
 .btn-site{font-family:'Cinzel',serif;font-size:.75rem;letter-spacing:.08em;padding:.4rem 1.1rem;background:transparent;border:1px solid var(--gold);color:var(--gold-lt);cursor:pointer;transition:all .18s;clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);text-decoration:none;display:inline-block}
 .btn-site:hover{background:var(--gold);color:var(--ink)}
-.btn-addon{font-family:'Cinzel',serif;font-size:.7rem;letter-spacing:.08em;padding:.38rem .9rem;background:rgba(201,146,42,.12);border:1px solid var(--gold);color:var(--gold-lt);text-decoration:none;transition:all .15s;white-space:nowrap;clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);display:inline-block}.btn-addon:hover{background:var(--gold);color:var(--ink)}.btn-sup{font-family:'Cinzel',serif;font-size:.75rem;letter-spacing:.08em;padding:.4rem 1.1rem;background:rgba(155,26,42,.15);border:1px solid var(--crimson);color:#ff8fa0;cursor:pointer;transition:all .18s;clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);text-decoration:none;display:inline-block}
+.btn-addon{font-family:'Cinzel',serif;font-size:.66rem;letter-spacing:.07em;padding:.34rem .72rem;background:rgba(201,146,42,.12);border:1px solid var(--gold);color:var(--gold-lt);text-decoration:none;transition:all .15s;white-space:nowrap;clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);display:inline-block}.btn-addon:hover{background:var(--gold);color:var(--ink)}.btn-sup{font-family:'Cinzel',serif;font-size:.68rem;letter-spacing:.07em;padding:.34rem .82rem;background:rgba(155,26,42,.15);border:1px solid var(--crimson);color:#ff8fa0;cursor:pointer;transition:all .18s;clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);text-decoration:none;display:inline-block}
 .btn-sup:hover{background:var(--crimson);color:#fff}
 
 .hero{text-align:center;padding:3.5rem 2rem 2.5rem;position:relative;overflow:hidden;background:radial-gradient(ellipse 70% 50% at 50% 0%,rgba(110,64,201,.08),transparent 70%)}
@@ -1234,8 +1235,8 @@ input::placeholder{color:rgba(240,222,180,.22);font-style:italic}
 .tbtn{font-family:'Cinzel',serif;font-size:.82rem;letter-spacing:.07em;padding:.55rem 1.4rem;cursor:pointer;transition:all .15s;clip-path:polygon(9px 0%,100% 0%,calc(100% - 9px) 100%,0% 100%);border:1px solid}
 .tbtn.pri{background:var(--gold);border-color:var(--gold);color:var(--ink);font-weight:700}
 .tbtn.pri:hover{background:var(--gold-br)}
-.tbtn.sec{background:transparent;border-color:var(--gold);color:var(--gold-lt)}
-.tbtn.sec:hover{background:rgba(201,146,42,.1)}
+.tbtn.sec{background:#000;border-color:#000;color:var(--gold-lt);font-weight:700}
+.tbtn.sec:hover{background:#16110a;border-color:var(--gold)}
 .tbtn.dan{background:transparent;border-color:var(--crimson);color:#ff8fa0}
 .tbtn.dan:hover{background:rgba(155,26,42,.2)}
 
@@ -1467,13 +1468,16 @@ function Slot({ label, id, data, onChange, targetTrack, bisMode }) {
 function Tracker({ cls, spec, charName, onBack }) {
   const storageKey = `bis-${cls.id}-${spec.id}-${charName || "default"}`;
   const modeStorageKey = (mode) => `${storageKey}-${mode}`;
+  const modeLabel = (mode) => mode === "custom" ? "Custom Builder" : mode === "community" ? "Community BiS" : "Character Scan";
+  const isPlaceholderName = (name) => {
+    const n = (name || "").trim();
+    return !n || /^x+$/i.test(n) || /^unknown$/i.test(n);
+  };
   const readModeData = (mode) => {
     try {
       const modeKey = modeStorageKey(mode);
       const modeRaw = localStorage.getItem(modeKey);
-      if (modeRaw) return JSON.parse(modeRaw) || {};
-      const baseRaw = localStorage.getItem(storageKey);
-      return baseRaw ? JSON.parse(baseRaw) : {};
+      return modeRaw ? (JSON.parse(modeRaw) || {}) : {};
     } catch {
       return {};
     }
@@ -1526,7 +1530,19 @@ function Tracker({ cls, spec, charName, onBack }) {
     try { return localStorage.getItem(`simc-${storageKey}`) || ""; } catch { return ""; }
   });
   const [vaultMatches, setVaultMatches] = useState([]);
+  const [saveState, setSaveState] = useState('saved');
   const sugRef = useRef(null);
+
+  const writeModeData = useCallback((mode, next) => {
+    try {
+      localStorage.setItem(modeStorageKey(mode), JSON.stringify(next || {}));
+      setSaveState('saved');
+      return true;
+    } catch {
+      setSaveState('error');
+      return false;
+    }
+  }, [storageKey]);
 
   const SLOT_LABELS = {
     head:"Head", neck:"Neck", shoulders:"Shoulders", back:"Cloak",
@@ -1537,19 +1553,26 @@ function Tracker({ cls, spec, charName, onBack }) {
   };
 
   useEffect(() => {
-    try {
-      localStorage.setItem(storageKey, JSON.stringify(data));
-      localStorage.setItem(modeStorageKey(bisMode), JSON.stringify(data));
-    } catch {}
+    setSaveState('saving');
+    const t = setTimeout(() => {
+      try {
+        localStorage.setItem(modeStorageKey(bisMode), JSON.stringify(data || {}));
+        localStorage.setItem(`bismode-${storageKey}`, bisMode);
+        setSaveState('saved');
+      } catch {
+        setSaveState('error');
+      }
+    }, 140);
+    return () => clearTimeout(t);
   }, [data, storageKey, bisMode]);
 
   const upSlot = useCallback((id, val) => {
+    setSaveState('saving');
     setData(p => {
       const next = { ...p, [id]: val };
-      try { localStorage.setItem(storageKey, JSON.stringify(next)); } catch {}
       return next;
     });
-  }, [storageKey]);
+  }, [bisMode]);
 
   const can2h = cls.weapons.includes("2H Weapon");
   const can1h = cls.weapons.includes("Main Hand + Off Hand");
@@ -1598,9 +1621,9 @@ function Tracker({ cls, spec, charName, onBack }) {
           rankBlob = "#T" + String(activeIdx + 1) + "#" + ranked.map(r => [r.name, r.src, r.have].join("~")).join("^");
         }
       }
-      if (itemName) {
+      const n = cleanField(itemName);
+      if (n && !(bisMode === 'custom' && isPlaceholderName(n))) {
         const s = cleanField(itemSrc || "Unknown");
-        const n = cleanField(itemName);
         const acquired = d.done ? "1" : "0";
         const trackCode = d.track ? d.track[0].toLowerCase() : "n";
         parts.push(slotNum + ":" + n + ":" + s + ":" + acquired + ":" + trackCode + rankBlob);
@@ -1642,7 +1665,7 @@ function Tracker({ cls, spec, charName, onBack }) {
       nd[mapped] = { name: v.name, src: v.source, done: false };
     });
     setData(nd);
-    try { localStorage.setItem(storageKey, JSON.stringify(nd)); } catch {}
+    writeModeData(bisMode, nd)
     setSugs(null);
   };
 
@@ -1650,7 +1673,6 @@ function Tracker({ cls, spec, charName, onBack }) {
     const mapped = mapKey(k, sugs?.slots || {});
     setData(p => {
       const next = { ...p, [mapped]: { name: v.name, src: v.source, done: false } };
-      try { localStorage.setItem(storageKey, JSON.stringify(next)); } catch {}
       return next;
     });
   };
@@ -1787,6 +1809,13 @@ function Tracker({ cls, spec, charName, onBack }) {
         </button>
       </div>
 
+      <div className="no-print" style={{ display:'flex', alignItems:'center', justifyContent:'space-between', gap:'.75rem', margin:'-.2rem 0 .65rem' }}>
+        <div style={{ fontSize:'.72rem', color:'var(--parch-dk)' }}>Current mode: <strong style={{ color:'var(--gold-lt)' }}>{modeLabel(bisMode)}</strong></div>
+        <div style={{ fontSize:'.7rem', color: saveState === 'error' ? '#ff8fa0' : saveState === 'saving' ? 'var(--gold-lt)' : 'var(--parch-dk)' }}>
+          {saveState === 'error' ? 'Save failed in this browser' : saveState === 'saving' ? 'Saving...' : 'Saved locally'}
+        </div>
+      </div>
+
       {bisMode === "community" && (
         <div className="bis-bar">
           <span className="bis-txt">✦ Suggestions sourced from community guides and current patch data</span>
@@ -1810,7 +1839,7 @@ function Tracker({ cls, spec, charName, onBack }) {
         <div className="bis-bar" style={{ flexDirection:"column", alignItems:"flex-start", gap:".3rem" }}>
           <span className="bis-txt" style={{ fontFamily:"Cinzel,serif", letterSpacing:".1em" }}>✦ Custom BiS Builder</span>
           <span style={{ fontSize:".8rem", color:"var(--parch-dk)", fontStyle:"italic" }}>
-            Build your own ranked list — up to 3 options per slot. Use any source you trust. Tip: click <strong style={{color:"var(--gold-lt)"}}>Load BiS Suggestions → Apply All</strong> first to pre-fill the community list, then override individual slots with your own research. The export includes all slots — your custom choices plus the community fills.
+            Build your own ranked list — up to 3 options per slot. Community, Character Scan, and Custom Builder each save into their own separate browser vault. Tip: click <strong style={{color:"var(--gold-lt)"}}>Load BiS Suggestions → Apply All</strong> first to pre-fill a base list, then override individual slots with your own research. Export sends the active mode only.
           </span>
         </div>
       )}
@@ -1856,7 +1885,7 @@ function Tracker({ cls, spec, charName, onBack }) {
                         matched++;
                       }
                     });
-                    try { localStorage.setItem(storageKey, JSON.stringify(next)); } catch {}
+                    try { localStorage.setItem(modeStorageKey(bisMode), JSON.stringify(next)); } catch {}
                     return next;
                   });
                   const vaultHits = [];
@@ -1980,7 +2009,15 @@ function Tracker({ cls, spec, charName, onBack }) {
       )}
 
       <div className="tactions">
-        <button className="tbtn dan" onClick={() => { if (window.confirm("Clear all entries?")) { setData({}); try { localStorage.removeItem(storageKey); } catch {} } }}>Clear All</button>
+        <button className="tbtn dan" onClick={() => { if (window.confirm("Clear all entries for this mode?")) { setData({}); try { localStorage.removeItem(modeStorageKey(bisMode)); setSaveState('saved'); } catch {} } }}>Clear All</button>
+        <button className="tbtn pri" onClick={() => {
+          if (writeModeData(bisMode, data || {})) {
+            try { localStorage.setItem(`bismode-${storageKey}`, bisMode); } catch {}
+            alert(`${modeLabel(bisMode)} saved.`);
+          } else {
+            alert("Could not save this list in your browser.");
+          }
+        }}>{bisMode === 'custom' ? 'Save Custom' : bisMode === 'community' ? 'Save Community' : 'Save Scan'}</button>
         <button className="tbtn sec" onClick={() => {
           const code = exportForAddon();
           if (!code) { alert("Load your BiS list first before exporting."); return; }
@@ -1989,7 +2026,7 @@ function Tracker({ cls, spec, charName, onBack }) {
           modal.style.cssText = "position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.85);z-index:9999;display:flex;align-items:center;justify-content:center;";
           const inner = document.createElement("div");
           inner.style.cssText = "background:#150f08;border:1px solid #c9922a;padding:1.5rem;max-width:540px;width:90%;font-family:Cinzel,serif;";
-          inner.innerHTML = `<div style="font-size:.75rem;letter-spacing:.15em;color:#c9922a;margin-bottom:.75rem">EXPORT FOR ADDON</div><div style="font-size:.85rem;color:#c8a96a;margin-bottom:.75rem;font-family:Crimson Pro,serif;line-height:1.6;">Copy this code and paste it into the WoW BiS Tracker addon in-game using the Import BiS button.</div>`;
+          inner.innerHTML = `<div style="font-size:.75rem;letter-spacing:.15em;color:#c9922a;margin-bottom:.75rem">EXPORT FOR ADDON</div><div style="font-size:.85rem;color:#c8a96a;margin-bottom:.75rem;font-family:Crimson Pro,serif;line-height:1.6;">Copy this code and paste it into the WoW BiS Tracker addon in-game using the Import BiS button. This export contains only the active mode.</div>`;
           const ta = document.createElement("textarea");
           ta.readOnly = true;
           ta.value = code;
@@ -2030,7 +2067,7 @@ function Tracker({ cls, spec, charName, onBack }) {
           modal.addEventListener("click", e => { if (e.target === modal) modal.remove(); });
           setTimeout(() => ta.select(), 100);
         }}>🎮 Export for Addon</button>
-        <button className="tbtn sec" onClick={() => window.print()}>🖨 Print / PDF</button>
+        <button className="tbtn sec" onClick={() => window.print()} style={{ borderWidth:'2px', boxShadow:'inset 0 0 0 1px rgba(255,255,255,.04)' }}>🖨 Print / PDF</button>
       </div>
 
     </div>
