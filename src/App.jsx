@@ -2034,7 +2034,7 @@ function Tracker({ cls, spec, charName, onBack }) {
         }}>{bisMode === 'custom' ? 'Save Custom' : bisMode === 'community' ? 'Save Community' : 'Save Scan'}</button>
         <button className="tbtn sec" onClick={() => {
           const code = exportForAddon();
-          if (!code) { alert("Apply All, save your custom list, or enter at least one item before exporting."); return; }
+          if (!code) { alert("Nothing exportable found yet. Load suggestions only previews them. Click Apply All, or enter and save at least one real item before exporting."); return; }
           window.__wowbisExportCode = code;
           const modal = document.createElement("div");
           modal.style.cssText = "position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.85);z-index:9999;display:flex;align-items:center;justify-content:center;";
@@ -2104,7 +2104,7 @@ function SpecPage({ cls, onBack, onGo }) {
 
   const handleOpen = () => {
     if (!spec) return;
-    const name = charName.trim() || "default";
+    const name = splitSaveLabel(charName.trim() || "default").base || "default";
     if (name && name !== "default") {
       try {
         const ckey = `characters-${cls.id}-${spec.id}`;
@@ -2216,8 +2216,10 @@ function useResetTimer(region) {
 
 const SAVE_MODE_ORDER = ["community","custom","simc","scan"];
 function splitSaveLabel(charName) {
-  const m = String(charName || "default").match(/^(.*?)(?:-(community|custom|simc|scan))?$/i);
-  const base = (m?.[1] || charName || "default").replace(/[-_]+$/,"");
+  const raw = String(charName || "default").trim() || "default";
+  const m = raw.match(/^(.*?)(?:[-_ ](community|custom|simc|scan))?$/i);
+  let base = (m?.[1] || raw || "default").trim().replace(/[-_ ]+$/, "");
+  base = base.replace(/(?:[-_ ]+(community|custom|simc|scan))+$/i, "").trim() || "default";
   const mode = (m?.[2] || "community").toLowerCase();
   return { base, mode };
 }
@@ -2226,13 +2228,11 @@ function modeNice(m) {
 }
 
 function getSavedCharacters() {
-  const chars = [];
-  const seen = new Set();
+  const bestByKey = new Map();
   try {
     for (let i = 0; i < localStorage.length; i++) {
       const key = localStorage.key(i);
-      if (!key || !key.startsWith("bis-") || seen.has(key)) continue;
-      seen.add(key);
+      if (!key || !key.startsWith("bis-") || key.endsWith("-community") || key.endsWith("-custom") || key.endsWith("-simc") || key.endsWith("-scan")) continue;
       const raw = localStorage.getItem(key);
       if (!raw) continue;
       const data = JSON.parse(raw);
@@ -2252,11 +2252,17 @@ function getSavedCharacters() {
         return (!best || s.id.length > best.id.length) ? s : best;
       }, null);
       if (!spec) continue;
-      const charName = rest.slice(spec.id.length + 1) || "default";
-      chars.push({ key, cls, spec, charName, slotCount, acquired });
+      const rawCharName = rest.slice(spec.id.length + 1) || "default";
+      const { base, mode } = splitSaveLabel(rawCharName);
+      const dedupeKey = `${cls.id}||${spec.id}||${base}||${mode}`;
+      const candidate = { key, cls, spec, charName: base, slotCount, acquired, mode, rawCharName };
+      const existing = bestByKey.get(dedupeKey);
+      if (!existing || candidate.slotCount > existing.slotCount || candidate.acquired > existing.acquired) {
+        bestByKey.set(dedupeKey, candidate);
+      }
     }
   } catch {}
-  return chars.sort((a, b) => b.acquired - a.acquired);
+  return Array.from(bestByKey.values()).sort((a, b) => b.acquired - a.acquired || a.charName.localeCompare(b.charName));
 }
 function normalizeSrc(src) {
   if (!src) return "Unknown";
@@ -2966,7 +2972,7 @@ export default function App() {
   const [charName, setCharName] = useState("default");
   const goHome  = () => { setPage("home"); setCls(null); setSpec(null); setCharName("default"); };
   const goClass = c  => { setCls(c); setPage("spec"); };
-  const goTrack = (sp, cn) => { setSpec(sp); setCharName(cn || "default"); setPage("tracker"); };
+  const goTrack = (sp, cn) => { const normalized = splitSaveLabel(cn || "default").base || "default"; setSpec(sp); setCharName(normalized); setPage("tracker"); };
 
   return (
     <>
