@@ -1017,7 +1017,7 @@ const CLASSES = [
     specs:[
       {id:"arcane",     name:"Arcane", role:"DPS", icon:"spell_holy_magicalsentry"},
       {id:"fire",       name:"Fire",   role:"DPS", icon:"spell_fire_firebolt02"},
-      {id:"frost-mage", name:"Frost",  role:"DPS", icon:"spell_deathknight_frostpresence"},
+      {id:"frost-mage", name:"Frost",  role:"DPS", icon:"spell_frost_frostbolt02"},
     ],
   },
   {
@@ -1057,7 +1057,7 @@ const CLASSES = [
     specs:[
       {id:"assassination", name:"Assassination", role:"DPS", icon:"ability_rogue_deadlybrew"},
       {id:"outlaw",        name:"Outlaw",         role:"DPS", icon:"ability_rogue_waylay"},
-      {id:"subtlety",      name:"Subtlety",       role:"DPS", icon:"ability_stealth"},
+      {id:"subtlety",      name:"Subtlety",       role:"DPS", icon:"ability_rogue_masterofsubtlety"},
     ],
   },
   {
@@ -1066,7 +1066,7 @@ const CLASSES = [
     weapons:["2H Weapon","Main Hand + Off Hand"],
     specs:[
       {id:"elemental",        name:"Elemental",   role:"DPS", icon:"spell_nature_lightning"},
-      {id:"enhancement",      name:"Enhancement", role:"DPS",  icon:"spell_shaman_improvedstormstrike"},
+      {id:"enhancement",      name:"Enhancement", role:"DPS",  icon:"spell_nature_lightning"},
       {id:"restoration-sham", name:"Restoration", role:"Healer",     icon:"spell_nature_magicimmunity"},
     ],
   },
@@ -1077,7 +1077,7 @@ const CLASSES = [
     specs:[
       {id:"affliction",  name:"Affliction",  role:"DPS", icon:"spell_shadow_deathcoil"},
       {id:"demonology",  name:"Demonology",  role:"DPS", icon:"spell_shadow_metamorphosis"},
-      {id:"destruction", name:"Destruction", role:"DPS", icon:"spell_shadow_rainoffire"},
+      {id:"destruction", name:"Destruction", role:"DPS", icon:"spell_shadow_scourgebuild"},
     ],
   },
   {
@@ -1087,7 +1087,7 @@ const CLASSES = [
     specs:[
       {id:"arms",           name:"Arms",       role:"DPS", icon:"ability_warrior_savageblow"},
       {id:"fury",           name:"Fury",       role:"DPS", icon:"ability_warrior_innerrage"},
-      {id:"protection-war", name:"Protection", role:"Tank",      icon:"ability_warrior_defensivestance"},
+      {id:"protection-war", name:"Protection", role:"Tank",      icon:"inv_shield_06"},
     ],
   },
 ];
@@ -3193,7 +3193,7 @@ export default function App() {
                   { icon:"👥", line1:"Group", line2:"planning", sub:"Share farm lists · See who needs what", scrollId:"group-planner" },
                   { icon:"✏️", line1:"Build your", line2:"own list", sub:"Up to 3 options per slot", scrollId:"select-class" },
                   { icon:"🎮", line1:"Track", line2:"in-game", sub:"Free addon · Mini overlay", scrollId:"addon-sync" },
-                  { icon:"🗓", line1:"Weekly reset", line2:"& Great Vault", sub:"Reset timer · Vault highlight", scrollId:"weekly-reset" },
+                  { icon:"🗓", line1:"Weekly reset", line2:"& Vault", sub:"Reset timer · Vault highlight", scrollId:"weekly-reset" },
                 ].map(({ icon, line1, line2, sub, scrollId, href }) => (
                   <div key={line1+line2}
                     onClick={() => {
