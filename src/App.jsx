@@ -997,7 +997,7 @@ const CLASSES = [
     specs:[
       {id:"devastation",  name:"Devastation",  role:"DPS", icon:"classicon_evoker_devastation"},
       {id:"preservation", name:"Preservation", role:"Healer",      icon:"classicon_evoker_preservation"},
-      {id:"augmentation", name:"Augmentation", role:"DPS", icon:"classicon_evoker_augmentation"},
+      {id:"augmentation", name:"Augmentation", role:"DPS", icon:"spell_holy_holyguidance"},
     ],
   },
   {
@@ -1035,7 +1035,7 @@ const CLASSES = [
     roles:["Tank","DPS","Healer"], armor:"Plate",
     weapons:["2H Weapon","Main Hand + Off Hand"],
     specs:[
-      {id:"holy-pala",       name:"Holy",        role:"Healer",    icon:"classicon_evoker_augmentation"},
+      {id:"holy-pala",       name:"Holy",        role:"Healer",    icon:"spell_holy_holyguidance"},
       {id:"protection-pala", name:"Protection",  role:"Tank",      icon:"ability_paladin_shieldofthetemplar"},
       {id:"retribution",     name:"Retribution", role:"DPS", icon:"spell_holy_auraoflight"},
     ],
@@ -1057,7 +1057,7 @@ const CLASSES = [
     specs:[
       {id:"assassination", name:"Assassination", role:"DPS", icon:"ability_rogue_deadlybrew"},
       {id:"outlaw",        name:"Outlaw",         role:"DPS", icon:"ability_rogue_waylay"},
-      {id:"subtlety",      name:"Subtlety",       role:"DPS", icon:"ability_rogue_masterofsubtlety"},
+      {id:"subtlety",      name:"Subtlety",       role:"DPS", icon:"ability_stealth"},
     ],
   },
   {
@@ -1065,8 +1065,8 @@ const CLASSES = [
     roles:["DPS","Healer"], armor:"Mail",
     weapons:["2H Weapon","Main Hand + Off Hand"],
     specs:[
-      {id:"elemental",        name:"Elemental",   role:"DPS", icon:"spell_nature_lightning"},
-      {id:"enhancement",      name:"Enhancement", role:"DPS",  icon:"spell_nature_lightning"},
+      {id:"elemental",        name:"Elemental",   role:"DPS", icon:"spell_shaman_improvedstormstrike"},
+      {id:"enhancement",      name:"Enhancement", role:"DPS",  icon:"spell_shaman_improvedstormstrike"},
       {id:"restoration-sham", name:"Restoration", role:"Healer",     icon:"spell_nature_magicimmunity"},
     ],
   },
@@ -1077,7 +1077,7 @@ const CLASSES = [
     specs:[
       {id:"affliction",  name:"Affliction",  role:"DPS", icon:"spell_shadow_deathcoil"},
       {id:"demonology",  name:"Demonology",  role:"DPS", icon:"spell_shadow_metamorphosis"},
-      {id:"destruction", name:"Destruction", role:"DPS", icon:"spell_shadow_scourgebuild"},
+      {id:"destruction", name:"Destruction", role:"DPS", icon:"spell_shadow_rainoffire"},
     ],
   },
   {
