@@ -1057,7 +1057,7 @@ const CLASSES = [
     specs:[
       {id:"assassination", name:"Assassination", role:"DPS", icon:"ability_rogue_deadlybrew"},
       {id:"outlaw",        name:"Outlaw",         role:"DPS", icon:"ability_rogue_waylay"},
-      {id:"subtlety",      name:"Subtlety",       role:"DPS", icon:"spell_shadow_shadowwordpain"},
+      {id:"subtlety",      name:"Subtlety",       role:"DPS", icon:"ability_stealth"},
     ],
   },
   {
@@ -1066,7 +1066,7 @@ const CLASSES = [
     weapons:["2H Weapon","Main Hand + Off Hand"],
     specs:[
       {id:"elemental",        name:"Elemental",   role:"DPS", icon:"spell_nature_lightning"},
-      {id:"enhancement",      name:"Enhancement", role:"DPS",  icon:"spell_monk_mistweaver_spec"},
+      {id:"enhancement",      name:"Enhancement", role:"DPS",  icon:"spell_shaman_improvedstormstrike"},
       {id:"restoration-sham", name:"Restoration", role:"Healer",     icon:"spell_nature_magicimmunity"},
     ],
   },
@@ -1077,7 +1077,7 @@ const CLASSES = [
     specs:[
       {id:"affliction",  name:"Affliction",  role:"DPS", icon:"spell_shadow_deathcoil"},
       {id:"demonology",  name:"Demonology",  role:"DPS", icon:"spell_shadow_metamorphosis"},
-      {id:"destruction", name:"Destruction", role:"DPS", icon:"spell_fire_firebolt02"},
+      {id:"destruction", name:"Destruction", role:"DPS", icon:"spell_shadow_rainoffire"},
     ],
   },
   {
@@ -1087,7 +1087,7 @@ const CLASSES = [
     specs:[
       {id:"arms",           name:"Arms",       role:"DPS", icon:"ability_warrior_savageblow"},
       {id:"fury",           name:"Fury",       role:"DPS", icon:"ability_warrior_innerrage"},
-      {id:"protection-war", name:"Protection", role:"Tank",      icon:"ability_demonhunter_spectank"},
+      {id:"protection-war", name:"Protection", role:"Tank",      icon:"ability_warrior_defensivestance"},
     ],
   },
 ];
@@ -2233,7 +2233,7 @@ function SpecPage({ cls, onBack, onGo }) {
       <div className="spec-grid">
         {cls.specs.map(s => (
           <div key={s.id} className={"sc" + (spec?.id === s.id ? " sel" : "")} onClick={() => { setSpec(s); setCharName(""); }}>
-            <span className="si"><SpecIcon spec={s} size={18} /></span>
+            <span className="si"><SpecIcon spec={s} size={34} /></span>
             <span className="sn">{s.name}</span>
             <span className="sr" style={{ background: `${ROLE_COLOR[s.role]}18`, border: `1px solid ${ROLE_COLOR[s.role]}`, color: ROLE_COLOR[s.role] }}>
               {ROLE_ICON[s.role]} {s.role}
@@ -2597,7 +2597,7 @@ function GroupPlanner() {
                     <select value={active} onChange={e => setGroupMode(prev => ({ ...prev, [group.key]: e.target.value }))} style={{ background:"var(--bg2)", border:"1px solid var(--bdr2)", color:"var(--parch)", padding:".2rem .45rem", fontFamily:"Cinzel,serif", fontSize:".66rem" }}>
                       {SAVE_MODE_ORDER.filter(mode => group.saves[mode]).map(mode => <option key={mode} value={mode}>{modeNice(mode)}</option>)}
                     </select>
-                    <div style={{ fontSize:".72rem", color:"var(--parch)" }}><span style={{ display:"inline-flex", alignItems:"center", gap:".4rem" }}><SpecIcon spec={entry?.spec} size={16} /><span>{entry?.spec?.name}</span></span></div>
+                    <div style={{ fontSize:".72rem", color:"var(--parch)" }}><span style={{ display:"inline-flex", alignItems:"center", gap:".4rem" }}><SpecIcon spec={entry?.spec} size={18} /><span>{entry?.spec?.name}</span></span></div>
                   </div>
                 </div>
               );
@@ -3019,7 +3019,7 @@ function Home({ onSelectClass, onLoadCharacter }) {
                         <div key={rowKey} style={{ border:`1px solid ${cls.color}44`, padding:".55rem .6rem", background:"rgba(255,255,255,.01)" }}>
                           <div style={{ display:"flex", alignItems:"center", gap:".5rem", marginBottom:".35rem", flexWrap:"wrap" }}>
                             <button onClick={() => onLoadCharacter(cls, spec, base, activeMode)} style={{ display:"flex", alignItems:"center", gap:".35rem", background:"var(--bg2)", border:`1px solid ${cls.color}55`, padding:".22rem .5rem", cursor:"pointer", fontSize:".76rem", color:"var(--parch-dk)", fontFamily:"Cinzel,serif" }}>
-                              <SpecIcon spec={spec} size={16} /><span style={{ color:cls.color }}>{spec.name}</span><span style={{ opacity:.85 }}>{pct}%</span>
+                              <SpecIcon spec={spec} size={18} /><span style={{ color:cls.color }}>{spec.name}</span><span style={{ opacity:.85 }}>{pct}%</span>
                             </button>
                             <div style={{ fontSize:".68rem", color:"var(--parch-dk)" }}>{cls.name}</div>
                             <select value={activeMode} onChange={e => setCardMode(prev => ({ ...prev, [rowKey]: e.target.value }))} style={{ marginLeft:"auto", background:"var(--bg2)", border:"1px solid var(--bdr2)", color:"var(--parch)", padding:".18rem .45rem", fontFamily:"Cinzel,serif", fontSize:".66rem" }}>
