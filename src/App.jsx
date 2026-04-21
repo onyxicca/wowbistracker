@@ -932,15 +932,40 @@ function getSeeded(specId, content) {
   return SEEDED[`${specId}:${content}`] || SEEDED[`${specId}:Overall BiS`] || null;
 }
 
+
+const WOW_ICON_BASE = "https://wow.zamimg.com/images/wow/icons/medium/";
+
+function SpecIcon({ spec, size = 18 }) {
+  const iconSrc = spec?.icon ? `${WOW_ICON_BASE}${spec.icon}.jpg` : null;
+  if (!iconSrc) return null;
+  return (
+    <img
+      src={iconSrc}
+      alt={spec.name}
+      width={size}
+      height={size}
+      loading="lazy"
+      style={{
+        width: size,
+        height: size,
+        borderRadius: "4px",
+        objectFit: "cover",
+        boxShadow: "0 0 0 1px rgba(0,0,0,.45)",
+        flex: "0 0 auto",
+      }}
+    />
+  );
+}
+
 const CLASSES = [
   {
     id:"death-knight", name:"Death Knight", color:"#C41E3A",
     roles:["Tank","DPS"], armor:"Plate",
     weapons:["2H Weapon","Main Hand + Off Hand"],
     specs:[
-      {id:"blood",    name:"Blood",  role:"Tank",      icon:"🩸"},
-      {id:"frost-dk", name:"Frost",  role:"DPS", icon:"❄️"},
-      {id:"unholy",   name:"Unholy", role:"DPS", icon:"💀"},
+      {id:"blood",    name:"Blood",  role:"Tank",      icon:"spell_deathknight_bloodpresence"},
+      {id:"frost-dk", name:"Frost",  role:"DPS", icon:"spell_deathknight_frostpresence"},
+      {id:"unholy",   name:"Unholy", role:"DPS", icon:"spell_deathknight_unholypresence"},
     ],
   },
   {
@@ -948,9 +973,9 @@ const CLASSES = [
     roles:["Tank","DPS"], armor:"Leather",
     weapons:["Main Hand + Off Hand"],
     specs:[
-      {id:"havoc",     name:"Havoc",     role:"DPS",  icon:"🟣"},
-      {id:"vengeance", name:"Vengeance", role:"Tank",        icon:"🛡️"},
-      {id:"devourer",  name:"Devourer",  role:"DPS", icon:"🌀",
+      {id:"havoc",     name:"Havoc",     role:"DPS",  icon:"ability_demonhunter_specdps"},
+      {id:"vengeance", name:"Vengeance", role:"Tank",        icon:"ability_demonhunter_spectank"},
+      {id:"devourer",  name:"Devourer",  role:"DPS", icon:"classicon_demonhunter_void",
        note:"New in Midnight — void-powered mid-range spellcaster, Intellect-based."},
     ],
   },
@@ -959,10 +984,10 @@ const CLASSES = [
     roles:["Tank","DPS","Healer"], armor:"Leather",
     weapons:["2H Weapon","Main Hand + Off Hand"],
     specs:[
-      {id:"balance",           name:"Balance",     role:"DPS", icon:"🌙"},
-      {id:"feral",             name:"Feral",        role:"DPS",  icon:"🐾"},
-      {id:"guardian",          name:"Guardian",     role:"Tank",        icon:"🐻"},
-      {id:"restoration-druid", name:"Restoration",  role:"Healer",      icon:"🌿"},
+      {id:"balance",           name:"Balance",     role:"DPS", icon:"spell_nature_starfall"},
+      {id:"feral",             name:"Feral",        role:"DPS",  icon:"ability_druid_catform"},
+      {id:"guardian",          name:"Guardian",     role:"Tank",        icon:"ability_racial_bearform"},
+      {id:"restoration-druid", name:"Restoration",  role:"Healer",      icon:"spell_nature_healingtouch"},
     ],
   },
   {
@@ -970,9 +995,9 @@ const CLASSES = [
     roles:["DPS","Healer"], armor:"Mail",
     weapons:["Main Hand + Off Hand"],
     specs:[
-      {id:"devastation",  name:"Devastation",  role:"DPS", icon:"🐉"},
-      {id:"preservation", name:"Preservation", role:"Healer",      icon:"💚"},
-      {id:"augmentation", name:"Augmentation", role:"DPS", icon:"✨"},
+      {id:"devastation",  name:"Devastation",  role:"DPS", icon:"classicon_evoker_devastation"},
+      {id:"preservation", name:"Preservation", role:"Healer",      icon:"classicon_evoker_preservation"},
+      {id:"augmentation", name:"Augmentation", role:"DPS", icon:"classicon_evoker_augmentation"},
     ],
   },
   {
@@ -980,9 +1005,9 @@ const CLASSES = [
     roles:["DPS"], armor:"Mail",
     weapons:["2H Weapon","Main Hand + Off Hand"],
     specs:[
-      {id:"beast-mastery", name:"Beast Mastery", role:"DPS", icon:"🏹"},
-      {id:"marksmanship",  name:"Marksmanship",  role:"DPS", icon:"🎯"},
-      {id:"survival",      name:"Survival",       role:"DPS",  icon:"🗡️"},
+      {id:"beast-mastery", name:"Beast Mastery", role:"DPS", icon:"ability_hunter_bestialdiscipline"},
+      {id:"marksmanship",  name:"Marksmanship",  role:"DPS", icon:"ability_marksmanship"},
+      {id:"survival",      name:"Survival",       role:"DPS",  icon:"ability_hunter_camouflage"},
     ],
   },
   {
@@ -990,9 +1015,9 @@ const CLASSES = [
     roles:["DPS"], armor:"Cloth",
     weapons:["Main Hand + Off Hand"],
     specs:[
-      {id:"arcane",     name:"Arcane", role:"DPS", icon:"🔮"},
-      {id:"fire",       name:"Fire",   role:"DPS", icon:"🔥"},
-      {id:"frost-mage", name:"Frost",  role:"DPS", icon:"❄️"},
+      {id:"arcane",     name:"Arcane", role:"DPS", icon:"spell_holy_magicalsentry"},
+      {id:"fire",       name:"Fire",   role:"DPS", icon:"spell_fire_firebolt02"},
+      {id:"frost-mage", name:"Frost",  role:"DPS", icon:"spell_deathknight_frostpresence"},
     ],
   },
   {
@@ -1000,9 +1025,9 @@ const CLASSES = [
     roles:["Tank","DPS","Healer"], armor:"Leather",
     weapons:["Main Hand + Off Hand"],
     specs:[
-      {id:"brewmaster", name:"Brewmaster", role:"Tank",      icon:"🍺"},
-      {id:"mistweaver", name:"Mistweaver", role:"Healer",    icon:"🌊"},
-      {id:"windwalker", name:"Windwalker", role:"DPS", icon:"🌬️"},
+      {id:"brewmaster", name:"Brewmaster", role:"Tank",      icon:"spell_monk_brewmaster_spec"},
+      {id:"mistweaver", name:"Mistweaver", role:"Healer",    icon:"spell_monk_mistweaver_spec"},
+      {id:"windwalker", name:"Windwalker", role:"DPS", icon:"spell_monk_windwalker_spec"},
     ],
   },
   {
@@ -1010,9 +1035,9 @@ const CLASSES = [
     roles:["Tank","DPS","Healer"], armor:"Plate",
     weapons:["2H Weapon","Main Hand + Off Hand"],
     specs:[
-      {id:"holy-pala",       name:"Holy",        role:"Healer",    icon:"✨"},
-      {id:"protection-pala", name:"Protection",  role:"Tank",      icon:"🛡️"},
-      {id:"retribution",     name:"Retribution", role:"DPS", icon:"⚖️"},
+      {id:"holy-pala",       name:"Holy",        role:"Healer",    icon:"classicon_evoker_augmentation"},
+      {id:"protection-pala", name:"Protection",  role:"Tank",      icon:"ability_paladin_shieldofthetemplar"},
+      {id:"retribution",     name:"Retribution", role:"DPS", icon:"spell_holy_auraoflight"},
     ],
   },
   {
@@ -1020,9 +1045,9 @@ const CLASSES = [
     roles:["DPS","Healer"], armor:"Cloth",
     weapons:["Main Hand + Off Hand"],
     specs:[
-      {id:"discipline",  name:"Discipline", role:"Healer",     icon:"🕊️"},
-      {id:"holy-priest", name:"Holy",        role:"Healer",     icon:"☀️"},
-      {id:"shadow",      name:"Shadow",      role:"DPS", icon:"🌑"},
+      {id:"discipline",  name:"Discipline", role:"Healer",     icon:"spell_holy_powerwordshield"},
+      {id:"holy-priest", name:"Holy",        role:"Healer",     icon:"spell_holy_guardianspirit"},
+      {id:"shadow",      name:"Shadow",      role:"DPS", icon:"spell_shadow_shadowwordpain"},
     ],
   },
   {
@@ -1030,9 +1055,9 @@ const CLASSES = [
     roles:["DPS"], armor:"Leather",
     weapons:["Main Hand + Off Hand"],
     specs:[
-      {id:"assassination", name:"Assassination", role:"DPS", icon:"🗡️"},
-      {id:"outlaw",        name:"Outlaw",         role:"DPS", icon:"☠️"},
-      {id:"subtlety",      name:"Subtlety",       role:"DPS", icon:"🌑"},
+      {id:"assassination", name:"Assassination", role:"DPS", icon:"ability_rogue_deadlybrew"},
+      {id:"outlaw",        name:"Outlaw",         role:"DPS", icon:"ability_rogue_waylay"},
+      {id:"subtlety",      name:"Subtlety",       role:"DPS", icon:"spell_shadow_shadowwordpain"},
     ],
   },
   {
@@ -1040,9 +1065,9 @@ const CLASSES = [
     roles:["DPS","Healer"], armor:"Mail",
     weapons:["2H Weapon","Main Hand + Off Hand"],
     specs:[
-      {id:"elemental",        name:"Elemental",   role:"DPS", icon:"⚡"},
-      {id:"enhancement",      name:"Enhancement", role:"DPS",  icon:"🌊"},
-      {id:"restoration-sham", name:"Restoration", role:"Healer",     icon:"💧"},
+      {id:"elemental",        name:"Elemental",   role:"DPS", icon:"spell_nature_lightning"},
+      {id:"enhancement",      name:"Enhancement", role:"DPS",  icon:"spell_monk_mistweaver_spec"},
+      {id:"restoration-sham", name:"Restoration", role:"Healer",     icon:"spell_nature_magicimmunity"},
     ],
   },
   {
@@ -1050,9 +1075,9 @@ const CLASSES = [
     roles:["DPS"], armor:"Cloth",
     weapons:["Main Hand + Off Hand"],
     specs:[
-      {id:"affliction",  name:"Affliction",  role:"DPS", icon:"👁️"},
-      {id:"demonology",  name:"Demonology",  role:"DPS", icon:"😈"},
-      {id:"destruction", name:"Destruction", role:"DPS", icon:"🔥"},
+      {id:"affliction",  name:"Affliction",  role:"DPS", icon:"spell_shadow_deathcoil"},
+      {id:"demonology",  name:"Demonology",  role:"DPS", icon:"spell_shadow_metamorphosis"},
+      {id:"destruction", name:"Destruction", role:"DPS", icon:"spell_fire_firebolt02"},
     ],
   },
   {
@@ -1060,9 +1085,9 @@ const CLASSES = [
     roles:["Tank","DPS"], armor:"Plate",
     weapons:["2H Weapon","Main Hand + Off Hand"],
     specs:[
-      {id:"arms",           name:"Arms",       role:"DPS", icon:"🗡️"},
-      {id:"fury",           name:"Fury",       role:"DPS", icon:"💢"},
-      {id:"protection-war", name:"Protection", role:"Tank",      icon:"🛡️"},
+      {id:"arms",           name:"Arms",       role:"DPS", icon:"ability_warrior_savageblow"},
+      {id:"fury",           name:"Fury",       role:"DPS", icon:"ability_warrior_innerrage"},
+      {id:"protection-war", name:"Protection", role:"Tank",      icon:"ability_demonhunter_spectank"},
     ],
   },
 ];
@@ -2208,7 +2233,7 @@ function SpecPage({ cls, onBack, onGo }) {
       <div className="spec-grid">
         {cls.specs.map(s => (
           <div key={s.id} className={"sc" + (spec?.id === s.id ? " sel" : "")} onClick={() => { setSpec(s); setCharName(""); }}>
-            <span className="si">{s.icon}</span>
+            <span className="si"><SpecIcon spec={s} size={18} /></span>
             <span className="sn">{s.name}</span>
             <span className="sr" style={{ background: `${ROLE_COLOR[s.role]}18`, border: `1px solid ${ROLE_COLOR[s.role]}`, color: ROLE_COLOR[s.role] }}>
               {ROLE_ICON[s.role]} {s.role}
@@ -2572,7 +2597,7 @@ function GroupPlanner() {
                     <select value={active} onChange={e => setGroupMode(prev => ({ ...prev, [group.key]: e.target.value }))} style={{ background:"var(--bg2)", border:"1px solid var(--bdr2)", color:"var(--parch)", padding:".2rem .45rem", fontFamily:"Cinzel,serif", fontSize:".66rem" }}>
                       {SAVE_MODE_ORDER.filter(mode => group.saves[mode]).map(mode => <option key={mode} value={mode}>{modeNice(mode)}</option>)}
                     </select>
-                    <div style={{ fontSize:".72rem", color:"var(--parch)" }}>{entry?.spec?.icon} {entry?.spec?.name}</div>
+                    <div style={{ fontSize:".72rem", color:"var(--parch)" }}><span style={{ display:"inline-flex", alignItems:"center", gap:".4rem" }}><SpecIcon spec={entry?.spec} size={16} /><span>{entry?.spec?.name}</span></span></div>
                   </div>
                 </div>
               );
@@ -2994,7 +3019,7 @@ function Home({ onSelectClass, onLoadCharacter }) {
                         <div key={rowKey} style={{ border:`1px solid ${cls.color}44`, padding:".55rem .6rem", background:"rgba(255,255,255,.01)" }}>
                           <div style={{ display:"flex", alignItems:"center", gap:".5rem", marginBottom:".35rem", flexWrap:"wrap" }}>
                             <button onClick={() => onLoadCharacter(cls, spec, base, activeMode)} style={{ display:"flex", alignItems:"center", gap:".35rem", background:"var(--bg2)", border:`1px solid ${cls.color}55`, padding:".22rem .5rem", cursor:"pointer", fontSize:".76rem", color:"var(--parch-dk)", fontFamily:"Cinzel,serif" }}>
-                              <span>{spec.icon}</span><span style={{ color:cls.color }}>{spec.name}</span><span style={{ opacity:.85 }}>{pct}%</span>
+                              <SpecIcon spec={spec} size={16} /><span style={{ color:cls.color }}>{spec.name}</span><span style={{ opacity:.85 }}>{pct}%</span>
                             </button>
                             <div style={{ fontSize:".68rem", color:"var(--parch-dk)" }}>{cls.name}</div>
                             <select value={activeMode} onChange={e => setCardMode(prev => ({ ...prev, [rowKey]: e.target.value }))} style={{ marginLeft:"auto", background:"var(--bg2)", border:"1px solid var(--bdr2)", color:"var(--parch)", padding:".18rem .45rem", fontFamily:"Cinzel,serif", fontSize:".66rem" }}>
