@@ -2758,17 +2758,23 @@ input::placeholder{color:rgba(240,222,180,.22);font-style:italic}
   .gear-grid { display: grid !important; grid-template-columns: 1fr 1fr; gap: .35rem; }
   .slot-wrap { break-inside: avoid; margin-bottom: .25rem; }
   .slot-lbl { font-size: .6rem !important; color: #222 !important; letter-spacing: .1em; text-transform: uppercase; font-family: Cinzel, serif; padding-left: 2px; display: block; margin-bottom: 2px; }
-  .slot-entry, .rank-block { display: flex !important; border: 1.5px solid #000 !important; }
+  .slot-entry { display: flex !important; border: 1.5px solid #000 !important; }
+  .rank-block { display: block !important; border: 1.5px solid #000 !important; }
   .slot-fields, .rank-inputs { flex: 1; }
-  .sf-name { font-size: .82rem !important; color: #000 !important; padding: .32rem .45rem; display: block; border-bottom: 1px solid #000 !important; font-weight: 700; white-space: normal !important; overflow: visible !important; text-overflow: clip !important; line-height: 1.22 !important; min-height: 2.1em; word-break: break-word; }
-  .sf-src { font-size: .76rem !important; color: #000 !important; padding: .24rem .45rem; display: block; font-style: normal !important; white-space: normal !important; overflow: visible !important; text-overflow: clip !important; line-height: 1.2 !important; word-break: break-word; }
+  .rank-label { display:flex !important; align-items:center; gap:.22rem !important; padding:.18rem .28rem !important; border-bottom:1px solid #000 !important; background:#fff !important; }
+  .sf-name { font-size: .82rem !important; color: #000 !important; padding: .28rem .38rem .18rem !important; display: block; border-bottom: 1px solid #000 !important; font-weight: 700; white-space: normal !important; overflow: visible !important; text-overflow: clip !important; line-height: 1.18 !important; min-height: auto !important; word-break: break-word; }
+  .sf-src { font-size: .74rem !important; color: #000 !important; padding: .18rem .38rem .24rem !important; display: block; font-style: normal !important; white-space: normal !important; overflow: visible !important; text-overflow: clip !important; line-height: 1.15 !important; word-break: break-word; }
   .slot-chk { width: 26px; flex-shrink: 0; border-left: 1px solid #000 !important; display: flex !important; align-items: center; justify-content: center; font-size: 1rem; }
   .slot-chk:not(.done) { color: transparent !important; }
   .slot-chk.done, .slot-chk.soft { color: #000 !important; background: transparent !important; }
   .sub-sh { font-size: .66rem !important; color: #111 !important; letter-spacing: .15em; text-transform: uppercase; font-family: Cinzel, serif; border-bottom: 1px solid #000 !important; padding-bottom: .2rem; margin: .6rem 0 .3rem; display: block !important; }
-  .rank-badge, .rank-set-btn, .rank-have, .slot-track-row button, .rank-block button {
+  .rank-badge, .slot-track-row button, .rank-block button {
     color: #000 !important; background: #fff !important; border: 1.5px solid #000 !important; font-weight: 700 !important; opacity:1 !important;
   }
+  .rank-set-btn, .target-chip { display:none !important; }
+  .rank-have { width: 16px !important; height: 16px !important; min-width:16px !important; padding:0 !important; margin-left:.18rem !important; border:1.5px solid #000 !important; background:#fff !important; color:transparent !important; font-size:0 !important; line-height:0 !important; }
+  .rank-have.done { color:transparent !important; position:relative; }
+  .rank-have.done::after { content:"✓"; position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:.72rem; color:#000 !important; }
   .rank-badge.r1, .rank-badge.r2, .rank-badge.r3 { color:#000 !important; border-color:#000 !important; }
   .slot-track-row button[data-selected="true"], .rank-block button[data-selected="true"] {
     border: 3px solid #000 !important; color: #000 !important; font-weight: 800 !important; background:#fff !important;
@@ -2933,16 +2939,16 @@ function Slot({ label, id, data, onChange, targetTrack, bisMode }) {
           <div key={idx} className={"rank-block" + (idx === activeRank ? " rank-active" : "")}>
             <div className="rank-label">
               <span className={"rank-badge " + RBADGE[idx]}>{RLABEL[idx]}</span>
-              {idx !== activeRank && r.name && (
-                <button className="rank-set-btn" onClick={() => setActive(idx)}>Set as target</button>
-              )}
-              {idx === activeRank && r.name && (
-                <span style={{ fontSize:".6rem", color:"var(--gold)", marginLeft:"auto", fontFamily:"Cinzel,serif", letterSpacing:".06em" }}>▸ targeting</span>
-              )}
               {r.name && (
                 <button className={"rank-have" + (r.have ? " done" : "")} onClick={() => toggleHave(idx)}>
                   {r.have ? "✓ have" : "have?"}
                 </button>
+              )}
+              {idx !== activeRank && r.name && (
+                <button className="rank-set-btn" onClick={() => setActive(idx)}>Set as target</button>
+              )}
+              {idx === activeRank && r.name && (
+                <span className="target-chip" style={{ fontSize:".6rem", color:"var(--gold)", marginLeft:"auto", fontFamily:"Cinzel,serif", letterSpacing:".06em" }}>▸ targeting</span>
               )}
             </div>
             <div className="rank-inputs">
