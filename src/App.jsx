@@ -1307,16 +1307,21 @@ input::placeholder{color:rgba(240,222,180,.22);font-style:italic}
   .slot-wrap { break-inside: avoid; margin-bottom: .25rem; }
   .slot-lbl { font-size: .6rem !important; color: #222 !important; letter-spacing: .1em; text-transform: uppercase; font-family: Cinzel, serif; padding-left: 2px; display: block; margin-bottom: 2px; }
   .slot-entry, .rank-block { display: flex !important; border: 1.5px solid #000 !important; }
-  .slot-fields, .rank-inputs { flex: 1; }
-  .sf-name { font-size: .82rem !important; color: #000 !important; padding: .32rem .45rem; display: block; border-bottom: 1px solid #000 !important; font-weight: 700; white-space: normal !important; overflow: visible !important; text-overflow: clip !important; line-height: 1.22 !important; min-height: 2.1em; word-break: break-word; }
-  .sf-src { font-size: .76rem !important; color: #000 !important; padding: .24rem .45rem; display: block; font-style: normal !important; white-space: normal !important; overflow: visible !important; text-overflow: clip !important; line-height: 1.2 !important; word-break: break-word; }
+  .slot-fields, .rank-inputs { flex: 1; min-width: 0 !important; }
+  .rank-label { display:flex !important; align-items:center !important; gap:.2rem !important; padding:.18rem .28rem !important; border-bottom:1px solid #000 !important; background:#fff !important; }
+  .sf-name { font-size: .74rem !important; color: #000 !important; padding: .22rem .32rem .14rem !important; display: block; border-bottom: 1px solid #000 !important; font-weight: 700; white-space: nowrap !important; overflow: hidden !important; text-overflow: clip !important; line-height: 1.1 !important; min-height: 0 !important; word-break: normal !important; }
+  .sf-src { font-size: .68rem !important; color: #000 !important; padding: .18rem .32rem !important; display: block; font-style: normal !important; white-space: nowrap !important; overflow: hidden !important; text-overflow: clip !important; line-height: 1.1 !important; word-break: normal !important; }
   .slot-chk { width: 26px; flex-shrink: 0; border-left: 1px solid #000 !important; display: flex !important; align-items: center; justify-content: center; font-size: 1rem; }
   .slot-chk:not(.done) { color: transparent !important; }
   .slot-chk.done, .slot-chk.soft { color: #000 !important; background: transparent !important; }
+  .custom-track-row .slot-chk { display: none !important; }
   .sub-sh { font-size: .66rem !important; color: #111 !important; letter-spacing: .15em; text-transform: uppercase; font-family: Cinzel, serif; border-bottom: 1px solid #000 !important; padding-bottom: .2rem; margin: .6rem 0 .3rem; display: block !important; }
-  .rank-badge, .rank-set-btn, .rank-have, .slot-track-row button, .rank-block button {
+  .rank-badge, .rank-have, .slot-track-row button, .rank-block button {
     color: #000 !important; background: #fff !important; border: 1.5px solid #000 !important; font-weight: 700 !important; opacity:1 !important;
   }
+  .rank-set-btn, .rank-targeting { display:none !important; }
+  .rank-have { margin-left:.18rem !important; padding:.04rem .22rem !important; min-width: 1rem !important; font-size:.58rem !important; line-height:1 !important; }
+  .rank-have.done { background:#fff !important; color:#000 !important; border-color:#000 !important; }
   .rank-badge.r1, .rank-badge.r2, .rank-badge.r3 { color:#000 !important; border-color:#000 !important; }
   .slot-track-row button[data-selected="true"], .rank-block button[data-selected="true"] {
     border: 3px solid #000 !important; color: #000 !important; font-weight: 800 !important; background:#fff !important;
@@ -1485,7 +1490,7 @@ function Slot({ label, id, data, onChange, targetTrack, bisMode }) {
                 <button className="rank-set-btn" onClick={() => setActive(idx)}>Set as target</button>
               )}
               {idx === activeRank && r.name && (
-                <span style={{ fontSize:".6rem", color:"var(--gold)", marginLeft:"auto", fontFamily:"Cinzel,serif", letterSpacing:".06em" }}>▸ targeting</span>
+                <span className="rank-targeting" style={{ fontSize:".6rem", color:"var(--gold)", marginLeft:"auto", fontFamily:"Cinzel,serif", letterSpacing:".06em" }}>▸ targeting</span>
               )}
               {r.name && (
                 <button className={"rank-have" + (r.have ? " done" : "")} onClick={() => toggleHave(idx)}>
@@ -1524,7 +1529,7 @@ function Slot({ label, id, data, onChange, targetTrack, bisMode }) {
           </div>
         ))}
         {d.name && (
-          <div style={{ display:"flex", gap:".25rem", padding:".2rem .4rem", background:"rgba(0,0,0,.15)", border:"1px solid var(--bdr)", borderTop:"none" }}>
+          <div className="custom-track-row" style={{ display:"flex", gap:".25rem", padding:".2rem .4rem", background:"rgba(0,0,0,.15)", border:"1px solid var(--bdr)", borderTop:"none" }}>
             <span style={{ fontFamily:"Cinzel,serif", fontSize:".58rem", color:"var(--parch-dk)", alignSelf:"center", letterSpacing:".06em" }}>TRACK:</span>
             {TRACKS.filter(t => t).map(t => (
               <button key={t} onClick={() => up("track", track === t ? "" : t)} style={{ fontFamily:"Cinzel,serif", fontSize:".58rem", letterSpacing:".05em", padding:".1rem .4rem", background: track === t ? TRACK_COLOR[t] : "transparent", border:`1px solid ${track === t ? TRACK_COLOR[t] : "var(--bdr2)"}`, color: track === t ? "#fff" : "var(--parch-dk)", cursor:"pointer", transition:"all .12s", filter: track === t ? "brightness(0.72)" : "none" }}>{t}</button>
@@ -1718,19 +1723,18 @@ function Tracker({ cls, spec, charName, initialMode = "", onBack }) {
     weapon2h:"16", mainhand:"16", offhand:"17"
   };
 
-  const serializeAddonMode = (mode, sourceData) => {
+  const exportForAddon = () => {
     const cleanField = (v) => (v || "").replace(/[|:\^~#]/g, " ").trim();
     const parts = [];
-    const source = sourceData || {};
     allSlotIds.forEach(id => {
-      const d = source[id];
+      const d = data[id];
       const slotNum = ADDON_SLOT_MAP[id];
       if (!slotNum) return;
       let itemName = d?.name;
       let itemSrc = d?.src;
       let rankBlob = "";
       let activeIdx = 0;
-      if (mode === "custom" && d?.ranks) {
+      if (bisMode === "custom" && d?.ranks) {
         activeIdx = d.activeRank ?? 0;
         itemName = d.ranks[activeIdx]?.name || d.name;
         itemSrc = d.ranks[activeIdx]?.src || d.src;
@@ -1749,31 +1753,16 @@ function Tracker({ cls, spec, charName, initialMode = "", onBack }) {
       const n = cleanField(itemName);
       if (n) {
         const s = cleanField(itemSrc || "Unknown");
-        const acquired = d?.done ? "1" : "0";
-        const trackCode = d?.track ? d.track[0].toLowerCase() : "n";
+        const acquired = d.done ? "1" : "0";
+        const trackCode = d.track ? d.track[0].toLowerCase() : "n";
         parts.push(slotNum + ":" + n + ":" + s + ":" + acquired + ":" + trackCode + rankBlob);
       }
     });
     if (!parts.length) {
-      const hasRankedDraft = mode === "custom" && allSlotIds.some(id => (source[id]?.ranks || []).some(r => (r?.name || "").trim().length > 0));
+      const hasRankedDraft = bisMode === "custom" && allSlotIds.some(id => (data[id]?.ranks || []).some(r => (r?.name || "").trim().length > 0));
       if (!hasRankedDraft) return null;
     }
-    return `WBISMODE=${mode};` + parts.join("|");
-  };
-
-  const exportForAddon = () => {
-    const liveModeData = data || {};
-    const communityData = bisMode === "community" ? liveModeData : readModeData("community");
-    const customData = bisMode === "custom" ? liveModeData : readModeData("custom");
-
-    const sections = [
-      serializeAddonMode("community", communityData),
-      serializeAddonMode("custom", customData),
-    ].filter(Boolean);
-
-    if (!sections.length) return null;
-    if (sections.length === 1) return sections[0];
-    return "WBISBUNDLE=1###" + sections.join("###");
+    return `WBISMODE=${bisMode};` + parts.join("|");
   };
 
   const loadSuggestions = async () => {
@@ -1982,7 +1971,7 @@ function Tracker({ cls, spec, charName, initialMode = "", onBack }) {
         <div className="bis-bar" style={{ flexDirection:"column", alignItems:"flex-start", gap:".3rem" }}>
           <span className="bis-txt" style={{ fontFamily:"Cinzel,serif", letterSpacing:".1em" }}>✦ Custom BiS Builder</span>
           <span style={{ fontSize:".8rem", color:"var(--parch-dk)", fontStyle:"italic" }}>
-            Build your own ranked list — up to 3 options per slot. Wowhead BiS, Character Scan, and Custom Builder now live under one character card with separate mode saves. Tip: click <strong style={{color:"var(--gold-lt)"}}>Load Suggested BiS → Apply All</strong> first to pre-fill a base list, then override individual slots with your own research. For custom sources, use clear labels like <strong style={{color:"var(--gold-lt)"}}>Raid</strong>, <strong style={{color:"var(--gold-lt)"}}>Dungeon</strong>, <strong style={{color:"var(--gold-lt)"}}>Delves</strong>, <strong style={{color:"var(--gold-lt)"}}>World Quests</strong>, <strong style={{color:"var(--gold-lt)"}}>Renown</strong>, <strong style={{color:"var(--gold-lt)"}}>Prey</strong>, <strong style={{color:"var(--gold-lt)"}}>Crafted</strong>, or <strong style={{color:"var(--gold-lt)"}}>PvP</strong>. Export includes every saved addon-compatible BiS list for this spec. If Wowhead BiS and Custom Builder are both saved, one export bundles both for the addon.
+            Build your own ranked list — up to 3 options per slot. Wowhead BiS, Character Scan, and Custom Builder now live under one character card with separate mode saves. Tip: click <strong style={{color:"var(--gold-lt)"}}>Load Suggested BiS → Apply All</strong> first to pre-fill a base list, then override individual slots with your own research. For custom sources, use clear labels like <strong style={{color:"var(--gold-lt)"}}>Raid</strong>, <strong style={{color:"var(--gold-lt)"}}>Dungeon</strong>, <strong style={{color:"var(--gold-lt)"}}>Delves</strong>, <strong style={{color:"var(--gold-lt)"}}>World Quests</strong>, <strong style={{color:"var(--gold-lt)"}}>Renown</strong>, <strong style={{color:"var(--gold-lt)"}}>Prey</strong>, <strong style={{color:"var(--gold-lt)"}}>Crafted</strong>, or <strong style={{color:"var(--gold-lt)"}}>PvP</strong>. Export sends the active mode only.
           </span>
         </div>
       )}
@@ -2204,13 +2193,13 @@ function Tracker({ cls, spec, charName, initialMode = "", onBack }) {
         }}>{bisMode === 'custom' ? 'Save Custom' : bisMode === 'community' ? 'Save Suggested BiS' : 'Save Scan'}</button>
         <button className="tbtn sec" onClick={() => {
           const code = exportForAddon();
-          if (!code) { alert("Nothing exportable found yet for Wowhead BiS or Custom Builder. Load Suggested BiS and click Apply All, or enter and save at least one real custom item before exporting."); return; }
+          if (!code) { alert("Nothing exportable found yet for this mode. Load suggestions only previews them. Click Apply All, or enter and save at least one real item before exporting."); return; }
           window.__wowbisExportCode = code;
           const modal = document.createElement("div");
           modal.style.cssText = "position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.85);z-index:9999;display:flex;align-items:center;justify-content:center;";
           const inner = document.createElement("div");
           inner.style.cssText = "background:#150f08;border:1px solid #c9922a;padding:1.5rem;max-width:540px;width:90%;font-family:Cinzel,serif;";
-          inner.innerHTML = `<div style="font-size:.75rem;letter-spacing:.15em;color:#c9922a;margin-bottom:.75rem">EXPORT FOR ADDON</div><div style="font-size:.85rem;color:#c8a96a;margin-bottom:.75rem;font-family:Crimson Pro,serif;line-height:1.6;">Copy this code and paste it into the WoW BiS Tracker addon in-game using the Import BiS button. This export includes every saved addon-compatible BiS list for this spec. If Wowhead BiS and Custom Builder are both saved, one import will load both into the addon.</div>`;
+          inner.innerHTML = `<div style="font-size:.75rem;letter-spacing:.15em;color:#c9922a;margin-bottom:.75rem">EXPORT FOR ADDON</div><div style="font-size:.85rem;color:#c8a96a;margin-bottom:.75rem;font-family:Crimson Pro,serif;line-height:1.6;">Copy this code and paste it into the WoW BiS Tracker addon in-game using the Import BiS button. This export contains only the active mode.</div>`;
           const ta = document.createElement("textarea");
           ta.readOnly = true;
           ta.value = code;
