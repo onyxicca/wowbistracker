@@ -44,6 +44,1458 @@ const HERO_TALENTS = {
   "protection-war":     ["Mountain Thane","Colossus"],
 };
 
+const WOWHEAD_LINKS = {
+  "blood": "https://www.wowhead.com/guide/classes/death-knight/blood/bis-gear",
+  "frost-dk": "https://www.wowhead.com/guide/classes/death-knight/frost/bis-gear",
+  "unholy": "https://www.wowhead.com/guide/classes/death-knight/unholy/bis-gear",
+  "havoc": "https://www.wowhead.com/guide/classes/demon-hunter/havoc/bis-gear",
+  "vengeance": "https://www.wowhead.com/guide/classes/demon-hunter/vengeance/bis-gear",
+  "devourer": "https://www.wowhead.com/guide/classes/demon-hunter/devourer/bis-gear",
+  "balance": "https://www.wowhead.com/guide/classes/druid/balance/bis-gear",
+  "feral": "https://www.wowhead.com/guide/classes/druid/feral/bis-gear",
+  "guardian": "https://www.wowhead.com/guide/classes/druid/guardian/bis-gear",
+  "restoration-druid": "https://www.wowhead.com/guide/classes/druid/restoration/bis-gear",
+  "devastation": "https://www.wowhead.com/guide/classes/evoker/devastation/bis-gear",
+  "preservation": "https://www.wowhead.com/guide/classes/evoker/preservation/bis-gear",
+  "augmentation": "https://www.wowhead.com/guide/classes/evoker/augmentation/bis-gear",
+  "beast-mastery": "https://www.wowhead.com/guide/classes/hunter/beast-mastery/bis-gear",
+  "marksmanship": "https://www.wowhead.com/guide/classes/hunter/marksmanship/bis-gear",
+  "survival": "https://www.wowhead.com/guide/classes/hunter/survival/bis-gear",
+  "arcane": "https://www.wowhead.com/guide/classes/mage/arcane/bis-gear",
+  "fire": "https://www.wowhead.com/guide/classes/mage/fire/bis-gear",
+  "frost-mage": "https://www.wowhead.com/guide/classes/mage/frost/bis-gear",
+  "brewmaster": "https://www.wowhead.com/guide/classes/monk/brewmaster/bis-gear",
+  "mistweaver": "https://www.wowhead.com/guide/classes/monk/mistweaver/bis-gear",
+  "windwalker": "https://www.wowhead.com/guide/classes/monk/windwalker/bis-gear",
+  "holy-pala": "https://www.wowhead.com/guide/classes/paladin/holy/bis-gear",
+  "protection-pala": "https://www.wowhead.com/guide/classes/paladin/protection/bis-gear",
+  "retribution": "https://www.wowhead.com/guide/classes/paladin/retribution/bis-gear",
+  "discipline": "https://www.wowhead.com/guide/classes/priest/discipline/bis-gear",
+  "holy-priest": "https://www.wowhead.com/guide/classes/priest/holy/bis-gear",
+  "shadow": "https://www.wowhead.com/guide/classes/priest/shadow/bis-gear",
+  "assassination": "https://www.wowhead.com/guide/classes/rogue/assassination/bis-gear",
+  "outlaw": "https://www.wowhead.com/guide/classes/rogue/outlaw/bis-gear",
+  "subtlety": "https://www.wowhead.com/guide/classes/rogue/subtlety/bis-gear",
+  "elemental": "https://www.wowhead.com/guide/classes/shaman/elemental/bis-gear",
+  "enhancement": "https://www.wowhead.com/guide/classes/shaman/enhancement/bis-gear",
+  "restoration-sham": "https://www.wowhead.com/guide/classes/shaman/restoration/bis-gear",
+  "affliction": "https://www.wowhead.com/guide/classes/warlock/affliction/bis-gear",
+  "demonology": "https://www.wowhead.com/guide/classes/warlock/demonology/bis-gear",
+  "destruction": "https://www.wowhead.com/guide/classes/warlock/destruction/bis-gear",
+  "arms": "https://www.wowhead.com/guide/classes/warrior/arms/bis-gear",
+  "fury": "https://www.wowhead.com/guide/classes/warrior/fury/bis-gear",
+  "protection-war": "https://www.wowhead.com/guide/classes/warrior/protection/bis-gear"
+};
+
+const STRATEGY_DATA = {
+  "blood": {
+    "targetPriority": [
+      {
+        "name": "Gaze of the Alnseer",
+        "source": "Chimaerus"
+      },
+      {
+        "name": "Light Company Guidon",
+        "source": "Imperator Averzian"
+      },
+      {
+        "name": "Garfrost's Two-Ton Hammer",
+        "source": "Pit of Saron"
+      },
+      {
+        "name": "Relentless Rider's Crown",
+        "source": "Tier Set \u2014 Raid | Catalyst | Vault"
+      }
+    ],
+    "upgradePriority": [
+      {
+        "name": "Weapon",
+        "source": ""
+      },
+      {
+        "name": "Liferipper's Cutlass (Your current weapon, really)",
+        "source": ""
+      },
+      {
+        "name": "Gaze of the Alnseer",
+        "source": "Chimaerus"
+      },
+      {
+        "name": "Umbral Plume",
+        "source": ""
+      }
+    ]
+  },
+  "frost-dk": {
+    "targetPriority": [
+      {
+        "name": "Light Company Guidon",
+        "source": "Imperator Averzian"
+      },
+      {
+        "name": "Gaze of the Alnseer",
+        "source": "Chimaerus"
+      },
+      {
+        "name": "Bellamy's Final Judgement",
+        "source": "Lightblinded Vanguard"
+      },
+      {
+        "name": "Relentless Rider's Crown",
+        "source": "Tier Set \u2014 Raid | Catalyst | Vault"
+      }
+    ],
+    "upgradePriority": [
+      {
+        "name": "Weapon",
+        "source": ""
+      },
+      {
+        "name": "Gaze of the Alnseer",
+        "source": "Chimaerus"
+      },
+      {
+        "name": "Light Company Guidon",
+        "source": "Imperator Averzian"
+      },
+      {
+        "name": "Bellamy's Final Judgement",
+        "source": "Lightblinded Vanguard"
+      }
+    ]
+  },
+  "unholy": {
+    "targetPriority": [
+      {
+        "name": "Gaze of the Alnseer",
+        "source": "Chimaerus"
+      },
+      {
+        "name": "Light Company Guidon",
+        "source": "Imperator Averzian"
+      },
+      {
+        "name": "Bellamy's Final Judgement",
+        "source": "Lightblinded Vanguard"
+      },
+      {
+        "name": "Relentless Rider's Crown",
+        "source": "Tier Set \u2014 Raid | Catalyst | Vault"
+      }
+    ],
+    "upgradePriority": [
+      {
+        "name": "Weapon",
+        "source": ""
+      },
+      {
+        "name": "Gaze of the Alnseer",
+        "source": "Chimaerus"
+      },
+      {
+        "name": "Light Company Guidon",
+        "source": "Imperator Averzian"
+      },
+      {
+        "name": "Bellamy's Final Judgement",
+        "source": "Lightblinded Vanguard"
+      }
+    ]
+  },
+  "havoc": {
+    "targetPriority": [
+      {
+        "name": "Algeth'ar Puzzle Box",
+        "source": "Algeth'ar Academy"
+      },
+      {
+        "name": "Gaze of the Alnseer",
+        "source": "Chimaerus"
+      },
+      {
+        "name": "Lightless Lament",
+        "source": "Midnight Falls"
+      },
+      {
+        "name": "Emblazoned Sunglaive",
+        "source": "Vaelgor & Ezzorak"
+      }
+    ],
+    "upgradePriority": [
+      {
+        "name": "Weapon",
+        "source": ""
+      },
+      {
+        "name": "Lightless Lament",
+        "source": "Midnight Falls"
+      },
+      {
+        "name": "Algeth'ar Puzzle Box",
+        "source": "Algeth'ar Academy"
+      },
+      {
+        "name": "Gaze of the Alnseer",
+        "source": "Chimaerus"
+      }
+    ]
+  },
+  "vengeance": {
+    "targetPriority": [
+      {
+        "name": "Gaze of the Alnseer",
+        "source": "Chimaerus"
+      },
+      {
+        "name": "Light Company Guidon",
+        "source": "Imperator Averzian"
+      },
+      {
+        "name": "Lightless Lament",
+        "source": "Midnight Falls"
+      },
+      {
+        "name": "Tormentor's Bladed Fists",
+        "source": "Fallen-King Salhadaar"
+      }
+    ],
+    "upgradePriority": [
+      {
+        "name": "Weapon",
+        "source": ""
+      },
+      {
+        "name": "Lightless Lament",
+        "source": "Midnight Falls"
+      },
+      {
+        "name": "Tormentor's Bladed Fists",
+        "source": "Fallen-King Salhadaar"
+      },
+      {
+        "name": "Gaze of the Alnseer",
+        "source": "Chimaerus"
+      }
+    ]
+  },
+  "devourer": {
+    "targetPriority": [
+      {
+        "name": "Gaze of the Alnseer",
+        "source": "Chimaerus"
+      },
+      {
+        "name": "Vaelgor's Final Stare",
+        "source": "Vaelgor & Ezzorak"
+      },
+      {
+        "name": "Lightless Lament",
+        "source": "Midnight Falls"
+      },
+      {
+        "name": "Spellbreaker's Warglaive + Darkmoon Sigil: Hunt",
+        "source": "Crafting"
+      }
+    ],
+    "upgradePriority": [
+      {
+        "name": "Weapon",
+        "source": ""
+      },
+      {
+        "name": "Spellboon Saber",
+        "source": ""
+      },
+      {
+        "name": "Spellbreaker's Warglaive",
+        "source": ""
+      },
+      {
+        "name": "Gaze of the Alnseer",
+        "source": "Chimaerus"
+      }
+    ]
+  },
+  "balance": {
+    "targetPriority": [
+      {
+        "name": "Vaelgor's Final Stare",
+        "source": "Vaelgor & Ezzorak"
+      },
+      {
+        "name": "Locus-Walker's Ribbon",
+        "source": "Crown of the Cosmos"
+      },
+      {
+        "name": "Belo'melorn, the Shattered Talon",
+        "source": "Belo'ren"
+      },
+      {
+        "name": "Aln'hara Lantern",
+        "source": "Crafting"
+      }
+    ],
+    "upgradePriority": [
+      {
+        "name": "Weapon",
+        "source": ""
+      },
+      {
+        "name": "Aln'hara Cane",
+        "source": ""
+      },
+      {
+        "name": "Vaelgor's Final Stare",
+        "source": "Vaelgor & Ezzorak"
+      },
+      {
+        "name": "Gaze of the Alnseer",
+        "source": ""
+      }
+    ]
+  },
+  "feral": {
+    "targetPriority": [
+      {
+        "name": "Algeth'ar Puzzle Box",
+        "source": "Algeth'ar Academy"
+      },
+      {
+        "name": "Radiant Plume",
+        "source": "Belo'ren"
+      },
+      {
+        "name": "Inescapable Reach",
+        "source": "Vorasius"
+      },
+      {
+        "name": "Branches of the Luminous Bloom",
+        "source": "Tier Set \u2014 Raid | Catalyst | Vault"
+      }
+    ],
+    "upgradePriority": [
+      {
+        "name": "Weapon",
+        "source": ""
+      },
+      {
+        "name": "Alnscorned Spire",
+        "source": ""
+      },
+      {
+        "name": "Gaze of the Alnseer",
+        "source": ""
+      },
+      {
+        "name": "Algeth'ar Puzzle Box",
+        "source": "Algeth'ar Academy"
+      }
+    ]
+  },
+  "guardian": {
+    "targetPriority": [
+      {
+        "name": "Gaze of the Alnseer",
+        "source": "Chimaerus"
+      },
+      {
+        "name": "Algeth'ar Puzzle Box",
+        "source": "Algeth'ar Academy"
+      },
+      {
+        "name": "Alnscorned Spire",
+        "source": "Chimaerus"
+      },
+      {
+        "name": "Mask of Darkest Intent",
+        "source": "Midnight Falls"
+      }
+    ],
+    "upgradePriority": [
+      {
+        "name": "Weapon",
+        "source": ""
+      },
+      {
+        "name": "Alnscorned Spire",
+        "source": "Chimaerus"
+      },
+      {
+        "name": "Gaze of the Alnseer",
+        "source": "Chimaerus"
+      },
+      {
+        "name": "Algeth'ar Puzzle Box",
+        "source": "Algeth'ar Academy"
+      }
+    ]
+  },
+  "restoration-druid": {
+    "targetPriority": [
+      {
+        "name": "Locus-Walker's Ribbon",
+        "source": "Crown of the Cosmos"
+      },
+      {
+        "name": "Vaelgor's Final Stare",
+        "source": "Vaelgor & Ezzorak"
+      },
+      {
+        "name": "Belo'melorn, the Shattered Talon",
+        "source": "Belo'ren"
+      },
+      {
+        "name": "Tome of Alnscorned Regret",
+        "source": "Chimaerus"
+      }
+    ],
+    "upgradePriority": [
+      {
+        "name": "Weapon",
+        "source": ""
+      },
+      {
+        "name": "Gaze of the Alnseer",
+        "source": ""
+      },
+      {
+        "name": "Locus-Walker's Ribbon",
+        "source": "Crown of the Cosmos"
+      }
+    ]
+  },
+  "devastation": {
+    "targetPriority": [
+      {
+        "name": "Vaelgor's Final Stare",
+        "source": "Vaelgor & Ezzorak"
+      },
+      {
+        "name": "Locus-Walker's Ribbon",
+        "source": "Crown of the Cosmos"
+      },
+      {
+        "name": "Belo'melorn, the Shattered Talon",
+        "source": "Belo'ren"
+      },
+      {
+        "name": "Grimoire of the Eternal Light",
+        "source": "Vorasius"
+      }
+    ],
+    "upgradePriority": [
+      {
+        "name": "Weapon",
+        "source": ""
+      },
+      {
+        "name": "Aln'hara Cane",
+        "source": ""
+      },
+      {
+        "name": "Vaelgor's Final Stare",
+        "source": "Vaelgor & Ezzorak"
+      },
+      {
+        "name": "Locus-Walker's Ribbon",
+        "source": "Crown of the Cosmos"
+      }
+    ]
+  },
+  "preservation": {
+    "targetPriority": [
+      {
+        "name": "Vaelgor's Final Stare",
+        "source": "Vaelgor & Ezzorak"
+      },
+      {
+        "name": "Locus-Walker's Ribbon",
+        "source": "Crown of the Cosmos"
+      },
+      {
+        "name": "Umbral Spire of Zuraal",
+        "source": "Seat of the Triumvirate"
+      },
+      {
+        "name": "Oblivion Guise",
+        "source": "Midnight Falls"
+      }
+    ],
+    "upgradePriority": [
+      {
+        "name": "Weapon",
+        "source": ""
+      },
+      {
+        "name": "Gaze of the Alnseer",
+        "source": ""
+      },
+      {
+        "name": "Locus-Walker's Ribbon",
+        "source": "Crown of the Cosmos"
+      }
+    ]
+  },
+  "augmentation": {
+    "targetPriority": [
+      {
+        "name": "Ribbon of Coiled Malice",
+        "source": "Fallen-King Salhadaar"
+      },
+      {
+        "name": "Shadow of the Empyrean Requiem",
+        "source": "Midnight Falls"
+      },
+      {
+        "name": "Soulcatcher's Charm",
+        "source": "Maisara Caverns"
+      },
+      {
+        "name": "Ceremonial Hexblade",
+        "source": "Maisara Caverns"
+      }
+    ],
+    "upgradePriority": [
+      {
+        "name": "Weapon",
+        "source": ""
+      },
+      {
+        "name": "Magister's Valediction",
+        "source": ""
+      },
+      {
+        "name": "Shadow of the Empyrean Requiem",
+        "source": "Midnight Falls"
+      },
+      {
+        "name": "Grimoire of the Eternal Light",
+        "source": "Vorasius"
+      }
+    ]
+  },
+  "beast-mastery": {
+    "targetPriority": [
+      {
+        "name": "Radiant Plume",
+        "source": "Belo'ren"
+      },
+      {
+        "name": "Algeth'ar Puzzle Box",
+        "source": "Algeth'ar Academy"
+      },
+      {
+        "name": "Deceiver's Rotbow",
+        "source": "Maisara Caverns"
+      },
+      {
+        "name": "Primal Sentry's Maw",
+        "source": "Tier Set \u2014 Raid | Catalyst | Vault"
+      }
+    ],
+    "upgradePriority": [
+      {
+        "name": "Weapon",
+        "source": ""
+      },
+      {
+        "name": "Deceiver's Rotbow",
+        "source": "Maisara Caverns"
+      },
+      {
+        "name": "Algeth'ar Puzzle Box",
+        "source": "Algeth'ar Academy"
+      },
+      {
+        "name": "Gaze of the Alnseer",
+        "source": ""
+      }
+    ]
+  },
+  "marksmanship": {
+    "targetPriority": [
+      {
+        "name": "Algeth'ar Puzzle Box",
+        "source": "Algeth'ar Academy"
+      },
+      {
+        "name": "Umbral Plume",
+        "source": "Belo'ren"
+      },
+      {
+        "name": "Ranger-Captain's Lethal Recurve",
+        "source": "Crown of the Cosmos"
+      },
+      {
+        "name": "Primal Sentry's Maw",
+        "source": "Tier Set \u2014 Raid | Catalyst | Vault"
+      }
+    ],
+    "upgradePriority": [
+      {
+        "name": "Weapon",
+        "source": ""
+      },
+      {
+        "name": "Ranger-Captain's Lethal Recurve",
+        "source": "Crown of the Cosmos"
+      },
+      {
+        "name": "Algeth'ar Puzzle Box",
+        "source": "Algeth'ar Academy"
+      },
+      {
+        "name": "Umbral Plume",
+        "source": "Belo'ren"
+      }
+    ]
+  },
+  "survival": {
+    "targetPriority": [
+      {
+        "name": "Algeth'ar Puzzle Box",
+        "source": "Algeth'ar Academy"
+      },
+      {
+        "name": "Radiant Plume",
+        "source": "Belo'ren"
+      },
+      {
+        "name": "Roostwarden's Bough",
+        "source": "Windrunner Spire"
+      },
+      {
+        "name": "Primal Sentry's Maw",
+        "source": "Tier Set \u2014 Raid | Catalyst | Vault"
+      }
+    ],
+    "upgradePriority": [
+      {
+        "name": "Weapon",
+        "source": ""
+      },
+      {
+        "name": "Belo'ren's Swift Talon",
+        "source": ""
+      },
+      {
+        "name": "Gaze of the Alnseer",
+        "source": ""
+      },
+      {
+        "name": "Algeth'ar Puzzle Box",
+        "source": "Algeth'ar Academy"
+      }
+    ]
+  },
+  "arcane": {
+    "targetPriority": [
+      {
+        "name": "Vaelgor's Final Stare",
+        "source": "Vaelgor & Ezzorak"
+      },
+      {
+        "name": "Gaze of the Alnseer",
+        "source": "Chimaerus"
+      },
+      {
+        "name": "Skybreaker's Blade",
+        "source": "Skyreach"
+      },
+      {
+        "name": "Sigil of the Restless Heart",
+        "source": "Windrunner Spire"
+      }
+    ],
+    "upgradePriority": [
+      {
+        "name": "Weapon",
+        "source": ""
+      },
+      {
+        "name": "Aln'hara Cane",
+        "source": ""
+      },
+      {
+        "name": "Vaelgor's Final Stare",
+        "source": "Vaelgor & Ezzorak"
+      },
+      {
+        "name": "Gaze of the Alnseer",
+        "source": "Chimaerus"
+      }
+    ]
+  },
+  "fire": {
+    "targetPriority": [
+      {
+        "name": "Emberwing Feather",
+        "source": "Windrunner Spire"
+      },
+      {
+        "name": "Locus-Walker's Ribbon",
+        "source": "Crown of the Cosmos"
+      },
+      {
+        "name": "Brazier of the Dissonant Dirge",
+        "source": "Midnight Falls"
+      },
+      {
+        "name": "Voidbreaker's Veil",
+        "source": "Tier Set \u2014 Raid | Catalyst | Vault"
+      }
+    ],
+    "upgradePriority": [
+      {
+        "name": "Weapon",
+        "source": ""
+      },
+      {
+        "name": "Aln'hara Cane",
+        "source": ""
+      },
+      {
+        "name": "Emberwing Feather",
+        "source": "Windrunner Spire"
+      },
+      {
+        "name": "Locus-Walker's Ribbon",
+        "source": "Crown of the Cosmos"
+      }
+    ]
+  },
+  "frost-mage": {
+    "targetPriority": [
+      {
+        "name": "Gaze of the Alnseer",
+        "source": "Chimaerus"
+      },
+      {
+        "name": "Vaelgor's Final Stare",
+        "source": "Vaelgor & Ezzorak"
+      },
+      {
+        "name": "Skybreaker's Blade",
+        "source": "Skyreach"
+      },
+      {
+        "name": "Aln'hara Lantern",
+        "source": "Crafting"
+      }
+    ],
+    "upgradePriority": [
+      {
+        "name": "Weapon",
+        "source": ""
+      }
+    ]
+  },
+  "brewmaster": {
+    "targetPriority": [
+      {
+        "name": "Radiant Plume",
+        "source": "Belo'ren"
+      },
+      {
+        "name": "Gaze of the Alnseer",
+        "source": "Chimaerus"
+      },
+      {
+        "name": "Inescapable Reach",
+        "source": "Vorasius"
+      },
+      {
+        "name": "Fearsome Visage of Ra-den's Chosen",
+        "source": "Tier Set \u2014 Raid | Catalyst | Vault"
+      }
+    ],
+    "upgradePriority": [
+      {
+        "name": "Weapon",
+        "source": ""
+      },
+      {
+        "name": "Inescapable Reach",
+        "source": "Vorasius"
+      },
+      {
+        "name": "Gaze of the Alnseer",
+        "source": "Chimaerus"
+      },
+      {
+        "name": "Radiant Plume",
+        "source": "Belo'ren"
+      }
+    ]
+  },
+  "mistweaver": {
+    "targetPriority": [
+      {
+        "name": "Litany of Lightblind Wrath",
+        "source": "Lightblinded Vanguard"
+      },
+      {
+        "name": "Gaze of the Alnseer",
+        "source": "Chimaerus"
+      },
+      {
+        "name": "Arcanic of the High Sage",
+        "source": "Skyreach"
+      },
+      {
+        "name": "Grimoire of the Eternal Light",
+        "source": "Vorasius"
+      }
+    ],
+    "upgradePriority": [
+      {
+        "name": "Weapon",
+        "source": ""
+      },
+      {
+        "name": "Aln'hara Cane",
+        "source": ""
+      },
+      {
+        "name": "Litany of Lightblind Wrath",
+        "source": "Lightblinded Vanguard"
+      },
+      {
+        "name": "Gaze of the Alnseer",
+        "source": "Chimaerus"
+      }
+    ]
+  },
+  "windwalker": {
+    "targetPriority": [
+      {
+        "name": "Gaze of the Alnseer",
+        "source": "Chimaerus"
+      },
+      {
+        "name": "Algeth'ar Puzzle Box",
+        "source": "Algeth'ar Academy"
+      },
+      {
+        "name": "Traitor's Talon",
+        "source": "Maisara Caverns"
+      },
+      {
+        "name": "Fearsome Visage of Ra-den's Chosen",
+        "source": "Tier Set \u2014 Raid | Catalyst | Vault"
+      }
+    ],
+    "upgradePriority": [
+      {
+        "name": "Weapon",
+        "source": ""
+      },
+      {
+        "name": "Traitor's Talon",
+        "source": "Maisara Caverns"
+      },
+      {
+        "name": "Algeth'ar Puzzle Box",
+        "source": "Algeth'ar Academy"
+      },
+      {
+        "name": "Gaze of the Alnseer",
+        "source": "Chimaerus"
+      }
+    ]
+  },
+  "holy-pala": {
+    "targetPriority": [
+      {
+        "name": "Locus-Walker's Ribbon",
+        "source": "Crown of the Cosmos"
+      },
+      {
+        "name": "Gaze of the Alnseer",
+        "source": "Chimaerus"
+      },
+      {
+        "name": "Spellboon Saber",
+        "source": "Algeth'ar Academy"
+      },
+      {
+        "name": "Viryx's Indomitable Bulwark",
+        "source": "Skyreach"
+      }
+    ],
+    "upgradePriority": [
+      {
+        "name": "Weapon",
+        "source": ""
+      },
+      {
+        "name": "Magister's Mana Sword",
+        "source": ""
+      },
+      {
+        "name": "Spellbreaker's Rebuke",
+        "source": ""
+      },
+      {
+        "name": "Locus-Walker's Ribbon",
+        "source": "Crown of the Cosmos"
+      }
+    ]
+  },
+  "protection-pala": {
+    "targetPriority": [
+      {
+        "name": "Gaze of the Alnseer",
+        "source": "Chimaerus"
+      },
+      {
+        "name": "Heart of Ancient Hunger",
+        "source": "Vorasius"
+      },
+      {
+        "name": "Turalyon's False Echo",
+        "source": "Crown of the Cosmos"
+      },
+      {
+        "name": "Thalassian Dawnguard",
+        "source": "Belo'ren"
+      }
+    ],
+    "upgradePriority": [
+      {
+        "name": "Weapon",
+        "source": ""
+      },
+      {
+        "name": "Turalyon's False Echo",
+        "source": "Crown of the Cosmos"
+      },
+      {
+        "name": "Thalassian Dawnguard",
+        "source": "Belo'ren"
+      },
+      {
+        "name": "Gaze of the Alnseer",
+        "source": "Chimaerus"
+      }
+    ]
+  },
+  "retribution": {
+    "targetPriority": [
+      {
+        "name": "Umbral Plume",
+        "source": "Belo'ren"
+      },
+      {
+        "name": "Algeth'ar Puzzle Box",
+        "source": "Algeth'ar Academy"
+      },
+      {
+        "name": "Bellamy's Final Judgement",
+        "source": "Lightblinded Vanguard"
+      },
+      {
+        "name": "Luminant Verdict's Unwavering Gaze",
+        "source": "Tier Set \u2014 Raid | Catalyst | Vault"
+      }
+    ],
+    "upgradePriority": [
+      {
+        "name": "Weapon",
+        "source": ""
+      },
+      {
+        "name": "Bellamy's Final Judgement",
+        "source": "Lightblinded Vanguard"
+      },
+      {
+        "name": "Algeth'ar Puzzle Box",
+        "source": "Algeth'ar Academy"
+      },
+      {
+        "name": "Umbral Plume",
+        "source": "Belo'ren"
+      }
+    ]
+  },
+  "discipline": {
+    "targetPriority": [
+      {
+        "name": "Litany of Lightblind Wrath",
+        "source": "War Chaplain Senn"
+      },
+      {
+        "name": "Vaelgor's Final Stare",
+        "source": "Vaelgor & Ezzorak"
+      },
+      {
+        "name": "Belo'melorn, the Shattered Talon",
+        "source": "Belo'ren"
+      },
+      {
+        "name": "Aln'hara Lantern",
+        "source": "Crafting"
+      }
+    ],
+    "upgradePriority": [
+      {
+        "name": "Weapon",
+        "source": ""
+      },
+      {
+        "name": "Gaze of the Alnseer",
+        "source": ""
+      },
+      {
+        "name": "Vaelgor's Final Stare",
+        "source": "Vaelgor & Ezzorak"
+      },
+      {
+        "name": "Litany of Lightblind Wrath",
+        "source": "War Chaplain Senn"
+      }
+    ]
+  },
+  "holy-priest": {
+    "targetPriority": [],
+    "upgradePriority": [
+      {
+        "name": "Weapon",
+        "source": ""
+      },
+      {
+        "name": "Litany of Lightblind Wrath",
+        "source": ""
+      },
+      {
+        "name": "Locus-Walker's Ribbon",
+        "source": ""
+      },
+      {
+        "name": "Gaze of the Alnseer",
+        "source": ""
+      }
+    ]
+  },
+  "shadow": {
+    "targetPriority": [
+      {
+        "name": "Wraps of Watchful Wrath",
+        "source": "Magister's Terrace"
+      },
+      {
+        "name": "Gaze of the Alnseer",
+        "source": "Chimaerus"
+      },
+      {
+        "name": "Vaelgor's Final Stare",
+        "source": "Vaelgor & Ezzorak"
+      },
+      {
+        "name": "Belo'melorn, the Shattered Talon",
+        "source": "Belo'ren"
+      }
+    ],
+    "upgradePriority": [
+      {
+        "name": "Weapon",
+        "source": ""
+      },
+      {
+        "name": "Spire of the Furious Construct",
+        "source": ""
+      },
+      {
+        "name": "Gaze of the Alnseer",
+        "source": "Chimaerus"
+      },
+      {
+        "name": "Vaelgor's Final Stare",
+        "source": "Vaelgor & Ezzorak"
+      }
+    ]
+  },
+  "assassination": {
+    "targetPriority": [
+      {
+        "name": "Ribbon of Coiled Malice",
+        "source": "Fallen-King Salhadaar"
+      },
+      {
+        "name": "Gaze of the Alnseer",
+        "source": "Chimaerus"
+      },
+      {
+        "name": "Algeth'ar Puzzle Box",
+        "source": "Algeth'ar Academy"
+      },
+      {
+        "name": "Hungering Victory",
+        "source": "Vorasius"
+      }
+    ],
+    "upgradePriority": [
+      {
+        "name": "Weapon",
+        "source": ""
+      },
+      {
+        "name": "Hungering Victory",
+        "source": "Vorasius"
+      },
+      {
+        "name": "Algeth'ar Puzzle Box",
+        "source": "Algeth'ar Academy"
+      },
+      {
+        "name": "Gaze of the Alnseer",
+        "source": "Chimaerus"
+      }
+    ]
+  },
+  "outlaw": {
+    "targetPriority": [
+      {
+        "name": "Gaze of the Alnseer",
+        "source": "Chimaerus"
+      },
+      {
+        "name": "Umbral Plume",
+        "source": "Belo'ren"
+      },
+      {
+        "name": "Arator's Swift Remembrance",
+        "source": "Crown of the Cosmos"
+      },
+      {
+        "name": "Krick's Beetle Stabber",
+        "source": "Pit of Saron"
+      }
+    ],
+    "upgradePriority": [
+      {
+        "name": "Weapon",
+        "source": ""
+      },
+      {
+        "name": "Arator's Swift Remembrance",
+        "source": "Crown of the Cosmos"
+      },
+      {
+        "name": "Gaze of the Alnseer",
+        "source": "Chimaerus"
+      },
+      {
+        "name": "Umbral Plume",
+        "source": "Belo'ren"
+      }
+    ]
+  },
+  "subtlety": {
+    "targetPriority": [
+      {
+        "name": "Light Company Guidon",
+        "source": "Imperator Averzian"
+      },
+      {
+        "name": "Gaze of the Alnseer",
+        "source": "Chimaerus"
+      },
+      {
+        "name": "Hungering Victory",
+        "source": "Vorasius"
+      },
+      {
+        "name": "Farstrider's Mercy",
+        "source": "Crafting"
+      }
+    ],
+    "upgradePriority": [
+      {
+        "name": "Weapon",
+        "source": ""
+      }
+    ]
+  },
+  "elemental": {
+    "targetPriority": [
+      {
+        "name": "Gaze of the Alnseer",
+        "source": "Chimaerus"
+      },
+      {
+        "name": "Emberwing Feather",
+        "source": "Windrunner Spire"
+      },
+      {
+        "name": "Excavating Cudgel",
+        "source": "Windrunner Spire"
+      },
+      {
+        "name": "Ward of the Spellbreaker",
+        "source": "Magister's Terrace"
+      }
+    ],
+    "upgradePriority": [
+      {
+        "name": "Weapon",
+        "source": ""
+      },
+      {
+        "name": "Magister's Valediction",
+        "source": ""
+      },
+      {
+        "name": "Emberwing Feather",
+        "source": "Windrunner Spire"
+      },
+      {
+        "name": "Gaze of the Alnseer",
+        "source": "Chimaerus"
+      }
+    ]
+  },
+  "enhancement": {
+    "targetPriority": [
+      {
+        "name": "Gaze of the Alnseer",
+        "source": "Chimaerus"
+      },
+      {
+        "name": "Algeth'ar Puzzle Box",
+        "source": "Algeth'ar Academy"
+      },
+      {
+        "name": "Clutchmates' Caress",
+        "source": "Vaelgor & Ezzorak"
+      },
+      {
+        "name": "Farstrider's Chopper",
+        "source": "Blacksmithing"
+      }
+    ],
+    "upgradePriority": [
+      {
+        "name": "Weapon",
+        "source": ""
+      },
+      {
+        "name": "Clutchmates' Caress Or any Myth Main-Hand Weapon",
+        "source": ""
+      },
+      {
+        "name": "Algeth'ar Puzzle Box",
+        "source": "Algeth'ar Academy"
+      },
+      {
+        "name": "Gaze of the Alnseer",
+        "source": "Chimaerus"
+      }
+    ]
+  },
+  "restoration-sham": {
+    "targetPriority": [
+      {
+        "name": "Ribbon of Coiled Malice",
+        "source": "Fallen-King Salhadaar"
+      },
+      {
+        "name": "Gaze of the Alnseer",
+        "source": "Chimaerus"
+      },
+      {
+        "name": "Weight of Command",
+        "source": "Imperator Averzian"
+      },
+      {
+        "name": "Reflux Reflector",
+        "source": "Nexus Point Xenas"
+      }
+    ],
+    "upgradePriority": [
+      {
+        "name": "Weapon",
+        "source": ""
+      },
+      {
+        "name": "Weight of Command",
+        "source": "Imperator Averzian"
+      },
+      {
+        "name": "Light of the Cosmic Crescendo",
+        "source": ""
+      },
+      {
+        "name": "Locus-Walker's Ribbon",
+        "source": ""
+      }
+    ]
+  },
+  "affliction": {
+    "targetPriority": [
+      {
+        "name": "Gaze of the Alnseer",
+        "source": "Chimaerus"
+      },
+      {
+        "name": "Emberwing Feather",
+        "source": "Windrunner Spire"
+      },
+      {
+        "name": "Belo'melorn, the Shattered Talon",
+        "source": "Belo'ren"
+      },
+      {
+        "name": "Grimoire of the Eternal Light",
+        "source": "Vorasius"
+      }
+    ],
+    "upgradePriority": [
+      {
+        "name": "Weapon",
+        "source": ""
+      }
+    ]
+  },
+  "demonology": {
+    "targetPriority": [
+      {
+        "name": "Gaze of the Alnseer",
+        "source": "Chimaerus"
+      },
+      {
+        "name": "Vaelgor's Final Stare",
+        "source": "Vaelgor"
+      },
+      {
+        "name": "Belo'melorn, the Shattered Talon",
+        "source": "Belo'ren"
+      },
+      {
+        "name": "Grimoire of the Eternal Light",
+        "source": "Vorasius"
+      }
+    ],
+    "upgradePriority": [
+      {
+        "name": "Weapon",
+        "source": ""
+      },
+      {
+        "name": "Belo'melorn, the Shattered Talon",
+        "source": "Belo'ren"
+      },
+      {
+        "name": "Emberwing Feather",
+        "source": ""
+      },
+      {
+        "name": "Gaze of the Alnseer",
+        "source": "Chimaerus"
+      }
+    ]
+  },
+  "destruction": {
+    "targetPriority": [
+      {
+        "name": "Gaze of the Alnseer",
+        "source": "Chimaerus"
+      },
+      {
+        "name": "Vaelgor's Final Stare",
+        "source": "Vaelgor"
+      },
+      {
+        "name": "Belo'melorn, the Shattered Talon",
+        "source": "Belo'ren"
+      },
+      {
+        "name": "Grimoire of the Eternal Light",
+        "source": "Vorasius"
+      }
+    ],
+    "upgradePriority": [
+      {
+        "name": "Weapon",
+        "source": ""
+      }
+    ]
+  },
+  "arms": {
+    "targetPriority": [
+      {
+        "name": "Ribbon of Coiled Malice",
+        "source": "Fallen-King Salhadaar"
+      },
+      {
+        "name": "Gaze of the Alnseer",
+        "source": "Chimaerus"
+      },
+      {
+        "name": "Heart of Ancient Hunger",
+        "source": "Vorasius"
+      },
+      {
+        "name": "Alah'endal, the Dawnsong",
+        "source": "Midnight Falls"
+      }
+    ],
+    "upgradePriority": [
+      {
+        "name": "Weapon",
+        "source": ""
+      }
+    ]
+  },
+  "fury": {
+    "targetPriority": [
+      {
+        "name": "Gaze of the Alnseer",
+        "source": "Chimaerus"
+      },
+      {
+        "name": "Heart of Ancient Hunger",
+        "source": "Vorasius"
+      },
+      {
+        "name": "Bellamy's Final Judgement",
+        "source": "Lightblinded Vanguard"
+      },
+      {
+        "name": "Blood Knight's Warblade",
+        "source": "Crafted"
+      }
+    ],
+    "upgradePriority": [
+      {
+        "name": "Weapon",
+        "source": ""
+      }
+    ]
+  },
+  "protection-war": {
+    "targetPriority": [],
+    "upgradePriority": [
+      {
+        "name": "Weapon",
+        "source": ""
+      },
+      {
+        "name": "Turalyon's False Echo",
+        "source": ""
+      },
+      {
+        "name": "Thalassian Dawnguard",
+        "source": ""
+      },
+      {
+        "name": "Gaze of the Alnseer",
+        "source": ""
+      }
+    ]
+  }
+};
+
 const SEEDED = {
   "blood:Overall BiS": {
     patch: "12.0.1 Midnight Season 1", lastVerified: "2026-04-14", source: "Wowhead",
@@ -1570,7 +3022,9 @@ function Slot({ label, id, data, onChange, targetTrack, bisMode }) {
 function Tracker({ cls, spec, charName, initialMode = "", onBack }) {
   const storageKey = `bis-${cls.id}-${spec.id}-${charName || "default"}`;
   const modeStorageKey = (mode) => `${storageKey}-${mode}`;
-  const modeLabel = (mode) => mode === "custom" ? "Custom Builder" : mode === "community" ? "Community BiS" : "Character Scan";
+  const modeLabel = (mode) => mode === "custom" ? "Custom Builder" : mode === "community" ? "Wowhead BiS" : "Character Scan";
+  const wowheadLink = WOWHEAD_LINKS[spec.id] || "";
+  const strategy = STRATEGY_DATA[spec.id] || { targetPriority: [], upgradePriority: [] };
   const isPlaceholderName = (name) => {
     const n = (name || "").trim();
     return !n || /^x+$/i.test(n) || /^unknown$/i.test(n);
@@ -1845,6 +3299,48 @@ function Tracker({ cls, spec, charName, initialMode = "", onBack }) {
         )}
       </div>
 
+
+      <div className="no-print" style={{ background:"var(--panel)", border:"1px solid var(--bdr)", marginBottom:".75rem", padding:".75rem 1rem" }}>
+        <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", gap:".75rem", flexWrap:"wrap" }}>
+          <div>
+            <div style={{ fontFamily:"Cinzel,serif", fontSize:".78rem", letterSpacing:".12em", color:"var(--gold)" }}>WOWHEAD SUGGESTED BiS</div>
+            <div style={{ fontSize:".78rem", color:"var(--parch-dk)", marginTop:".2rem" }}>Suggested BiS is based on Wowhead and should still be double-checked for your character. Use Custom Builder for full control.</div>
+          </div>
+          {wowheadLink && <a href={wowheadLink} target="_blank" rel="noreferrer" className="bis-btn" style={{ textDecoration:"none", whiteSpace:"nowrap" }}>↗ View Wowhead Guide</a>}
+        </div>
+      </div>
+
+      <div className="farm-priority-section no-print" style={{ background:"var(--panel)", border:"1px solid var(--bdr)", marginBottom:".75rem" }}>
+        <div style={{ display:"flex", alignItems:"center", gap:".75rem", padding:".7rem .85rem", borderBottom:"1px solid var(--bdr)", flexWrap:"wrap" }}>
+          <div style={{ flex:1 }}>
+            <div style={{ fontFamily:"Cinzel,serif", fontSize:".78rem", letterSpacing:".12em", color:"var(--gold)" }}>STRATEGY</div>
+            <div style={{ fontSize:".78rem", color:"var(--parch-dk)", marginTop:".2rem" }}>What to chase first and what deserves upgrade resources. BiS stays untouched.</div>
+          </div>
+        </div>
+        <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit,minmax(260px,1fr))", gap:".8rem", padding:".85rem" }}>
+          <div style={{ border:"1px solid var(--bdr2)", background:"rgba(0,0,0,.14)", padding:".75rem" }}>
+            <div style={{ fontFamily:"Cinzel,serif", fontSize:".72rem", letterSpacing:".1em", color:"var(--gold-lt)", marginBottom:".45rem" }}>TARGET PRIORITY</div>
+            {(strategy.targetPriority || []).length ? strategy.targetPriority.map((row, idx) => (
+              <div key={row.name + idx} style={{ marginBottom:".4rem", fontSize:".84rem", color:"var(--parch-dk)" }}>
+                <span style={{ color:"var(--gold-lt)", fontFamily:"Cinzel,serif", marginRight:".4rem" }}>{idx + 1}.</span>
+                <span style={{ color:"var(--parch)" }}>{row.name}</span>
+                {row.source ? <span style={{ color:"var(--parch-dk)" }}> · {row.source}</span> : null}
+              </div>
+            )) : <div style={{ fontSize:".82rem", color:"var(--parch-dk)" }}>No priority data loaded yet for this spec.</div>}
+          </div>
+          <div style={{ border:"1px solid var(--bdr2)", background:"rgba(0,0,0,.14)", padding:".75rem" }}>
+            <div style={{ fontFamily:"Cinzel,serif", fontSize:".72rem", letterSpacing:".1em", color:"var(--gold-lt)", marginBottom:".45rem" }}>UPGRADE PRIORITY</div>
+            {(strategy.upgradePriority || []).length ? strategy.upgradePriority.map((row, idx) => (
+              <div key={row.name + idx} style={{ marginBottom:".4rem", fontSize:".84rem", color:"var(--parch-dk)" }}>
+                <span style={{ color:"var(--gold-lt)", fontFamily:"Cinzel,serif", marginRight:".4rem" }}>{idx + 1}.</span>
+                <span style={{ color:"var(--parch)" }}>{row.name}</span>
+                {row.source ? <span style={{ color:"var(--parch-dk)" }}> · {row.source}</span> : null}
+              </div>
+            )) : <div style={{ fontSize:".82rem", color:"var(--parch-dk)" }}>No upgrade data loaded yet for this spec.</div>}
+          </div>
+        </div>
+      </div>
+
       {filled.length > 0 && (
         <div className="farm-priority-section no-print" style={{ background:"var(--panel)", border:"1px solid var(--bdr)", marginBottom:".75rem" }}>
           <div style={{ display:"flex", alignItems:"center", gap:".75rem", padding:".6rem .75rem", borderBottom: showPriority ? "1px solid var(--bdr)" : "none" }}>
@@ -1913,7 +3409,7 @@ function Tracker({ cls, spec, charName, initialMode = "", onBack }) {
 
       <div className="bis-mode-bar">
         <button className={"bis-mode-btn" + (bisMode === "community" ? " active" : "")} onClick={() => switchBisMode("community")}>
-          Community BiS
+          Wowhead BiS
         </button>
         <div className="bis-mode-divider" />
         <button className={"bis-mode-btn" + (bisMode === "simc" ? " active" : "")} onClick={() => switchBisMode("simc")}>
@@ -1934,12 +3430,12 @@ function Tracker({ cls, spec, charName, initialMode = "", onBack }) {
 
       {bisMode === "community" && (
         <div className="bis-bar">
-          <span className="bis-txt">✦ Suggestions sourced from community guides and current patch data</span>
+          <span className="bis-txt">✦ Suggested BiS is sourced from Wowhead guides. Always verify with your own sims and preferences.</span>
           {spec.role === "Healer" && (
             <a href="https://questionablyepic.com" target="_blank" rel="noreferrer" className="bis-btn" style={{ marginRight:".4rem", background:"rgba(110,64,201,.15)", borderColor:"#6e40c9", color:"#c9a0ff", textDecoration:"none", display:"none" }}>✦ QE Live Rankings</a>
           )}
           <button className="bis-btn" onClick={loadSuggestions} disabled={loading}>
-            {loading ? <>Loading...</> : sugs ? "↺ Refresh" : "✦ Load BiS Suggestions"}
+            {loading ? <>Loading...</> : sugs ? "↺ Refresh" : "✦ Load Suggested BiS"}
           </button>
         </div>
       )}
@@ -1952,10 +3448,35 @@ function Tracker({ cls, spec, charName, initialMode = "", onBack }) {
       )}
 
       {bisMode === "custom" && (
-        <div className="bis-bar" style={{ flexDirection:"column", alignItems:"flex-start", gap:".3rem" }}>
+        <div className="bis-bar" style={{ flexDirection:"column", alignItems:"flex-start", gap:".45rem" }}>
+          <div style={{ display:"flex", gap:".5rem", flexWrap:"wrap", width:"100%", alignItems:"center", justifyContent:"space-between" }}>
+                        <button className="bis-btn" onClick={async () => {
+              const seeded = getSeeded(spec.id, "Overall BiS");
+              if (!seeded) { await loadSuggestions(); return; }
+              const next = {};
+              Object.entries(seeded.slots || {}).forEach(([k, v]) => {
+                const key = mapKey(k, seeded.slots || {});
+                next[key] = {
+                  name: v.name || "",
+                  src: v.source || "",
+                  done: false,
+                  track: "",
+                  ranks: [
+                    { name: v.name || "", src: v.source || "", have: false, itemId: "" },
+                    { name: "", src: "", have: false, itemId: "" },
+                    { name: "", src: "", have: false, itemId: "" }
+                  ],
+                  activeRank: 0
+                };
+              });
+              setBisMode("custom");
+              setData(next);
+              try { localStorage.setItem(`bismode-${storageKey}`, "custom"); } catch {}
+            }}>✦ Start from Suggested BiS</button>
+          </div>
           <span className="bis-txt" style={{ fontFamily:"Cinzel,serif", letterSpacing:".1em" }}>✦ Custom BiS Builder</span>
           <span style={{ fontSize:".8rem", color:"var(--parch-dk)", fontStyle:"italic" }}>
-            Build your own ranked list — up to 3 options per slot. Community, Character Scan, and Custom Builder now live under one character card with separate mode saves. Tip: click <strong style={{color:"var(--gold-lt)"}}>Load BiS Suggestions → Apply All</strong> first to pre-fill a base list, then override individual slots with your own research. For custom sources, use clear labels like <strong style={{color:"var(--gold-lt)"}}>Raid</strong>, <strong style={{color:"var(--gold-lt)"}}>Dungeon</strong>, <strong style={{color:"var(--gold-lt)"}}>Delves</strong>, <strong style={{color:"var(--gold-lt)"}}>World Quests</strong>, <strong style={{color:"var(--gold-lt)"}}>Renown</strong>, <strong style={{color:"var(--gold-lt)"}}>Prey</strong>, <strong style={{color:"var(--gold-lt)"}}>Crafted</strong>, or <strong style={{color:"var(--gold-lt)"}}>PvP</strong>. Export sends the active mode only.
+            Build your own ranked list — up to 3 options per slot. Wowhead, Character Scan, and Custom Builder now live under one character card with separate mode saves. Tip: click <strong style={{color:"var(--gold-lt)"}}>Load Suggested BiS → Apply All</strong> first to pre-fill a base list, then override individual slots with your own research. For custom sources, use clear labels like <strong style={{color:"var(--gold-lt)"}}>Raid</strong>, <strong style={{color:"var(--gold-lt)"}}>Dungeon</strong>, <strong style={{color:"var(--gold-lt)"}}>Delves</strong>, <strong style={{color:"var(--gold-lt)"}}>World Quests</strong>, <strong style={{color:"var(--gold-lt)"}}>Renown</strong>, <strong style={{color:"var(--gold-lt)"}}>Prey</strong>, <strong style={{color:"var(--gold-lt)"}}>Crafted</strong>, or <strong style={{color:"var(--gold-lt)"}}>PvP</strong>. Export sends the active mode only.
           </span>
         </div>
       )}
@@ -2327,7 +3848,7 @@ function splitSaveLabel(charName) {
   return { base, mode };
 }
 function modeNice(m) {
-  return ({ community:"Community", custom:"Custom", simc:"SimC", scan:"Scan" }[m] || m);
+  return ({ community:"Wowhead", custom:"Custom", simc:"SimC", scan:"Scan" }[m] || m);
 }
 
 const SAVE_REGISTRY_KEY = "wbt-save-registry-v3";
@@ -3090,7 +4611,7 @@ function Home({ onSelectClass, onLoadCharacter }) {
               <div style={{ fontFamily:"Cinzel,serif", fontSize:".68rem", letterSpacing:".1em", color:"var(--gold)", marginBottom:".75rem" }}>HOW TO USE THIS SITE</div>
               {[
                 "Select your class and spec below",
-                "Click Load BiS Suggestions → Apply All",
+                "Click Load Suggested BiS → Apply All",
                 "Mark acquired items using the checkboxes",
                 "Set each item's gear track with the track pills",
                 "Check Farm Priority to see what to run this week",
@@ -3189,7 +4710,7 @@ export default function App() {
             {page === "home" && (
               <div style={{ display:"flex", justifyContent:"center", gap:"1rem", marginTop:"1.4rem", flexWrap:"wrap" }}>
                 {[
-                  { icon:"📖", line1:"Browse BiS by", line2:"class & spec", sub:"Community guides, every spec", scrollId:"select-class" },
+                  { icon:"📖", line1:"Browse BiS by", line2:"class & spec", sub:"Wowhead guides, every spec", scrollId:"select-class" },
                   { icon:"🗺", line1:"Plan your", line2:"farm", sub:"Farm Priority · Raid vs Dungeon", scrollId:"group-planner" },
                   { icon:"👥", line1:"Group", line2:"planning", sub:"Share farm lists · See who needs what", scrollId:"group-planner" },
                   { icon:"✏️", line1:"Build your", line2:"own list", sub:"Up to 3 options per slot", scrollId:"select-class" },
