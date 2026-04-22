@@ -3314,12 +3314,12 @@ function Tracker({ cls, spec, charName, initialMode = "", onBack }) {
         <div style={{ display:"flex", alignItems:"center", gap:".75rem", padding:".7rem .85rem", borderBottom:"1px solid var(--bdr)", flexWrap:"wrap" }}>
           <div style={{ flex:1 }}>
             <div style={{ fontFamily:"Cinzel,serif", fontSize:".78rem", letterSpacing:".12em", color:"var(--gold)" }}>STRATEGY</div>
-            <div style={{ fontSize:".78rem", color:"var(--parch-dk)", marginTop:".2rem" }}>What to chase first and what deserves upgrade resources. BiS stays untouched.</div>
+            <div style={{ fontSize:".78rem", color:"var(--parch-dk)", marginTop:".2rem" }}>What to spend bonus rolls on first and which items deserve your upgrade resources. BiS stays untouched.</div>
           </div>
         </div>
         <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit,minmax(260px,1fr))", gap:".8rem", padding:".85rem" }}>
           <div style={{ border:"1px solid var(--bdr2)", background:"rgba(0,0,0,.14)", padding:".75rem" }}>
-            <div style={{ fontFamily:"Cinzel,serif", fontSize:".72rem", letterSpacing:".1em", color:"var(--gold-lt)", marginBottom:".45rem" }}>TARGET PRIORITY</div>
+            <div style={{ fontFamily:"Cinzel,serif", fontSize:".72rem", letterSpacing:".1em", color:"var(--gold-lt)", marginBottom:".45rem" }}>TARGET PRIORITY (BONUS ROLLS)</div>
             {(strategy.targetPriority || []).length ? strategy.targetPriority.map((row, idx) => (
               <div key={row.name + idx} style={{ marginBottom:".4rem", fontSize:".84rem", color:"var(--parch-dk)" }}>
                 <span style={{ color:"var(--gold-lt)", fontFamily:"Cinzel,serif", marginRight:".4rem" }}>{idx + 1}.</span>
@@ -3655,7 +3655,7 @@ function Tracker({ cls, spec, charName, initialMode = "", onBack }) {
           } else {
             alert("Could not save this list in your browser.");
           }
-        }}>{bisMode === 'custom' ? 'Save Custom' : bisMode === 'community' ? 'Save Community' : 'Save Scan'}</button>
+        }}>{bisMode === 'custom' ? 'Save Custom' : bisMode === 'community' ? 'Save Suggested BiS' : 'Save Scan'}</button>
         <button className="tbtn sec" onClick={() => {
           const code = exportForAddon();
           if (!code) { alert("Nothing exportable found yet for this mode. Load suggestions only previews them. Click Apply All, or enter and save at least one real item before exporting."); return; }
