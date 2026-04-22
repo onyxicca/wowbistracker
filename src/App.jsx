@@ -2987,9 +2987,6 @@ function Slot({ label, id, data, onChange, targetTrack, bisMode }) {
             {TRACKS.filter(t => t).map(t => (
               <button key={t} onClick={() => up("track", track === t ? "" : t)} style={{ fontFamily:"Cinzel,serif", fontSize:".58rem", letterSpacing:".05em", padding:".1rem .4rem", background: track === t ? TRACK_COLOR[t] : "transparent", border:`1px solid ${track === t ? TRACK_COLOR[t] : "var(--bdr2)"}`, color: track === t ? "#fff" : "var(--parch-dk)", cursor:"pointer", transition:"all .12s", filter: track === t ? "brightness(0.72)" : "none" }}>{t}</button>
             ))}
-            <div className={"slot-chk" + (d.done && !softBisSlot ? " done" : d.done && softBisSlot ? " soft" : "")} onClick={() => up("done", !d.done)} title={d.done ? "Acquired" : "Mark acquired"} style={{ marginLeft:"auto", width:"28px", height:"28px", fontSize:".85rem" }}>
-              {d.done ? (softBisSlot ? "~" : "✓") : ""}
-            </div>
           </div>
         )}
         {track && <div style={{ height:"2px", background: TRACK_COLOR[track], opacity:.7 }} />}
@@ -3306,11 +3303,11 @@ function Tracker({ cls, spec, charName, initialMode = "", onBack }) {
       </div>
 
 
-      <div className="no-print" style={{ background:"var(--panel)", border:"1px solid var(--bdr)", marginBottom:".75rem", padding:".75rem 1rem" }}>
-        <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", gap:".75rem", flexWrap:"wrap" }}>
+      <div className="no-print" style={{ background:"var(--panel)", border:"1px solid var(--bdr)", marginBottom:".75rem", padding:".9rem 1rem", textAlign:"center" }}>
+        <div style={{ display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", gap:".55rem" }}>
           <div>
             <div style={{ fontFamily:"Cinzel,serif", fontSize:".78rem", letterSpacing:".12em", color:"var(--gold)" }}>WOWHEAD SUGGESTED BiS</div>
-            <div style={{ fontSize:".78rem", color:"var(--parch-dk)", marginTop:".2rem" }}>Suggested BiS is based on Wowhead and should still be double-checked for your character. Use Custom Builder for full control.</div>
+            <div style={{ fontSize:".78rem", color:"var(--parch-dk)", marginTop:".2rem", maxWidth:"820px", marginLeft:"auto", marginRight:"auto" }}>Suggested BiS is based on Wowhead and should still be double-checked for your character. Use Custom Builder for full control.</div>
           </div>
           {wowheadLink && <a href={wowheadLink} target="_blank" rel="noreferrer" className="bis-btn" style={{ textDecoration:"none", whiteSpace:"nowrap" }}>↗ View Wowhead Guide</a>}
         </div>
