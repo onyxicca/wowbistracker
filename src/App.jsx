@@ -1570,7 +1570,7 @@ function Slot({ label, id, data, onChange, targetTrack, bisMode }) {
 function Tracker({ cls, spec, charName, initialMode = "", onBack }) {
   const storageKey = `bis-${cls.id}-${spec.id}-${charName || "default"}`;
   const modeStorageKey = (mode) => `${storageKey}-${mode}`;
-  const modeLabel = (mode) => mode === "custom" ? "Custom Builder" : mode === "community" ? "Community BiS" : "Character Scan";
+  const modeLabel = (mode) => mode === "custom" ? "Custom Builder" : mode === "community" ? "Wowhead BiS" : "Character Scan";
   const isPlaceholderName = (name) => {
     const n = (name || "").trim();
     return !n || /^x+$/i.test(n) || /^unknown$/i.test(n);
@@ -1603,6 +1603,17 @@ function Tracker({ cls, spec, charName, initialMode = "", onBack }) {
   const [sugs,    setSugs]    = useState(null);
   const [showPriority, setShowPriority] = useState(false);
   const [showSimC, setShowSimC] = useState(false);
+  const [scanTargetMode, setScanTargetMode] = useState(() => {
+    try {
+      const customData = readModeData("custom");
+      return Object.values(customData || {}).some(v => v?.name) ? "custom" : "community";
+    } catch {
+      return "community";
+    }
+  });
+  const [simcSummary, setSimcSummary] = useState(() => {
+    try { return JSON.parse(localStorage.getItem(`simc-summary-${storageKey}`) || "null") || null; } catch { return null; }
+  });
   const [targetTrack, setTargetTrack] = useState(() => {
     try { return localStorage.getItem(`target-track-${storageKey}`) || "Myth"; } catch { return "Myth"; }
   });
@@ -1632,7 +1643,6 @@ function Tracker({ cls, spec, charName, initialMode = "", onBack }) {
     try { return localStorage.getItem(`simc-${storageKey}`) || ""; } catch { return ""; }
   });
   const [vaultMatches, setVaultMatches] = useState([]);
-  const [scanSnapshot, setScanSnapshot] = useState([]);
   const [saveState, setSaveState] = useState('saved');
   const sugRef = useRef(null);
   useEffect(() => {
@@ -1914,7 +1924,7 @@ function Tracker({ cls, spec, charName, initialMode = "", onBack }) {
 
       <div className="bis-mode-bar">
         <button className={"bis-mode-btn" + (bisMode === "community" ? " active" : "")} onClick={() => switchBisMode("community")}>
-          Community BiS
+          Wowhead BiS
         </button>
         <div className="bis-mode-divider" />
         <button className={"bis-mode-btn" + (bisMode === "simc" ? " active" : "")} onClick={() => switchBisMode("simc")}>
@@ -1935,7 +1945,7 @@ function Tracker({ cls, spec, charName, initialMode = "", onBack }) {
 
       {bisMode === "community" && (
         <div className="bis-bar">
-          <span className="bis-txt">✦ Suggestions sourced from community guides and current patch data</span>
+          <span className="bis-txt">✦ Suggested BiS sourced from Wowhead guides and current patch data</span>
           {spec.role === "Healer" && (
             <a href="https://questionablyepic.com" target="_blank" rel="noreferrer" className="bis-btn" style={{ marginRight:".4rem", background:"rgba(110,64,201,.15)", borderColor:"#6e40c9", color:"#c9a0ff", textDecoration:"none", display:"none" }}>✦ QE Live Rankings</a>
           )}
@@ -1946,12 +1956,9 @@ function Tracker({ cls, spec, charName, initialMode = "", onBack }) {
       )}
 
       {bisMode === "simc" && (
-        <div className="bis-bar no-print" style={{ alignItems:"stretch" }}>
-          <div style={{ display:"flex", flexDirection:"column", gap:".25rem", flex:1, minWidth:"260px" }}>
-            <span className="bis-txt">✦ Compare your currently equipped gear against a target list without changing your Wowhead or Custom Builder saves</span>
-            <span style={{ fontSize:".76rem", color:"var(--parch-dk)" }}>Target list stays separate. Scan reads what you are wearing now and compares it against your selected plan.</span>
-          </div>
-          <button className="bis-btn" onClick={() => setShowSimC(s => !s)} style={{ background:"rgba(201,146,42,.15)", borderColor:"var(--gold)", color:"var(--gold-lt)", alignSelf:"center" }}>📋 {showSimC ? "Close" : "Open SimC Scanner"}</button>
+        <div className="bis-bar no-print">
+          <span className="bis-txt">✦ Compare your currently equipped gear against a target list without changing your Wowhead or Custom Builder saves</span>
+          <button className="bis-btn" onClick={() => setShowSimC(s => !s)} style={{ background:"rgba(201,146,42,.15)", borderColor:"var(--gold)", color:"var(--gold-lt)" }}>📋 {showSimC ? "Close" : "Open SimC Scanner"}</button>
         </div>
       )}
 
@@ -1959,7 +1966,7 @@ function Tracker({ cls, spec, charName, initialMode = "", onBack }) {
         <div className="bis-bar" style={{ flexDirection:"column", alignItems:"flex-start", gap:".3rem" }}>
           <span className="bis-txt" style={{ fontFamily:"Cinzel,serif", letterSpacing:".1em" }}>✦ Custom BiS Builder</span>
           <span style={{ fontSize:".8rem", color:"var(--parch-dk)", fontStyle:"italic" }}>
-            Build your own ranked list — up to 3 options per slot. Community, Character Scan, and Custom Builder now live under one character card with separate mode saves. Tip: click <strong style={{color:"var(--gold-lt)"}}>Load BiS Suggestions → Apply All</strong> first to pre-fill a base list, then override individual slots with your own research. For custom sources, use clear labels like <strong style={{color:"var(--gold-lt)"}}>Raid</strong>, <strong style={{color:"var(--gold-lt)"}}>Dungeon</strong>, <strong style={{color:"var(--gold-lt)"}}>Delves</strong>, <strong style={{color:"var(--gold-lt)"}}>World Quests</strong>, <strong style={{color:"var(--gold-lt)"}}>Renown</strong>, <strong style={{color:"var(--gold-lt)"}}>Prey</strong>, <strong style={{color:"var(--gold-lt)"}}>Crafted</strong>, or <strong style={{color:"var(--gold-lt)"}}>PvP</strong>. Export sends the active mode only.
+            Build your own ranked list — up to 3 options per slot. Wowhead BiS, Character Scan, and Custom Builder now live under one character card with separate mode saves. Tip: click <strong style={{color:"var(--gold-lt)"}}>Load Suggested BiS → Apply All</strong> first to pre-fill a base list, then override individual slots with your own research. For custom sources, use clear labels like <strong style={{color:"var(--gold-lt)"}}>Raid</strong>, <strong style={{color:"var(--gold-lt)"}}>Dungeon</strong>, <strong style={{color:"var(--gold-lt)"}}>Delves</strong>, <strong style={{color:"var(--gold-lt)"}}>World Quests</strong>, <strong style={{color:"var(--gold-lt)"}}>Renown</strong>, <strong style={{color:"var(--gold-lt)"}}>Prey</strong>, <strong style={{color:"var(--gold-lt)"}}>Crafted</strong>, or <strong style={{color:"var(--gold-lt)"}}>PvP</strong>. Export sends the active mode only.
           </span>
         </div>
       )}
@@ -1981,24 +1988,30 @@ function Tracker({ cls, spec, charName, initialMode = "", onBack }) {
           ) : (
             <>
               <div style={{ fontSize:".85rem", color:"var(--parch-dk)", marginBottom:".75rem", lineHeight:1.6 }}>
-                Paste your SimC string below. Your character will be scanned and any BiS items you are currently wearing will be <strong style={{ color:"var(--gold-lt)" }}>automatically checked off</strong>.
+                Paste your SimC string below. Character Scan builds a comparison snapshot against your selected target list, so your core <strong style={{ color:"var(--gold-lt)" }}>Wowhead BiS</strong> and <strong style={{ color:"var(--gold-lt)" }}>Custom Builder</strong> saves stay untouched.
               </div>
-              <div style={{ display:"grid", gridTemplateColumns:"minmax(0,1fr)", gap:".6rem", marginBottom:".75rem" }}>
-                <div style={{ background:"rgba(201,146,42,.06)", border:"1px solid var(--bdr2)", padding:".75rem .85rem" }}>
-                  <div style={{ fontFamily:"Cinzel,serif", fontSize:".68rem", letterSpacing:".1em", color:"var(--gold)", marginBottom:".45rem" }}>CURRENTLY EQUIPPED SNAPSHOT</div>
-                  {scanSnapshot.length === 0 ? (
-                    <div style={{ fontSize:".8rem", color:"var(--parch-dk)", fontStyle:"italic" }}>Run a scan once and your currently equipped items will appear here for quick comparison.</div>
-                  ) : (
-                    <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit,minmax(220px,1fr))", gap:".35rem .75rem" }}>
-                      {scanSnapshot.map(row => (
-                        <div key={row.slot} style={{ fontSize:".78rem", color:"var(--parch-dk)", lineHeight:1.45 }}>
-                          <span style={{ color:"var(--gold-lt)", fontFamily:"Cinzel,serif", fontSize:".66rem", letterSpacing:".05em", textTransform:"uppercase" }}>{row.label}</span>
-                          <div style={{ color:"var(--parch)" }}>{row.name}</div>
-                          {row.track ? <div style={{ fontSize:".72rem", color:"var(--parch-dk)" }}>{row.track}</div> : null}
-                        </div>
-                      ))}
-                    </div>
-                  )}
+              <div style={{ display:"flex", flexWrap:"wrap", gap:".5rem", alignItems:"center", marginBottom:".75rem" }}>
+                <span style={{ fontFamily:"Cinzel,serif", fontSize:".72rem", letterSpacing:".08em", color:"var(--gold)" }}>Compare against:</span>
+                {[{id:"community", label:"Wowhead BiS"},{id:"custom", label:"Custom Builder"}].map(opt => {
+                  const hasData = Object.values(readModeData(opt.id) || {}).some(v => v?.name);
+                  return (
+                    <button
+                      key={opt.id}
+                      className={"tbtn " + (scanTargetMode === opt.id ? "pri" : "sec")}
+                      onClick={() => setScanTargetMode(opt.id)}
+                      disabled={!hasData}
+                      title={hasData ? "" : `${opt.label} has no saved items yet.`}
+                      style={{ fontSize:".74rem", padding:".32rem .8rem", opacity: hasData ? 1 : .45 }}
+                    >
+                      {opt.label}
+                    </button>
+                  );
+                })}
+              </div>
+              <div style={{ background:"rgba(201,146,42,.06)", border:"1px solid var(--bdr2)", padding:".7rem .8rem", marginBottom:".75rem" }}>
+                <div style={{ fontFamily:"Cinzel,serif", fontSize:".68rem", letterSpacing:".08em", color:"var(--gold)", marginBottom:".35rem" }}>CURRENTLY EQUIPPED SNAPSHOT</div>
+                <div style={{ fontSize:".78rem", color:"var(--parch-dk)", lineHeight:1.6 }}>
+                  After you paste a SimC export and scan it, this section shows the items your character is currently wearing side-by-side with your chosen target list. It stays on-screen only and does not clutter the printable tracker.
                 </div>
               </div>
               <textarea
@@ -2008,15 +2021,27 @@ function Tracker({ cls, spec, charName, initialMode = "", onBack }) {
                 style={{ width:"100%", height:"100px", background:"var(--bg2)", border:"1px solid var(--bdr2)", color:"var(--parch)", fontFamily:"monospace", fontSize:".78rem", padding:".5rem", resize:"vertical", outline:"none" }}
               />
               <div style={{ display:"flex", gap:".5rem", marginTop:".5rem", flexWrap:"wrap", alignItems:"center" }}>
+              {simcSummary && (
+                <div style={{ marginTop:".9rem", background:"rgba(0,0,0,.18)", border:"1px solid var(--bdr)", padding:".85rem" }}>
+                  <div style={{ display:"flex", justifyContent:"space-between", gap:".75rem", flexWrap:"wrap", marginBottom:".5rem" }}>
+                    <div style={{ fontFamily:"Cinzel,serif", fontSize:".72rem", letterSpacing:".08em", color:"var(--gold)" }}>CURRENTLY EQUIPPED SNAPSHOT</div>
+                    <div style={{ fontSize:".76rem", color:"var(--parch-dk)" }}>Compared against <strong style={{ color:"var(--gold-lt)" }}>{simcSummary.targetMode === "custom" ? "Custom Builder" : "Wowhead BiS"}</strong> · <strong style={{ color:"var(--gold-lt)" }}>{simcSummary.matched}</strong> matched</div>
+                  </div>
+                  <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit, minmax(220px, 1fr))", gap:".35rem .9rem" }}>
+                    {simcSummary.scanned.map(row => (
+                      <div key={row.slot} style={{ fontSize:".78rem", color:"var(--parch-dk)", lineHeight:1.5 }}>
+                        <strong style={{ color:"var(--gold-lt)", fontFamily:"Cinzel,serif", fontSize:".68rem", letterSpacing:".06em" }}>{SLOT_LABELS[row.slot] || row.slot}</strong>
+                        <div style={{ color:"var(--parch)" }}>{row.name || "Unknown"}{row.track ? <span style={{ color:"var(--parch-dk)" }}> · {row.track}</span> : null}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
                 <button className="tbtn pri" onClick={async () => {
                   if (!simcStr.trim()) { alert("Paste your SimC string first."); return; }
                   const worn = await parseSimC(simcStr);
                   if (!Object.keys(worn).length) { alert("No gear slots found. Make sure you copied the full SimC string from the SimulationCraft addon in-game (not a sim result). It should contain lines like: head=item_name,id=12345"); return; }
                   const vaultItems = parseSimCVaultItems(simcStr);
-                  const snapshot = Object.entries(worn)
-                    .filter(([slot, value]) => !slot.endsWith("_track") && value && SLOT_LABELS[slot])
-                    .map(([slot, value]) => ({ slot, label: SLOT_LABELS[slot], name: value, track: worn[slot + "_track"] || "" }));
-                  setScanSnapshot(snapshot);
                   let matched = 0;
                   setData(prev => {
                     const next = { ...prev };
@@ -2160,7 +2185,7 @@ function Tracker({ cls, spec, charName, initialMode = "", onBack }) {
           } else {
             alert("Could not save this list in your browser.");
           }
-        }}>{bisMode === 'custom' ? 'Save Custom' : bisMode === 'community' ? 'Save Community' : 'Save Scan'}</button>
+        }}>{bisMode === 'custom' ? 'Save Custom' : bisMode === 'community' ? 'Save Suggested BiS' : 'Save Scan'}</button>
         <button className="tbtn sec" onClick={() => {
           const code = exportForAddon();
           if (!code) { alert("Nothing exportable found yet for this mode. Load suggestions only previews them. Click Apply All, or enter and save at least one real item before exporting."); return; }
@@ -2353,7 +2378,7 @@ function splitSaveLabel(charName) {
   return { base, mode };
 }
 function modeNice(m) {
-  return ({ community:"Community", custom:"Custom", simc:"SimC", scan:"Scan" }[m] || m);
+  return ({ community:"Wowhead", custom:"Custom", simc:"Character Scan", scan:"Scan" }[m] || m);
 }
 
 const SAVE_REGISTRY_KEY = "wbt-save-registry-v3";
@@ -2573,12 +2598,12 @@ function GroupPlanner() {
   const groupedSaves = (() => {
     const grouped = {};
     allSaved.forEach(entry => {
-      const { base, mode } = splitSaveLabel(entry.charName);
+      const { base } = splitSaveLabel(entry.charName);
       const key = `${base}||${entry.cls.id}`;
       if (!grouped[key]) grouped[key] = { key, base, cls: entry.cls, specs: {} };
-      const specId = entry.spec?.id || entry.spec?.name || "unknown";
-      if (!grouped[key].specs[specId]) grouped[key].specs[specId] = { spec: entry.spec, saves: {} };
-      grouped[key].specs[specId].saves[mode] = entry;
+      const specKey = entry.spec.id;
+      if (!grouped[key].specs[specKey]) grouped[key].specs[specKey] = { spec: entry.spec, saves: {} };
+      grouped[key].specs[specKey].saves[entry.mode] = entry;
     });
     return Object.values(grouped);
   })();
@@ -2586,13 +2611,11 @@ function GroupPlanner() {
   const [groupSpec, setGroupSpec] = useState({});
   const [groupMode, setGroupMode] = useState({});
   const activeGroup = groupedSaves.find(g => g.key === selectedGroupKey) || groupedSaves[0];
-  const activeSpecId = activeGroup
-    ? (groupSpec[activeGroup.key] || Object.keys(activeGroup.specs || {})[0] || "")
-    : "";
-  const activeSpecBucket = activeGroup && activeSpecId ? activeGroup.specs[activeSpecId] : null;
-  const activeMode = activeSpecBucket
-    ? (groupMode[`${activeGroup.key}||${activeSpecId}`] || (activeSpecBucket.saves.community ? "community" : Object.keys(activeSpecBucket.saves)[0]))
-    : "";
+  const activeSpecBuckets = activeGroup ? Object.values(activeGroup.specs).sort((a, b) => a.spec.name.localeCompare(b.spec.name)) : [];
+  const activeSpecKey = activeGroup ? (groupSpec[activeGroup.key] || activeSpecBuckets[0]?.spec.id || "") : "";
+  const activeSpecBucket = activeGroup ? (activeGroup.specs[activeSpecKey] || activeSpecBuckets[0] || null) : null;
+  const activeModeKey = activeGroup && activeSpecBucket ? `${activeGroup.key}||${activeSpecBucket.spec.id}` : "";
+  const activeMode = activeSpecBucket ? (groupMode[activeModeKey] || (activeSpecBucket.saves.community ? "community" : Object.keys(activeSpecBucket.saves)[0])) : "";
   const selectedSaved = activeSpecBucket ? activeSpecBucket.saves[activeMode] : null;
   const myCode = selectedSaved ? encodeFarmList(JSON.parse(localStorage.getItem(selectedSaved.key) || "{}")) : "";
 
@@ -2619,47 +2642,29 @@ function GroupPlanner() {
           <div style={{ fontFamily:"Cinzel,serif", fontSize:".65rem", letterSpacing:".1em", color:"var(--gold)", marginBottom:".5rem" }}>STEP 1 — COPY YOUR FARM CODE</div>
           <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit,minmax(260px,1fr))", gap:".55rem", marginBottom:".7rem" }}>
             {groupedSaves.map(group => {
-              const specIds = Object.keys(group.specs || {});
-              const chosenSpecId = groupSpec[group.key] || specIds[0] || "";
-              const specBucket = chosenSpecId ? group.specs[chosenSpecId] : null;
-              const modeKey = `${group.key}||${chosenSpecId}`;
-              const defaultMode = specBucket ? (specBucket.saves.community ? "community" : Object.keys(specBucket.saves)[0]) : "";
+              const specBuckets = Object.values(group.specs).sort((a, b) => a.spec.name.localeCompare(b.spec.name));
+              const defaultSpec = specBuckets[0]?.spec.id || "";
+              const chosenSpec = groupSpec[group.key] || defaultSpec;
+              const specBucket = group.specs[chosenSpec] || specBuckets[0];
+              const modeKey = `${group.key}||${specBucket?.spec?.id || ""}`;
+              const defaultMode = specBucket?.saves?.community ? "community" : Object.keys(specBucket?.saves || {})[0];
               const active = groupMode[modeKey] || defaultMode;
-              const entry = specBucket ? (specBucket.saves[active] || specBucket.saves[defaultMode]) : null;
-              const isSelected = selectedGroupKey === group.key || (!selectedGroupKey && groupedSaves[0]?.key === group.key);
+              const entry = specBucket?.saves?.[active] || specBucket?.saves?.[defaultMode] || null;
               return (
                 <div key={group.key} style={{ border:`1px solid ${group.cls.color}44`, background:"rgba(0,0,0,.12)", padding:".65rem .75rem" }}>
                   <div style={{ display:"flex", alignItems:"center", gap:".4rem", marginBottom:".35rem" }}>
                     <div style={{ fontFamily:"Cinzel,serif", fontSize:".78rem", color:group.cls.color }}>{group.base === "default" ? group.cls.name : group.base}</div>
-                    <button onClick={() => setSelectedGroupKey(group.key)} style={{ marginLeft:"auto", fontFamily:"Cinzel,serif", fontSize:".64rem", letterSpacing:".05em", padding:".18rem .5rem", background:isSelected ? "var(--gold)" : "transparent", color:isSelected ? "var(--ink)" : "var(--gold-lt)", border:"1px solid var(--gold)", cursor:"pointer" }}>Use</button>
+                    <button onClick={() => setSelectedGroupKey(group.key)} style={{ marginLeft:"auto", fontFamily:"Cinzel,serif", fontSize:".64rem", letterSpacing:".05em", padding:".18rem .5rem", background:selectedGroupKey === group.key || (!selectedGroupKey && groupedSaves[0]?.key === group.key) ? "var(--gold)" : "transparent", color:selectedGroupKey === group.key || (!selectedGroupKey && groupedSaves[0]?.key === group.key) ? "var(--ink)" : "var(--gold-lt)", border:"1px solid var(--gold)", cursor:"pointer" }}>Use</button>
                   </div>
                   <div style={{ fontSize:".7rem", color:"var(--parch-dk)", marginBottom:".4rem" }}>{group.cls.name}</div>
                   <div style={{ display:"flex", gap:".35rem", alignItems:"center", flexWrap:"wrap" }}>
-                    <select value={chosenSpecId} onChange={e => {
-                      const nextSpec = e.target.value;
-                      setGroupSpec(prev => ({ ...prev, [group.key]: nextSpec }));
-                      const nextBucket = group.specs[nextSpec];
-                      const nextDefaultMode = nextBucket ? (nextBucket.saves.community ? "community" : Object.keys(nextBucket.saves)[0]) : "";
-                      setGroupMode(prev => ({ ...prev, [`${group.key}||${nextSpec}`]: nextDefaultMode }));
-                      setSelectedGroupKey(group.key);
-                    }} style={{ background:"var(--bg2)", border:"1px solid var(--bdr2)", color:"var(--parch)", padding:".2rem .45rem", fontFamily:"Cinzel,serif", fontSize:".66rem" }}>
-                      {specIds.map(specId => {
-                        const sp = group.specs[specId]?.spec;
-                        return <option key={specId} value={specId}>{sp?.name || specId}</option>;
-                      })}
+                    <select value={chosenSpec} onChange={e => setGroupSpec(prev => ({ ...prev, [group.key]: e.target.value }))} style={{ background:"var(--bg2)", border:"1px solid var(--bdr2)", color:"var(--parch)", padding:".2rem .45rem", fontFamily:"Cinzel,serif", fontSize:".66rem" }}>
+                      {specBuckets.map(({ spec }) => <option key={spec.id} value={spec.id}>{spec.name}</option>)}
                     </select>
-                    <select value={active} onChange={e => {
-                      setGroupMode(prev => ({ ...prev, [modeKey]: e.target.value }));
-                      setSelectedGroupKey(group.key);
-                    }} style={{ background:"var(--bg2)", border:"1px solid var(--bdr2)", color:"var(--parch)", padding:".2rem .45rem", fontFamily:"Cinzel,serif", fontSize:".66rem" }}>
+                    <select value={active} onChange={e => setGroupMode(prev => ({ ...prev, [modeKey]: e.target.value }))} style={{ background:"var(--bg2)", border:"1px solid var(--bdr2)", color:"var(--parch)", padding:".2rem .45rem", fontFamily:"Cinzel,serif", fontSize:".66rem" }}>
                       {SAVE_MODE_ORDER.filter(mode => specBucket?.saves?.[mode]).map(mode => <option key={mode} value={mode}>{modeNice(mode)}</option>)}
                     </select>
-                    <div style={{ fontSize:".72rem", color:"var(--parch)" }}>
-                      <span style={{ display:"inline-flex", alignItems:"center", gap:".4rem" }}>
-                        <SpecIcon spec={entry?.spec} size={18} />
-                        <span>{entry?.spec?.name}</span>
-                      </span>
-                    </div>
+                    <div style={{ fontSize:".72rem", color:"var(--parch)" }}><span style={{ display:"inline-flex", alignItems:"center", gap:".4rem" }}><SpecIcon spec={entry?.spec || specBucket?.spec} size={18} /><span>{entry?.spec?.name || specBucket?.spec?.name}</span></span></div>
                   </div>
                 </div>
               );
@@ -3121,94 +3126,65 @@ function Home({ onSelectClass, onLoadCharacter }) {
 
       <div style={{ marginTop:"2.5rem" }} />
       <div id="vs-addon" className="sh">Website vs In-Game Addon</div>
-      <p style={{ fontSize:".9rem", color:"var(--parch-dk)", marginBottom:"1.5rem", lineHeight:1.7 }}>
-        Both tools are free. Use either independently, or together — export from the addon to sync your progress to the website.
+      <p style={{ fontSize:".9rem", color:"var(--parch-dk)", marginBottom:"1.25rem", lineHeight:1.7, maxWidth:"880px" }}>
+        Use the website for planning and printing. Use the addon for fast in-game checks. They can sync both ways, so you do not have to pick one forever.
       </p>
 
-      <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"1.25rem", marginBottom:"1rem" }}>
-
-        
-        <div style={{ background:"var(--panel)", border:"1px solid var(--bdr2)", display:"flex", flexDirection:"column" }}>
-          <div style={{ background:"rgba(201,146,42,.08)", borderBottom:"1px solid var(--bdr2)", padding:"1rem 1.25rem" }}>
-            <div style={{ fontFamily:"Cinzel,serif", fontSize:".78rem", letterSpacing:".14em", color:"var(--gold)", marginBottom:".3rem" }}>THIS WEBSITE</div>
-            <div style={{ fontSize:".85rem", color:"var(--parch-dk)", lineHeight:1.6 }}>Plan and track your gear from any browser. No download required.</div>
-          </div>
-          <div style={{ padding:"1.25rem", flex:1 }}>
-            {[
-              { title:"All characters at a glance", desc:"Every character and spec tracked in one place without switching between them." },
-              { title:"SimC import", desc:"Paste a SimC string to instantly fill in every item you're wearing and its gear track." },
-              { title:"Export to addon", desc:"Generate a code to push your website progress into the in-game addon." },
-              { title:"Group planning links", desc:"Share a URL on Discord so your party can coordinate farm runs — no addon needed on their end." },
-              { title:"Print farm lists", desc:"Clean printable farm priority list for the week. Works as PDF too." },
-              { title:"Visual progress", desc:"Progress bars across all specs and characters. Good for seeing where you are at a glance." },
-            ].map(({ title, desc }) => (
-              <div key={title} style={{ paddingBottom:"1rem", marginBottom:"1rem", borderBottom:"1px solid var(--bdr)" }}>
-                <div style={{ fontFamily:"Cinzel,serif", fontSize:".72rem", letterSpacing:".06em", color:"var(--parch)", marginBottom:".35rem" }}>{title}</div>
-                <div style={{ fontSize:".82rem", color:"var(--parch-dk)", lineHeight:1.65 }}>{desc}</div>
-              </div>
-            ))}
-            <div style={{ background:"rgba(0,0,0,.2)", border:"1px solid var(--bdr2)", padding:"1rem", marginTop:".25rem" }}>
-              <div style={{ fontFamily:"Cinzel,serif", fontSize:".68rem", letterSpacing:".1em", color:"var(--gold)", marginBottom:".75rem" }}>HOW TO USE THIS SITE</div>
-              {[
-                "Select your class and spec below",
-                "Click Load BiS Suggestions → Apply All",
-                "Mark acquired items using the checkboxes",
-                "Set each item's gear track with the track pills",
-                "Check Farm Priority to see what to run this week",
-                "Use SimC Import to auto-fill from your character data",
-              ].map((s, i) => (
-                <div key={s} style={{ display:"flex", gap:".6rem", marginBottom:".5rem", fontSize:".82rem", color:"var(--parch-dk)" }}>
-                  <span style={{ color:"var(--gold)", fontFamily:"Cinzel,serif", fontSize:".7rem", flexShrink:0, marginTop:".1rem" }}>{i+1}.</span>
-                  <span style={{ lineHeight:1.6 }}>{s}</span>
+      <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit, minmax(320px, 1fr))", gap:"1rem", marginBottom:"1rem" }}>
+        {[
+          {
+            title:"Website",
+            lead:"Best for planning across characters, printing, and group coordination.",
+            bullets:[
+              "Track every spec in one browser view",
+              "Use Wowhead BiS, Custom Builder, or Character Scan comparison",
+              "Print clean farm lists and tracker sheets",
+              "Share Group Planner links without needing the addon"
+            ],
+            footerTitle:"Use it when you want to",
+            footerBody:"plan your week, compare characters, print a checklist, or coordinate with friends outside the game."
+          },
+          {
+            title:"In-Game Addon",
+            lead:"Best for fast decisions while you are actually playing.",
+            bullets:[
+              "Auto-load your spec and scan equipped gear",
+              "See Farm Priority and Strategy without alt-tabbing",
+              "Check Great Vault matches and item tooltips in game",
+              "Use group planning with party exports"
+            ],
+            footerTitle:"Use it when you want to",
+            footerBody:"check what to run next, what a drop does for you, or what to spend bonus rolls and upgrade resources on mid-session."
+          }
+        ].map(card => (
+          <div key={card.title} style={{ background:"var(--panel)", border:"1px solid var(--bdr2)", padding:"1.15rem 1.2rem" }}>
+            <div style={{ fontFamily:"Cinzel,serif", fontSize:".8rem", letterSpacing:".12em", color:"var(--gold)", marginBottom:".45rem" }}>{card.title}</div>
+            <div style={{ fontSize:".86rem", color:"var(--parch-dk)", lineHeight:1.65, marginBottom:".85rem" }}>{card.lead}</div>
+            <div style={{ display:"grid", gap:".55rem" }}>
+              {card.bullets.map(b => (
+                <div key={b} style={{ display:"flex", gap:".55rem", alignItems:"flex-start" }}>
+                  <span style={{ color:"var(--gold-lt)", lineHeight:1 }}>✦</span>
+                  <span style={{ fontSize:".83rem", color:"var(--parch)", lineHeight:1.6 }}>{b}</span>
                 </div>
               ))}
             </div>
-          </div>
-        </div>
-
-        
-        <div style={{ background:"var(--panel)", border:"1px solid var(--bdr2)", display:"flex", flexDirection:"column" }}>
-          <div style={{ background:"rgba(201,146,42,.08)", borderBottom:"1px solid var(--bdr2)", padding:"1rem 1.25rem" }}>
-            <div style={{ fontFamily:"Cinzel,serif", fontSize:".78rem", letterSpacing:".14em", color:"var(--gold)", marginBottom:".3rem" }}>IN-GAME ADDON</div>
-            <div style={{ fontSize:".85rem", color:"var(--parch-dk)", lineHeight:1.6 }}>Works standalone inside WoW. BiS list loads automatically — no setup, no website needed.</div>
-          </div>
-          <div style={{ padding:"1.25rem", flex:1 }}>
-            {[
-              { title:"Auto-loads for your spec", desc:"Detects your class and spec on login. Switch specs mid-session and it switches instantly." },
-              { title:"Scan Gear", desc:"Reads your equipped items and auto-detects their gear track directly from the in-game tooltip. No guessing." },
-              { title:"Farm Priority", desc:"Shows exactly which dungeons and raids to run this week, sorted by how many items you need there." },
-              { title:"All My Specs farm view", desc:"One click shows every location that has BiS items across all your specs. A single run can gear your Resto, Guardian, and Balance Druid simultaneously. No other addon does this." },
-              { title:"In-game group planning", desc:"Type /wowbis share in your party. The Group Plan tab shows which locations overlap with your party members." },
-              { title:"Item tooltips", desc:"Hover any item anywhere in the game — bags, auction house, loot window — to see its BiS status for your spec." },
-            ].map(({ title, desc }) => (
-              <div key={title} style={{ paddingBottom:"1rem", marginBottom:"1rem", borderBottom:"1px solid var(--bdr)" }}>
-                <div style={{ fontFamily:"Cinzel,serif", fontSize:".72rem", letterSpacing:".06em", color:"var(--parch)", marginBottom:".35rem" }}>{title}</div>
-                <div style={{ fontSize:".82rem", color:"var(--parch-dk)", lineHeight:1.65 }}>{desc}</div>
-              </div>
-            ))}
-            <div style={{ background:"rgba(0,0,0,.2)", border:"1px solid var(--bdr2)", padding:"1rem", marginTop:".25rem" }}>
-              <div style={{ fontFamily:"Cinzel,serif", fontSize:".68rem", letterSpacing:".1em", color:"var(--gold)", marginBottom:".75rem" }}>HOW TO INSTALL</div>
-              {[
-                "Download the zip and extract it",
-                "Move the WoWBiSTracker folder to your AddOns directory",
-                "Log in — your BiS list loads automatically",
-                "Click the minimap button or type /wowbis",
-              ].map((s, i) => (
-                <div key={s} style={{ display:"flex", gap:".6rem", marginBottom:".5rem", fontSize:".82rem", color:"var(--parch-dk)" }}>
-                  <span style={{ color:"var(--gold)", fontFamily:"Cinzel,serif", fontSize:".7rem", flexShrink:0, marginTop:".1rem" }}>{i+1}.</span>
-                  <span style={{ lineHeight:1.6 }}>{s}</span>
-                </div>
-              ))}
-              <a href="https://github.com/onyxicca/wowbistracker-addon/releases/tag/v1.0.0" target="_blank" rel="noreferrer" style={{ display:"inline-block", marginTop:".85rem", fontFamily:"Cinzel,serif", fontSize:".72rem", letterSpacing:".08em", padding:".45rem 1.1rem", background:"var(--gold)", color:"var(--ink)", textDecoration:"none", fontWeight:700 }}>Download Addon</a>
-              <span style={{ display:"block", marginTop:".4rem", fontSize:".72rem", color:"var(--parch-dk)", fontStyle:"italic" }}>Coming to CurseForge soon</span>
+            <div style={{ marginTop:".95rem", paddingTop:".85rem", borderTop:"1px solid var(--bdr)" }}>
+              <div style={{ fontFamily:"Cinzel,serif", fontSize:".68rem", letterSpacing:".08em", color:"var(--gold)", marginBottom:".25rem" }}>{card.footerTitle}</div>
+              <div style={{ fontSize:".8rem", color:"var(--parch-dk)", lineHeight:1.6 }}>{card.footerBody}</div>
             </div>
+            {card.title === "In-Game Addon" && (
+              <div style={{ marginTop:".95rem", display:"flex", gap:".7rem", flexWrap:"wrap", alignItems:"center" }}>
+                <a href="https://github.com/onyxicca/wowbistracker-addon/releases/tag/v1.0.0" target="_blank" rel="noreferrer" style={{ display:"inline-block", fontFamily:"Cinzel,serif", fontSize:".72rem", letterSpacing:".08em", padding:".45rem 1.05rem", background:"var(--gold)", color:"var(--ink)", textDecoration:"none", fontWeight:700 }}>Download Addon</a>
+                <span style={{ fontSize:".76rem", color:"var(--parch-dk)", fontStyle:"italic" }}>Install it in Interface/AddOns/WoWBiSTracker</span>
+              </div>
+            )}
           </div>
-        </div>
+        ))}
       </div>
 
-      <div style={{ background:"rgba(201,146,42,.06)", border:"1px solid rgba(201,146,42,.25)", padding:"1rem 1.25rem", marginBottom:"2rem", fontSize:".85rem", color:"var(--parch-dk)", lineHeight:1.7 }}>
-        <strong style={{ fontFamily:"Cinzel,serif", fontSize:".68rem", letterSpacing:".1em", color:"var(--gold-lt)" }}>USING BOTH?</strong>
-        {"  "}The addon exports a code you can paste into the website to sync your in-game progress to the browser view. The website can also export a code back into the addon. Both tools stay in sync without requiring SimC.
+      <div style={{ background:"rgba(201,146,42,.06)", border:"1px solid rgba(201,146,42,.25)", padding:".9rem 1.1rem", marginBottom:"2rem", fontSize:".84rem", color:"var(--parch-dk)", lineHeight:1.7 }}>
+        <strong style={{ fontFamily:"Cinzel,serif", fontSize:".68rem", letterSpacing:".1em", color:"var(--gold-lt)" }}>USING BOTH</strong>
+        {"  "}The website is the cleaner planning view. The addon is the faster in-game view. Export between them whenever you want to keep progress in sync.
       </div>
 
     </div>
