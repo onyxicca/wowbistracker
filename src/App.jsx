@@ -44,1458 +44,6 @@ const HERO_TALENTS = {
   "protection-war":     ["Mountain Thane","Colossus"],
 };
 
-const WOWHEAD_LINKS = {
-  "blood": "https://www.wowhead.com/guide/classes/death-knight/blood/bis-gear",
-  "frost-dk": "https://www.wowhead.com/guide/classes/death-knight/frost/bis-gear",
-  "unholy": "https://www.wowhead.com/guide/classes/death-knight/unholy/bis-gear",
-  "havoc": "https://www.wowhead.com/guide/classes/demon-hunter/havoc/bis-gear",
-  "vengeance": "https://www.wowhead.com/guide/classes/demon-hunter/vengeance/bis-gear",
-  "devourer": "https://www.wowhead.com/guide/classes/demon-hunter/devourer/bis-gear",
-  "balance": "https://www.wowhead.com/guide/classes/druid/balance/bis-gear",
-  "feral": "https://www.wowhead.com/guide/classes/druid/feral/bis-gear",
-  "guardian": "https://www.wowhead.com/guide/classes/druid/guardian/bis-gear",
-  "restoration-druid": "https://www.wowhead.com/guide/classes/druid/restoration/bis-gear",
-  "devastation": "https://www.wowhead.com/guide/classes/evoker/devastation/bis-gear",
-  "preservation": "https://www.wowhead.com/guide/classes/evoker/preservation/bis-gear",
-  "augmentation": "https://www.wowhead.com/guide/classes/evoker/augmentation/bis-gear",
-  "beast-mastery": "https://www.wowhead.com/guide/classes/hunter/beast-mastery/bis-gear",
-  "marksmanship": "https://www.wowhead.com/guide/classes/hunter/marksmanship/bis-gear",
-  "survival": "https://www.wowhead.com/guide/classes/hunter/survival/bis-gear",
-  "arcane": "https://www.wowhead.com/guide/classes/mage/arcane/bis-gear",
-  "fire": "https://www.wowhead.com/guide/classes/mage/fire/bis-gear",
-  "frost-mage": "https://www.wowhead.com/guide/classes/mage/frost/bis-gear",
-  "brewmaster": "https://www.wowhead.com/guide/classes/monk/brewmaster/bis-gear",
-  "mistweaver": "https://www.wowhead.com/guide/classes/monk/mistweaver/bis-gear",
-  "windwalker": "https://www.wowhead.com/guide/classes/monk/windwalker/bis-gear",
-  "holy-pala": "https://www.wowhead.com/guide/classes/paladin/holy/bis-gear",
-  "protection-pala": "https://www.wowhead.com/guide/classes/paladin/protection/bis-gear",
-  "retribution": "https://www.wowhead.com/guide/classes/paladin/retribution/bis-gear",
-  "discipline": "https://www.wowhead.com/guide/classes/priest/discipline/bis-gear",
-  "holy-priest": "https://www.wowhead.com/guide/classes/priest/holy/bis-gear",
-  "shadow": "https://www.wowhead.com/guide/classes/priest/shadow/bis-gear",
-  "assassination": "https://www.wowhead.com/guide/classes/rogue/assassination/bis-gear",
-  "outlaw": "https://www.wowhead.com/guide/classes/rogue/outlaw/bis-gear",
-  "subtlety": "https://www.wowhead.com/guide/classes/rogue/subtlety/bis-gear",
-  "elemental": "https://www.wowhead.com/guide/classes/shaman/elemental/bis-gear",
-  "enhancement": "https://www.wowhead.com/guide/classes/shaman/enhancement/bis-gear",
-  "restoration-sham": "https://www.wowhead.com/guide/classes/shaman/restoration/bis-gear",
-  "affliction": "https://www.wowhead.com/guide/classes/warlock/affliction/bis-gear",
-  "demonology": "https://www.wowhead.com/guide/classes/warlock/demonology/bis-gear",
-  "destruction": "https://www.wowhead.com/guide/classes/warlock/destruction/bis-gear",
-  "arms": "https://www.wowhead.com/guide/classes/warrior/arms/bis-gear",
-  "fury": "https://www.wowhead.com/guide/classes/warrior/fury/bis-gear",
-  "protection-war": "https://www.wowhead.com/guide/classes/warrior/protection/bis-gear"
-};
-
-const STRATEGY_DATA = {
-  "blood": {
-    "targetPriority": [
-      {
-        "name": "Gaze of the Alnseer",
-        "source": "Chimaerus"
-      },
-      {
-        "name": "Light Company Guidon",
-        "source": "Imperator Averzian"
-      },
-      {
-        "name": "Garfrost's Two-Ton Hammer",
-        "source": "Pit of Saron"
-      },
-      {
-        "name": "Relentless Rider's Crown",
-        "source": "Tier Set \u2014 Raid | Catalyst | Vault"
-      }
-    ],
-    "upgradePriority": [
-      {
-        "name": "Weapon",
-        "source": ""
-      },
-      {
-        "name": "Liferipper's Cutlass (Your current weapon, really)",
-        "source": ""
-      },
-      {
-        "name": "Gaze of the Alnseer",
-        "source": "Chimaerus"
-      },
-      {
-        "name": "Umbral Plume",
-        "source": ""
-      }
-    ]
-  },
-  "frost-dk": {
-    "targetPriority": [
-      {
-        "name": "Light Company Guidon",
-        "source": "Imperator Averzian"
-      },
-      {
-        "name": "Gaze of the Alnseer",
-        "source": "Chimaerus"
-      },
-      {
-        "name": "Bellamy's Final Judgement",
-        "source": "Lightblinded Vanguard"
-      },
-      {
-        "name": "Relentless Rider's Crown",
-        "source": "Tier Set \u2014 Raid | Catalyst | Vault"
-      }
-    ],
-    "upgradePriority": [
-      {
-        "name": "Weapon",
-        "source": ""
-      },
-      {
-        "name": "Gaze of the Alnseer",
-        "source": "Chimaerus"
-      },
-      {
-        "name": "Light Company Guidon",
-        "source": "Imperator Averzian"
-      },
-      {
-        "name": "Bellamy's Final Judgement",
-        "source": "Lightblinded Vanguard"
-      }
-    ]
-  },
-  "unholy": {
-    "targetPriority": [
-      {
-        "name": "Gaze of the Alnseer",
-        "source": "Chimaerus"
-      },
-      {
-        "name": "Light Company Guidon",
-        "source": "Imperator Averzian"
-      },
-      {
-        "name": "Bellamy's Final Judgement",
-        "source": "Lightblinded Vanguard"
-      },
-      {
-        "name": "Relentless Rider's Crown",
-        "source": "Tier Set \u2014 Raid | Catalyst | Vault"
-      }
-    ],
-    "upgradePriority": [
-      {
-        "name": "Weapon",
-        "source": ""
-      },
-      {
-        "name": "Gaze of the Alnseer",
-        "source": "Chimaerus"
-      },
-      {
-        "name": "Light Company Guidon",
-        "source": "Imperator Averzian"
-      },
-      {
-        "name": "Bellamy's Final Judgement",
-        "source": "Lightblinded Vanguard"
-      }
-    ]
-  },
-  "havoc": {
-    "targetPriority": [
-      {
-        "name": "Algeth'ar Puzzle Box",
-        "source": "Algeth'ar Academy"
-      },
-      {
-        "name": "Gaze of the Alnseer",
-        "source": "Chimaerus"
-      },
-      {
-        "name": "Lightless Lament",
-        "source": "Midnight Falls"
-      },
-      {
-        "name": "Emblazoned Sunglaive",
-        "source": "Vaelgor & Ezzorak"
-      }
-    ],
-    "upgradePriority": [
-      {
-        "name": "Weapon",
-        "source": ""
-      },
-      {
-        "name": "Lightless Lament",
-        "source": "Midnight Falls"
-      },
-      {
-        "name": "Algeth'ar Puzzle Box",
-        "source": "Algeth'ar Academy"
-      },
-      {
-        "name": "Gaze of the Alnseer",
-        "source": "Chimaerus"
-      }
-    ]
-  },
-  "vengeance": {
-    "targetPriority": [
-      {
-        "name": "Gaze of the Alnseer",
-        "source": "Chimaerus"
-      },
-      {
-        "name": "Light Company Guidon",
-        "source": "Imperator Averzian"
-      },
-      {
-        "name": "Lightless Lament",
-        "source": "Midnight Falls"
-      },
-      {
-        "name": "Tormentor's Bladed Fists",
-        "source": "Fallen-King Salhadaar"
-      }
-    ],
-    "upgradePriority": [
-      {
-        "name": "Weapon",
-        "source": ""
-      },
-      {
-        "name": "Lightless Lament",
-        "source": "Midnight Falls"
-      },
-      {
-        "name": "Tormentor's Bladed Fists",
-        "source": "Fallen-King Salhadaar"
-      },
-      {
-        "name": "Gaze of the Alnseer",
-        "source": "Chimaerus"
-      }
-    ]
-  },
-  "devourer": {
-    "targetPriority": [
-      {
-        "name": "Gaze of the Alnseer",
-        "source": "Chimaerus"
-      },
-      {
-        "name": "Vaelgor's Final Stare",
-        "source": "Vaelgor & Ezzorak"
-      },
-      {
-        "name": "Lightless Lament",
-        "source": "Midnight Falls"
-      },
-      {
-        "name": "Spellbreaker's Warglaive + Darkmoon Sigil: Hunt",
-        "source": "Crafting"
-      }
-    ],
-    "upgradePriority": [
-      {
-        "name": "Weapon",
-        "source": ""
-      },
-      {
-        "name": "Spellboon Saber",
-        "source": ""
-      },
-      {
-        "name": "Spellbreaker's Warglaive",
-        "source": ""
-      },
-      {
-        "name": "Gaze of the Alnseer",
-        "source": "Chimaerus"
-      }
-    ]
-  },
-  "balance": {
-    "targetPriority": [
-      {
-        "name": "Vaelgor's Final Stare",
-        "source": "Vaelgor & Ezzorak"
-      },
-      {
-        "name": "Locus-Walker's Ribbon",
-        "source": "Crown of the Cosmos"
-      },
-      {
-        "name": "Belo'melorn, the Shattered Talon",
-        "source": "Belo'ren"
-      },
-      {
-        "name": "Aln'hara Lantern",
-        "source": "Crafting"
-      }
-    ],
-    "upgradePriority": [
-      {
-        "name": "Weapon",
-        "source": ""
-      },
-      {
-        "name": "Aln'hara Cane",
-        "source": ""
-      },
-      {
-        "name": "Vaelgor's Final Stare",
-        "source": "Vaelgor & Ezzorak"
-      },
-      {
-        "name": "Gaze of the Alnseer",
-        "source": ""
-      }
-    ]
-  },
-  "feral": {
-    "targetPriority": [
-      {
-        "name": "Algeth'ar Puzzle Box",
-        "source": "Algeth'ar Academy"
-      },
-      {
-        "name": "Radiant Plume",
-        "source": "Belo'ren"
-      },
-      {
-        "name": "Inescapable Reach",
-        "source": "Vorasius"
-      },
-      {
-        "name": "Branches of the Luminous Bloom",
-        "source": "Tier Set \u2014 Raid | Catalyst | Vault"
-      }
-    ],
-    "upgradePriority": [
-      {
-        "name": "Weapon",
-        "source": ""
-      },
-      {
-        "name": "Alnscorned Spire",
-        "source": ""
-      },
-      {
-        "name": "Gaze of the Alnseer",
-        "source": ""
-      },
-      {
-        "name": "Algeth'ar Puzzle Box",
-        "source": "Algeth'ar Academy"
-      }
-    ]
-  },
-  "guardian": {
-    "targetPriority": [
-      {
-        "name": "Gaze of the Alnseer",
-        "source": "Chimaerus"
-      },
-      {
-        "name": "Algeth'ar Puzzle Box",
-        "source": "Algeth'ar Academy"
-      },
-      {
-        "name": "Alnscorned Spire",
-        "source": "Chimaerus"
-      },
-      {
-        "name": "Mask of Darkest Intent",
-        "source": "Midnight Falls"
-      }
-    ],
-    "upgradePriority": [
-      {
-        "name": "Weapon",
-        "source": ""
-      },
-      {
-        "name": "Alnscorned Spire",
-        "source": "Chimaerus"
-      },
-      {
-        "name": "Gaze of the Alnseer",
-        "source": "Chimaerus"
-      },
-      {
-        "name": "Algeth'ar Puzzle Box",
-        "source": "Algeth'ar Academy"
-      }
-    ]
-  },
-  "restoration-druid": {
-    "targetPriority": [
-      {
-        "name": "Locus-Walker's Ribbon",
-        "source": "Crown of the Cosmos"
-      },
-      {
-        "name": "Vaelgor's Final Stare",
-        "source": "Vaelgor & Ezzorak"
-      },
-      {
-        "name": "Belo'melorn, the Shattered Talon",
-        "source": "Belo'ren"
-      },
-      {
-        "name": "Tome of Alnscorned Regret",
-        "source": "Chimaerus"
-      }
-    ],
-    "upgradePriority": [
-      {
-        "name": "Weapon",
-        "source": ""
-      },
-      {
-        "name": "Gaze of the Alnseer",
-        "source": ""
-      },
-      {
-        "name": "Locus-Walker's Ribbon",
-        "source": "Crown of the Cosmos"
-      }
-    ]
-  },
-  "devastation": {
-    "targetPriority": [
-      {
-        "name": "Vaelgor's Final Stare",
-        "source": "Vaelgor & Ezzorak"
-      },
-      {
-        "name": "Locus-Walker's Ribbon",
-        "source": "Crown of the Cosmos"
-      },
-      {
-        "name": "Belo'melorn, the Shattered Talon",
-        "source": "Belo'ren"
-      },
-      {
-        "name": "Grimoire of the Eternal Light",
-        "source": "Vorasius"
-      }
-    ],
-    "upgradePriority": [
-      {
-        "name": "Weapon",
-        "source": ""
-      },
-      {
-        "name": "Aln'hara Cane",
-        "source": ""
-      },
-      {
-        "name": "Vaelgor's Final Stare",
-        "source": "Vaelgor & Ezzorak"
-      },
-      {
-        "name": "Locus-Walker's Ribbon",
-        "source": "Crown of the Cosmos"
-      }
-    ]
-  },
-  "preservation": {
-    "targetPriority": [
-      {
-        "name": "Vaelgor's Final Stare",
-        "source": "Vaelgor & Ezzorak"
-      },
-      {
-        "name": "Locus-Walker's Ribbon",
-        "source": "Crown of the Cosmos"
-      },
-      {
-        "name": "Umbral Spire of Zuraal",
-        "source": "Seat of the Triumvirate"
-      },
-      {
-        "name": "Oblivion Guise",
-        "source": "Midnight Falls"
-      }
-    ],
-    "upgradePriority": [
-      {
-        "name": "Weapon",
-        "source": ""
-      },
-      {
-        "name": "Gaze of the Alnseer",
-        "source": ""
-      },
-      {
-        "name": "Locus-Walker's Ribbon",
-        "source": "Crown of the Cosmos"
-      }
-    ]
-  },
-  "augmentation": {
-    "targetPriority": [
-      {
-        "name": "Ribbon of Coiled Malice",
-        "source": "Fallen-King Salhadaar"
-      },
-      {
-        "name": "Shadow of the Empyrean Requiem",
-        "source": "Midnight Falls"
-      },
-      {
-        "name": "Soulcatcher's Charm",
-        "source": "Maisara Caverns"
-      },
-      {
-        "name": "Ceremonial Hexblade",
-        "source": "Maisara Caverns"
-      }
-    ],
-    "upgradePriority": [
-      {
-        "name": "Weapon",
-        "source": ""
-      },
-      {
-        "name": "Magister's Valediction",
-        "source": ""
-      },
-      {
-        "name": "Shadow of the Empyrean Requiem",
-        "source": "Midnight Falls"
-      },
-      {
-        "name": "Grimoire of the Eternal Light",
-        "source": "Vorasius"
-      }
-    ]
-  },
-  "beast-mastery": {
-    "targetPriority": [
-      {
-        "name": "Radiant Plume",
-        "source": "Belo'ren"
-      },
-      {
-        "name": "Algeth'ar Puzzle Box",
-        "source": "Algeth'ar Academy"
-      },
-      {
-        "name": "Deceiver's Rotbow",
-        "source": "Maisara Caverns"
-      },
-      {
-        "name": "Primal Sentry's Maw",
-        "source": "Tier Set \u2014 Raid | Catalyst | Vault"
-      }
-    ],
-    "upgradePriority": [
-      {
-        "name": "Weapon",
-        "source": ""
-      },
-      {
-        "name": "Deceiver's Rotbow",
-        "source": "Maisara Caverns"
-      },
-      {
-        "name": "Algeth'ar Puzzle Box",
-        "source": "Algeth'ar Academy"
-      },
-      {
-        "name": "Gaze of the Alnseer",
-        "source": ""
-      }
-    ]
-  },
-  "marksmanship": {
-    "targetPriority": [
-      {
-        "name": "Algeth'ar Puzzle Box",
-        "source": "Algeth'ar Academy"
-      },
-      {
-        "name": "Umbral Plume",
-        "source": "Belo'ren"
-      },
-      {
-        "name": "Ranger-Captain's Lethal Recurve",
-        "source": "Crown of the Cosmos"
-      },
-      {
-        "name": "Primal Sentry's Maw",
-        "source": "Tier Set \u2014 Raid | Catalyst | Vault"
-      }
-    ],
-    "upgradePriority": [
-      {
-        "name": "Weapon",
-        "source": ""
-      },
-      {
-        "name": "Ranger-Captain's Lethal Recurve",
-        "source": "Crown of the Cosmos"
-      },
-      {
-        "name": "Algeth'ar Puzzle Box",
-        "source": "Algeth'ar Academy"
-      },
-      {
-        "name": "Umbral Plume",
-        "source": "Belo'ren"
-      }
-    ]
-  },
-  "survival": {
-    "targetPriority": [
-      {
-        "name": "Algeth'ar Puzzle Box",
-        "source": "Algeth'ar Academy"
-      },
-      {
-        "name": "Radiant Plume",
-        "source": "Belo'ren"
-      },
-      {
-        "name": "Roostwarden's Bough",
-        "source": "Windrunner Spire"
-      },
-      {
-        "name": "Primal Sentry's Maw",
-        "source": "Tier Set \u2014 Raid | Catalyst | Vault"
-      }
-    ],
-    "upgradePriority": [
-      {
-        "name": "Weapon",
-        "source": ""
-      },
-      {
-        "name": "Belo'ren's Swift Talon",
-        "source": ""
-      },
-      {
-        "name": "Gaze of the Alnseer",
-        "source": ""
-      },
-      {
-        "name": "Algeth'ar Puzzle Box",
-        "source": "Algeth'ar Academy"
-      }
-    ]
-  },
-  "arcane": {
-    "targetPriority": [
-      {
-        "name": "Vaelgor's Final Stare",
-        "source": "Vaelgor & Ezzorak"
-      },
-      {
-        "name": "Gaze of the Alnseer",
-        "source": "Chimaerus"
-      },
-      {
-        "name": "Skybreaker's Blade",
-        "source": "Skyreach"
-      },
-      {
-        "name": "Sigil of the Restless Heart",
-        "source": "Windrunner Spire"
-      }
-    ],
-    "upgradePriority": [
-      {
-        "name": "Weapon",
-        "source": ""
-      },
-      {
-        "name": "Aln'hara Cane",
-        "source": ""
-      },
-      {
-        "name": "Vaelgor's Final Stare",
-        "source": "Vaelgor & Ezzorak"
-      },
-      {
-        "name": "Gaze of the Alnseer",
-        "source": "Chimaerus"
-      }
-    ]
-  },
-  "fire": {
-    "targetPriority": [
-      {
-        "name": "Emberwing Feather",
-        "source": "Windrunner Spire"
-      },
-      {
-        "name": "Locus-Walker's Ribbon",
-        "source": "Crown of the Cosmos"
-      },
-      {
-        "name": "Brazier of the Dissonant Dirge",
-        "source": "Midnight Falls"
-      },
-      {
-        "name": "Voidbreaker's Veil",
-        "source": "Tier Set \u2014 Raid | Catalyst | Vault"
-      }
-    ],
-    "upgradePriority": [
-      {
-        "name": "Weapon",
-        "source": ""
-      },
-      {
-        "name": "Aln'hara Cane",
-        "source": ""
-      },
-      {
-        "name": "Emberwing Feather",
-        "source": "Windrunner Spire"
-      },
-      {
-        "name": "Locus-Walker's Ribbon",
-        "source": "Crown of the Cosmos"
-      }
-    ]
-  },
-  "frost-mage": {
-    "targetPriority": [
-      {
-        "name": "Gaze of the Alnseer",
-        "source": "Chimaerus"
-      },
-      {
-        "name": "Vaelgor's Final Stare",
-        "source": "Vaelgor & Ezzorak"
-      },
-      {
-        "name": "Skybreaker's Blade",
-        "source": "Skyreach"
-      },
-      {
-        "name": "Aln'hara Lantern",
-        "source": "Crafting"
-      }
-    ],
-    "upgradePriority": [
-      {
-        "name": "Weapon",
-        "source": ""
-      }
-    ]
-  },
-  "brewmaster": {
-    "targetPriority": [
-      {
-        "name": "Radiant Plume",
-        "source": "Belo'ren"
-      },
-      {
-        "name": "Gaze of the Alnseer",
-        "source": "Chimaerus"
-      },
-      {
-        "name": "Inescapable Reach",
-        "source": "Vorasius"
-      },
-      {
-        "name": "Fearsome Visage of Ra-den's Chosen",
-        "source": "Tier Set \u2014 Raid | Catalyst | Vault"
-      }
-    ],
-    "upgradePriority": [
-      {
-        "name": "Weapon",
-        "source": ""
-      },
-      {
-        "name": "Inescapable Reach",
-        "source": "Vorasius"
-      },
-      {
-        "name": "Gaze of the Alnseer",
-        "source": "Chimaerus"
-      },
-      {
-        "name": "Radiant Plume",
-        "source": "Belo'ren"
-      }
-    ]
-  },
-  "mistweaver": {
-    "targetPriority": [
-      {
-        "name": "Litany of Lightblind Wrath",
-        "source": "Lightblinded Vanguard"
-      },
-      {
-        "name": "Gaze of the Alnseer",
-        "source": "Chimaerus"
-      },
-      {
-        "name": "Arcanic of the High Sage",
-        "source": "Skyreach"
-      },
-      {
-        "name": "Grimoire of the Eternal Light",
-        "source": "Vorasius"
-      }
-    ],
-    "upgradePriority": [
-      {
-        "name": "Weapon",
-        "source": ""
-      },
-      {
-        "name": "Aln'hara Cane",
-        "source": ""
-      },
-      {
-        "name": "Litany of Lightblind Wrath",
-        "source": "Lightblinded Vanguard"
-      },
-      {
-        "name": "Gaze of the Alnseer",
-        "source": "Chimaerus"
-      }
-    ]
-  },
-  "windwalker": {
-    "targetPriority": [
-      {
-        "name": "Gaze of the Alnseer",
-        "source": "Chimaerus"
-      },
-      {
-        "name": "Algeth'ar Puzzle Box",
-        "source": "Algeth'ar Academy"
-      },
-      {
-        "name": "Traitor's Talon",
-        "source": "Maisara Caverns"
-      },
-      {
-        "name": "Fearsome Visage of Ra-den's Chosen",
-        "source": "Tier Set \u2014 Raid | Catalyst | Vault"
-      }
-    ],
-    "upgradePriority": [
-      {
-        "name": "Weapon",
-        "source": ""
-      },
-      {
-        "name": "Traitor's Talon",
-        "source": "Maisara Caverns"
-      },
-      {
-        "name": "Algeth'ar Puzzle Box",
-        "source": "Algeth'ar Academy"
-      },
-      {
-        "name": "Gaze of the Alnseer",
-        "source": "Chimaerus"
-      }
-    ]
-  },
-  "holy-pala": {
-    "targetPriority": [
-      {
-        "name": "Locus-Walker's Ribbon",
-        "source": "Crown of the Cosmos"
-      },
-      {
-        "name": "Gaze of the Alnseer",
-        "source": "Chimaerus"
-      },
-      {
-        "name": "Spellboon Saber",
-        "source": "Algeth'ar Academy"
-      },
-      {
-        "name": "Viryx's Indomitable Bulwark",
-        "source": "Skyreach"
-      }
-    ],
-    "upgradePriority": [
-      {
-        "name": "Weapon",
-        "source": ""
-      },
-      {
-        "name": "Magister's Mana Sword",
-        "source": ""
-      },
-      {
-        "name": "Spellbreaker's Rebuke",
-        "source": ""
-      },
-      {
-        "name": "Locus-Walker's Ribbon",
-        "source": "Crown of the Cosmos"
-      }
-    ]
-  },
-  "protection-pala": {
-    "targetPriority": [
-      {
-        "name": "Gaze of the Alnseer",
-        "source": "Chimaerus"
-      },
-      {
-        "name": "Heart of Ancient Hunger",
-        "source": "Vorasius"
-      },
-      {
-        "name": "Turalyon's False Echo",
-        "source": "Crown of the Cosmos"
-      },
-      {
-        "name": "Thalassian Dawnguard",
-        "source": "Belo'ren"
-      }
-    ],
-    "upgradePriority": [
-      {
-        "name": "Weapon",
-        "source": ""
-      },
-      {
-        "name": "Turalyon's False Echo",
-        "source": "Crown of the Cosmos"
-      },
-      {
-        "name": "Thalassian Dawnguard",
-        "source": "Belo'ren"
-      },
-      {
-        "name": "Gaze of the Alnseer",
-        "source": "Chimaerus"
-      }
-    ]
-  },
-  "retribution": {
-    "targetPriority": [
-      {
-        "name": "Umbral Plume",
-        "source": "Belo'ren"
-      },
-      {
-        "name": "Algeth'ar Puzzle Box",
-        "source": "Algeth'ar Academy"
-      },
-      {
-        "name": "Bellamy's Final Judgement",
-        "source": "Lightblinded Vanguard"
-      },
-      {
-        "name": "Luminant Verdict's Unwavering Gaze",
-        "source": "Tier Set \u2014 Raid | Catalyst | Vault"
-      }
-    ],
-    "upgradePriority": [
-      {
-        "name": "Weapon",
-        "source": ""
-      },
-      {
-        "name": "Bellamy's Final Judgement",
-        "source": "Lightblinded Vanguard"
-      },
-      {
-        "name": "Algeth'ar Puzzle Box",
-        "source": "Algeth'ar Academy"
-      },
-      {
-        "name": "Umbral Plume",
-        "source": "Belo'ren"
-      }
-    ]
-  },
-  "discipline": {
-    "targetPriority": [
-      {
-        "name": "Litany of Lightblind Wrath",
-        "source": "War Chaplain Senn"
-      },
-      {
-        "name": "Vaelgor's Final Stare",
-        "source": "Vaelgor & Ezzorak"
-      },
-      {
-        "name": "Belo'melorn, the Shattered Talon",
-        "source": "Belo'ren"
-      },
-      {
-        "name": "Aln'hara Lantern",
-        "source": "Crafting"
-      }
-    ],
-    "upgradePriority": [
-      {
-        "name": "Weapon",
-        "source": ""
-      },
-      {
-        "name": "Gaze of the Alnseer",
-        "source": ""
-      },
-      {
-        "name": "Vaelgor's Final Stare",
-        "source": "Vaelgor & Ezzorak"
-      },
-      {
-        "name": "Litany of Lightblind Wrath",
-        "source": "War Chaplain Senn"
-      }
-    ]
-  },
-  "holy-priest": {
-    "targetPriority": [],
-    "upgradePriority": [
-      {
-        "name": "Weapon",
-        "source": ""
-      },
-      {
-        "name": "Litany of Lightblind Wrath",
-        "source": ""
-      },
-      {
-        "name": "Locus-Walker's Ribbon",
-        "source": ""
-      },
-      {
-        "name": "Gaze of the Alnseer",
-        "source": ""
-      }
-    ]
-  },
-  "shadow": {
-    "targetPriority": [
-      {
-        "name": "Wraps of Watchful Wrath",
-        "source": "Magister's Terrace"
-      },
-      {
-        "name": "Gaze of the Alnseer",
-        "source": "Chimaerus"
-      },
-      {
-        "name": "Vaelgor's Final Stare",
-        "source": "Vaelgor & Ezzorak"
-      },
-      {
-        "name": "Belo'melorn, the Shattered Talon",
-        "source": "Belo'ren"
-      }
-    ],
-    "upgradePriority": [
-      {
-        "name": "Weapon",
-        "source": ""
-      },
-      {
-        "name": "Spire of the Furious Construct",
-        "source": ""
-      },
-      {
-        "name": "Gaze of the Alnseer",
-        "source": "Chimaerus"
-      },
-      {
-        "name": "Vaelgor's Final Stare",
-        "source": "Vaelgor & Ezzorak"
-      }
-    ]
-  },
-  "assassination": {
-    "targetPriority": [
-      {
-        "name": "Ribbon of Coiled Malice",
-        "source": "Fallen-King Salhadaar"
-      },
-      {
-        "name": "Gaze of the Alnseer",
-        "source": "Chimaerus"
-      },
-      {
-        "name": "Algeth'ar Puzzle Box",
-        "source": "Algeth'ar Academy"
-      },
-      {
-        "name": "Hungering Victory",
-        "source": "Vorasius"
-      }
-    ],
-    "upgradePriority": [
-      {
-        "name": "Weapon",
-        "source": ""
-      },
-      {
-        "name": "Hungering Victory",
-        "source": "Vorasius"
-      },
-      {
-        "name": "Algeth'ar Puzzle Box",
-        "source": "Algeth'ar Academy"
-      },
-      {
-        "name": "Gaze of the Alnseer",
-        "source": "Chimaerus"
-      }
-    ]
-  },
-  "outlaw": {
-    "targetPriority": [
-      {
-        "name": "Gaze of the Alnseer",
-        "source": "Chimaerus"
-      },
-      {
-        "name": "Umbral Plume",
-        "source": "Belo'ren"
-      },
-      {
-        "name": "Arator's Swift Remembrance",
-        "source": "Crown of the Cosmos"
-      },
-      {
-        "name": "Krick's Beetle Stabber",
-        "source": "Pit of Saron"
-      }
-    ],
-    "upgradePriority": [
-      {
-        "name": "Weapon",
-        "source": ""
-      },
-      {
-        "name": "Arator's Swift Remembrance",
-        "source": "Crown of the Cosmos"
-      },
-      {
-        "name": "Gaze of the Alnseer",
-        "source": "Chimaerus"
-      },
-      {
-        "name": "Umbral Plume",
-        "source": "Belo'ren"
-      }
-    ]
-  },
-  "subtlety": {
-    "targetPriority": [
-      {
-        "name": "Light Company Guidon",
-        "source": "Imperator Averzian"
-      },
-      {
-        "name": "Gaze of the Alnseer",
-        "source": "Chimaerus"
-      },
-      {
-        "name": "Hungering Victory",
-        "source": "Vorasius"
-      },
-      {
-        "name": "Farstrider's Mercy",
-        "source": "Crafting"
-      }
-    ],
-    "upgradePriority": [
-      {
-        "name": "Weapon",
-        "source": ""
-      }
-    ]
-  },
-  "elemental": {
-    "targetPriority": [
-      {
-        "name": "Gaze of the Alnseer",
-        "source": "Chimaerus"
-      },
-      {
-        "name": "Emberwing Feather",
-        "source": "Windrunner Spire"
-      },
-      {
-        "name": "Excavating Cudgel",
-        "source": "Windrunner Spire"
-      },
-      {
-        "name": "Ward of the Spellbreaker",
-        "source": "Magister's Terrace"
-      }
-    ],
-    "upgradePriority": [
-      {
-        "name": "Weapon",
-        "source": ""
-      },
-      {
-        "name": "Magister's Valediction",
-        "source": ""
-      },
-      {
-        "name": "Emberwing Feather",
-        "source": "Windrunner Spire"
-      },
-      {
-        "name": "Gaze of the Alnseer",
-        "source": "Chimaerus"
-      }
-    ]
-  },
-  "enhancement": {
-    "targetPriority": [
-      {
-        "name": "Gaze of the Alnseer",
-        "source": "Chimaerus"
-      },
-      {
-        "name": "Algeth'ar Puzzle Box",
-        "source": "Algeth'ar Academy"
-      },
-      {
-        "name": "Clutchmates' Caress",
-        "source": "Vaelgor & Ezzorak"
-      },
-      {
-        "name": "Farstrider's Chopper",
-        "source": "Blacksmithing"
-      }
-    ],
-    "upgradePriority": [
-      {
-        "name": "Weapon",
-        "source": ""
-      },
-      {
-        "name": "Clutchmates' Caress Or any Myth Main-Hand Weapon",
-        "source": ""
-      },
-      {
-        "name": "Algeth'ar Puzzle Box",
-        "source": "Algeth'ar Academy"
-      },
-      {
-        "name": "Gaze of the Alnseer",
-        "source": "Chimaerus"
-      }
-    ]
-  },
-  "restoration-sham": {
-    "targetPriority": [
-      {
-        "name": "Ribbon of Coiled Malice",
-        "source": "Fallen-King Salhadaar"
-      },
-      {
-        "name": "Gaze of the Alnseer",
-        "source": "Chimaerus"
-      },
-      {
-        "name": "Weight of Command",
-        "source": "Imperator Averzian"
-      },
-      {
-        "name": "Reflux Reflector",
-        "source": "Nexus Point Xenas"
-      }
-    ],
-    "upgradePriority": [
-      {
-        "name": "Weapon",
-        "source": ""
-      },
-      {
-        "name": "Weight of Command",
-        "source": "Imperator Averzian"
-      },
-      {
-        "name": "Light of the Cosmic Crescendo",
-        "source": ""
-      },
-      {
-        "name": "Locus-Walker's Ribbon",
-        "source": ""
-      }
-    ]
-  },
-  "affliction": {
-    "targetPriority": [
-      {
-        "name": "Gaze of the Alnseer",
-        "source": "Chimaerus"
-      },
-      {
-        "name": "Emberwing Feather",
-        "source": "Windrunner Spire"
-      },
-      {
-        "name": "Belo'melorn, the Shattered Talon",
-        "source": "Belo'ren"
-      },
-      {
-        "name": "Grimoire of the Eternal Light",
-        "source": "Vorasius"
-      }
-    ],
-    "upgradePriority": [
-      {
-        "name": "Weapon",
-        "source": ""
-      }
-    ]
-  },
-  "demonology": {
-    "targetPriority": [
-      {
-        "name": "Gaze of the Alnseer",
-        "source": "Chimaerus"
-      },
-      {
-        "name": "Vaelgor's Final Stare",
-        "source": "Vaelgor"
-      },
-      {
-        "name": "Belo'melorn, the Shattered Talon",
-        "source": "Belo'ren"
-      },
-      {
-        "name": "Grimoire of the Eternal Light",
-        "source": "Vorasius"
-      }
-    ],
-    "upgradePriority": [
-      {
-        "name": "Weapon",
-        "source": ""
-      },
-      {
-        "name": "Belo'melorn, the Shattered Talon",
-        "source": "Belo'ren"
-      },
-      {
-        "name": "Emberwing Feather",
-        "source": ""
-      },
-      {
-        "name": "Gaze of the Alnseer",
-        "source": "Chimaerus"
-      }
-    ]
-  },
-  "destruction": {
-    "targetPriority": [
-      {
-        "name": "Gaze of the Alnseer",
-        "source": "Chimaerus"
-      },
-      {
-        "name": "Vaelgor's Final Stare",
-        "source": "Vaelgor"
-      },
-      {
-        "name": "Belo'melorn, the Shattered Talon",
-        "source": "Belo'ren"
-      },
-      {
-        "name": "Grimoire of the Eternal Light",
-        "source": "Vorasius"
-      }
-    ],
-    "upgradePriority": [
-      {
-        "name": "Weapon",
-        "source": ""
-      }
-    ]
-  },
-  "arms": {
-    "targetPriority": [
-      {
-        "name": "Ribbon of Coiled Malice",
-        "source": "Fallen-King Salhadaar"
-      },
-      {
-        "name": "Gaze of the Alnseer",
-        "source": "Chimaerus"
-      },
-      {
-        "name": "Heart of Ancient Hunger",
-        "source": "Vorasius"
-      },
-      {
-        "name": "Alah'endal, the Dawnsong",
-        "source": "Midnight Falls"
-      }
-    ],
-    "upgradePriority": [
-      {
-        "name": "Weapon",
-        "source": ""
-      }
-    ]
-  },
-  "fury": {
-    "targetPriority": [
-      {
-        "name": "Gaze of the Alnseer",
-        "source": "Chimaerus"
-      },
-      {
-        "name": "Heart of Ancient Hunger",
-        "source": "Vorasius"
-      },
-      {
-        "name": "Bellamy's Final Judgement",
-        "source": "Lightblinded Vanguard"
-      },
-      {
-        "name": "Blood Knight's Warblade",
-        "source": "Crafted"
-      }
-    ],
-    "upgradePriority": [
-      {
-        "name": "Weapon",
-        "source": ""
-      }
-    ]
-  },
-  "protection-war": {
-    "targetPriority": [],
-    "upgradePriority": [
-      {
-        "name": "Weapon",
-        "source": ""
-      },
-      {
-        "name": "Turalyon's False Echo",
-        "source": ""
-      },
-      {
-        "name": "Thalassian Dawnguard",
-        "source": ""
-      },
-      {
-        "name": "Gaze of the Alnseer",
-        "source": ""
-      }
-    ]
-  }
-};
-
 const SEEDED = {
   "blood:Overall BiS": {
     patch: "12.0.1 Midnight Season 1", lastVerified: "2026-04-14", source: "Wowhead",
@@ -2758,23 +1306,17 @@ input::placeholder{color:rgba(240,222,180,.22);font-style:italic}
   .gear-grid { display: grid !important; grid-template-columns: 1fr 1fr; gap: .35rem; }
   .slot-wrap { break-inside: avoid; margin-bottom: .25rem; }
   .slot-lbl { font-size: .6rem !important; color: #222 !important; letter-spacing: .1em; text-transform: uppercase; font-family: Cinzel, serif; padding-left: 2px; display: block; margin-bottom: 2px; }
-  .slot-entry { display: flex !important; border: 1.5px solid #000 !important; }
-  .rank-block { display: block !important; border: 1.5px solid #000 !important; }
+  .slot-entry, .rank-block { display: flex !important; border: 1.5px solid #000 !important; }
   .slot-fields, .rank-inputs { flex: 1; }
-  .rank-label { display:flex !important; align-items:center; gap:.22rem !important; padding:.18rem .28rem !important; border-bottom:1px solid #000 !important; background:#fff !important; }
-  .sf-name { font-size: .82rem !important; color: #000 !important; padding: .28rem .38rem .18rem !important; display: block; border-bottom: 1px solid #000 !important; font-weight: 700; white-space: normal !important; overflow: visible !important; text-overflow: clip !important; line-height: 1.18 !important; min-height: auto !important; word-break: break-word; }
-  .sf-src { font-size: .74rem !important; color: #000 !important; padding: .18rem .38rem .24rem !important; display: block; font-style: normal !important; white-space: normal !important; overflow: visible !important; text-overflow: clip !important; line-height: 1.15 !important; word-break: break-word; }
+  .sf-name { font-size: .82rem !important; color: #000 !important; padding: .32rem .45rem; display: block; border-bottom: 1px solid #000 !important; font-weight: 700; white-space: normal !important; overflow: visible !important; text-overflow: clip !important; line-height: 1.22 !important; min-height: 2.1em; word-break: break-word; }
+  .sf-src { font-size: .76rem !important; color: #000 !important; padding: .24rem .45rem; display: block; font-style: normal !important; white-space: normal !important; overflow: visible !important; text-overflow: clip !important; line-height: 1.2 !important; word-break: break-word; }
   .slot-chk { width: 26px; flex-shrink: 0; border-left: 1px solid #000 !important; display: flex !important; align-items: center; justify-content: center; font-size: 1rem; }
   .slot-chk:not(.done) { color: transparent !important; }
   .slot-chk.done, .slot-chk.soft { color: #000 !important; background: transparent !important; }
   .sub-sh { font-size: .66rem !important; color: #111 !important; letter-spacing: .15em; text-transform: uppercase; font-family: Cinzel, serif; border-bottom: 1px solid #000 !important; padding-bottom: .2rem; margin: .6rem 0 .3rem; display: block !important; }
-  .rank-badge, .slot-track-row button, .rank-block button {
+  .rank-badge, .rank-set-btn, .rank-have, .slot-track-row button, .rank-block button {
     color: #000 !important; background: #fff !important; border: 1.5px solid #000 !important; font-weight: 700 !important; opacity:1 !important;
   }
-  .rank-set-btn, .target-chip { display:none !important; }
-  .rank-have { width: 16px !important; height: 16px !important; min-width:16px !important; padding:0 !important; margin-left:.18rem !important; border:1.5px solid #000 !important; background:#fff !important; color:transparent !important; font-size:0 !important; line-height:0 !important; }
-  .rank-have.done { color:transparent !important; position:relative; }
-  .rank-have.done::after { content:"✓"; position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:.72rem; color:#000 !important; }
   .rank-badge.r1, .rank-badge.r2, .rank-badge.r3 { color:#000 !important; border-color:#000 !important; }
   .slot-track-row button[data-selected="true"], .rank-block button[data-selected="true"] {
     border: 3px solid #000 !important; color: #000 !important; font-weight: 800 !important; background:#fff !important;
@@ -2939,16 +1481,16 @@ function Slot({ label, id, data, onChange, targetTrack, bisMode }) {
           <div key={idx} className={"rank-block" + (idx === activeRank ? " rank-active" : "")}>
             <div className="rank-label">
               <span className={"rank-badge " + RBADGE[idx]}>{RLABEL[idx]}</span>
-              {r.name && (
-                <button className={"rank-have" + (r.have ? " done" : "")} onClick={() => toggleHave(idx)}>
-                  {r.have ? "✓ have" : "have?"}
-                </button>
-              )}
               {idx !== activeRank && r.name && (
                 <button className="rank-set-btn" onClick={() => setActive(idx)}>Set as target</button>
               )}
               {idx === activeRank && r.name && (
-                <span className="target-chip" style={{ fontSize:".6rem", color:"var(--gold)", marginLeft:"auto", fontFamily:"Cinzel,serif", letterSpacing:".06em" }}>▸ targeting</span>
+                <span style={{ fontSize:".6rem", color:"var(--gold)", marginLeft:"auto", fontFamily:"Cinzel,serif", letterSpacing:".06em" }}>▸ targeting</span>
+              )}
+              {r.name && (
+                <button className={"rank-have" + (r.have ? " done" : "")} onClick={() => toggleHave(idx)}>
+                  {r.have ? "✓ have" : "have?"}
+                </button>
               )}
             </div>
             <div className="rank-inputs">
@@ -2987,6 +1529,9 @@ function Slot({ label, id, data, onChange, targetTrack, bisMode }) {
             {TRACKS.filter(t => t).map(t => (
               <button key={t} onClick={() => up("track", track === t ? "" : t)} style={{ fontFamily:"Cinzel,serif", fontSize:".58rem", letterSpacing:".05em", padding:".1rem .4rem", background: track === t ? TRACK_COLOR[t] : "transparent", border:`1px solid ${track === t ? TRACK_COLOR[t] : "var(--bdr2)"}`, color: track === t ? "#fff" : "var(--parch-dk)", cursor:"pointer", transition:"all .12s", filter: track === t ? "brightness(0.72)" : "none" }}>{t}</button>
             ))}
+            <div className={"slot-chk" + (d.done && !softBisSlot ? " done" : d.done && softBisSlot ? " soft" : "")} onClick={() => up("done", !d.done)} title={d.done ? "Acquired" : "Mark acquired"} style={{ marginLeft:"auto", width:"28px", height:"28px", fontSize:".85rem" }}>
+              {d.done ? (softBisSlot ? "~" : "✓") : ""}
+            </div>
           </div>
         )}
         {track && <div style={{ height:"2px", background: TRACK_COLOR[track], opacity:.7 }} />}
@@ -3026,8 +1571,6 @@ function Tracker({ cls, spec, charName, initialMode = "", onBack }) {
   const storageKey = `bis-${cls.id}-${spec.id}-${charName || "default"}`;
   const modeStorageKey = (mode) => `${storageKey}-${mode}`;
   const modeLabel = (mode) => mode === "custom" ? "Custom Builder" : mode === "community" ? "Wowhead BiS" : "Character Scan";
-  const wowheadLink = WOWHEAD_LINKS[spec.id] || "";
-  const strategy = STRATEGY_DATA[spec.id] || { targetPriority: [], upgradePriority: [] };
   const isPlaceholderName = (name) => {
     const n = (name || "").trim();
     return !n || /^x+$/i.test(n) || /^unknown$/i.test(n);
@@ -3060,6 +1603,17 @@ function Tracker({ cls, spec, charName, initialMode = "", onBack }) {
   const [sugs,    setSugs]    = useState(null);
   const [showPriority, setShowPriority] = useState(false);
   const [showSimC, setShowSimC] = useState(false);
+  const [scanTargetMode, setScanTargetMode] = useState(() => {
+    try {
+      const customData = readModeData("custom");
+      return Object.values(customData || {}).some(v => v?.name) ? "custom" : "community";
+    } catch {
+      return "community";
+    }
+  });
+  const [simcSummary, setSimcSummary] = useState(() => {
+    try { return JSON.parse(localStorage.getItem(`simc-summary-${storageKey}`) || "null") || null; } catch { return null; }
+  });
   const [targetTrack, setTargetTrack] = useState(() => {
     try { return localStorage.getItem(`target-track-${storageKey}`) || "Myth"; } catch { return "Myth"; }
   });
@@ -3302,48 +1856,6 @@ function Tracker({ cls, spec, charName, initialMode = "", onBack }) {
         )}
       </div>
 
-
-      <div className="no-print" style={{ background:"var(--panel)", border:"1px solid var(--bdr)", marginBottom:".75rem", padding:".9rem 1rem", textAlign:"center" }}>
-        <div style={{ display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", gap:".55rem" }}>
-          <div>
-            <div style={{ fontFamily:"Cinzel,serif", fontSize:".78rem", letterSpacing:".12em", color:"var(--gold)" }}>WOWHEAD SUGGESTED BiS</div>
-            <div style={{ fontSize:".78rem", color:"var(--parch-dk)", marginTop:".2rem", maxWidth:"820px", marginLeft:"auto", marginRight:"auto" }}>Suggested BiS is based on Wowhead and should still be double-checked for your character. Use Custom Builder for full control.</div>
-          </div>
-          {wowheadLink && <a href={wowheadLink} target="_blank" rel="noreferrer" className="bis-btn" style={{ textDecoration:"none", whiteSpace:"nowrap" }}>↗ View Wowhead Guide</a>}
-        </div>
-      </div>
-
-      <div className="farm-priority-section no-print" style={{ background:"var(--panel)", border:"1px solid var(--bdr)", marginBottom:".75rem" }}>
-        <div style={{ display:"flex", alignItems:"center", gap:".75rem", padding:".7rem .85rem", borderBottom:"1px solid var(--bdr)", flexWrap:"wrap" }}>
-          <div style={{ flex:1 }}>
-            <div style={{ fontFamily:"Cinzel,serif", fontSize:".78rem", letterSpacing:".12em", color:"var(--gold)" }}>STRATEGY</div>
-            <div style={{ fontSize:".78rem", color:"var(--parch-dk)", marginTop:".2rem" }}>What to spend bonus rolls on first and which items deserve your upgrade resources. BiS stays untouched.</div>
-          </div>
-        </div>
-        <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit,minmax(260px,1fr))", gap:".8rem", padding:".85rem" }}>
-          <div style={{ border:"1px solid var(--bdr2)", background:"rgba(0,0,0,.14)", padding:".75rem" }}>
-            <div style={{ fontFamily:"Cinzel,serif", fontSize:".72rem", letterSpacing:".1em", color:"var(--gold-lt)", marginBottom:".45rem" }}>TARGET PRIORITY (BONUS ROLLS)</div>
-            {(strategy.targetPriority || []).length ? strategy.targetPriority.map((row, idx) => (
-              <div key={row.name + idx} style={{ marginBottom:".4rem", fontSize:".84rem", color:"var(--parch-dk)" }}>
-                <span style={{ color:"var(--gold-lt)", fontFamily:"Cinzel,serif", marginRight:".4rem" }}>{idx + 1}.</span>
-                <span style={{ color:"var(--parch)" }}>{row.name}</span>
-                {row.source ? <span style={{ color:"var(--parch-dk)" }}> · {row.source}</span> : null}
-              </div>
-            )) : <div style={{ fontSize:".82rem", color:"var(--parch-dk)" }}>No priority data loaded yet for this spec.</div>}
-          </div>
-          <div style={{ border:"1px solid var(--bdr2)", background:"rgba(0,0,0,.14)", padding:".75rem" }}>
-            <div style={{ fontFamily:"Cinzel,serif", fontSize:".72rem", letterSpacing:".1em", color:"var(--gold-lt)", marginBottom:".45rem" }}>UPGRADE PRIORITY</div>
-            {(strategy.upgradePriority || []).length ? strategy.upgradePriority.map((row, idx) => (
-              <div key={row.name + idx} style={{ marginBottom:".4rem", fontSize:".84rem", color:"var(--parch-dk)" }}>
-                <span style={{ color:"var(--gold-lt)", fontFamily:"Cinzel,serif", marginRight:".4rem" }}>{idx + 1}.</span>
-                <span style={{ color:"var(--parch)" }}>{row.name}</span>
-                {row.source ? <span style={{ color:"var(--parch-dk)" }}> · {row.source}</span> : null}
-              </div>
-            )) : <div style={{ fontSize:".82rem", color:"var(--parch-dk)" }}>No upgrade data loaded yet for this spec.</div>}
-          </div>
-        </div>
-      </div>
-
       {filled.length > 0 && (
         <div className="farm-priority-section no-print" style={{ background:"var(--panel)", border:"1px solid var(--bdr)", marginBottom:".75rem" }}>
           <div style={{ display:"flex", alignItems:"center", gap:".75rem", padding:".6rem .75rem", borderBottom: showPriority ? "1px solid var(--bdr)" : "none" }}>
@@ -3433,53 +1945,28 @@ function Tracker({ cls, spec, charName, initialMode = "", onBack }) {
 
       {bisMode === "community" && (
         <div className="bis-bar">
-          <span className="bis-txt">✦ Suggested BiS is sourced from Wowhead guides. Always verify with your own sims and preferences.</span>
+          <span className="bis-txt">✦ Suggested BiS sourced from Wowhead guides and current patch data</span>
           {spec.role === "Healer" && (
             <a href="https://questionablyepic.com" target="_blank" rel="noreferrer" className="bis-btn" style={{ marginRight:".4rem", background:"rgba(110,64,201,.15)", borderColor:"#6e40c9", color:"#c9a0ff", textDecoration:"none", display:"none" }}>✦ QE Live Rankings</a>
           )}
           <button className="bis-btn" onClick={loadSuggestions} disabled={loading}>
-            {loading ? <>Loading...</> : sugs ? "↺ Refresh" : "✦ Load Suggested BiS"}
+            {loading ? <>Loading...</> : sugs ? "↺ Refresh" : "✦ Load BiS Suggestions"}
           </button>
         </div>
       )}
 
       {bisMode === "simc" && (
         <div className="bis-bar no-print">
-          <span className="bis-txt">✦ Paste your in-game SimC export to scan your equipped gear against your BiS list — checks off items you already have</span>
+          <span className="bis-txt">✦ Compare your currently equipped gear against a target list without changing your Wowhead or Custom Builder saves</span>
           <button className="bis-btn" onClick={() => setShowSimC(s => !s)} style={{ background:"rgba(201,146,42,.15)", borderColor:"var(--gold)", color:"var(--gold-lt)" }}>📋 {showSimC ? "Close" : "Open SimC Scanner"}</button>
         </div>
       )}
 
       {bisMode === "custom" && (
-        <div className="bis-bar" style={{ flexDirection:"column", alignItems:"flex-start", gap:".45rem" }}>
-          <div style={{ display:"flex", gap:".5rem", flexWrap:"wrap", width:"100%", alignItems:"center", justifyContent:"space-between" }}>
-                        <button className="bis-btn" onClick={async () => {
-              const seeded = getSeeded(spec.id, "Overall BiS");
-              if (!seeded) { await loadSuggestions(); return; }
-              const next = {};
-              Object.entries(seeded.slots || {}).forEach(([k, v]) => {
-                const key = mapKey(k, seeded.slots || {});
-                next[key] = {
-                  name: v.name || "",
-                  src: v.source || "",
-                  done: false,
-                  track: "",
-                  ranks: [
-                    { name: v.name || "", src: v.source || "", have: false, itemId: "" },
-                    { name: "", src: "", have: false, itemId: "" },
-                    { name: "", src: "", have: false, itemId: "" }
-                  ],
-                  activeRank: 0
-                };
-              });
-              setBisMode("custom");
-              setData(next);
-              try { localStorage.setItem(`bismode-${storageKey}`, "custom"); } catch {}
-            }}>✦ Start from Suggested BiS</button>
-          </div>
+        <div className="bis-bar" style={{ flexDirection:"column", alignItems:"flex-start", gap:".3rem" }}>
           <span className="bis-txt" style={{ fontFamily:"Cinzel,serif", letterSpacing:".1em" }}>✦ Custom BiS Builder</span>
           <span style={{ fontSize:".8rem", color:"var(--parch-dk)", fontStyle:"italic" }}>
-            Build your own ranked list — up to 3 options per slot. Wowhead, Character Scan, and Custom Builder now live under one character card with separate mode saves. Tip: click <strong style={{color:"var(--gold-lt)"}}>Load Suggested BiS → Apply All</strong> first to pre-fill a base list, then override individual slots with your own research. For custom sources, use clear labels like <strong style={{color:"var(--gold-lt)"}}>Raid</strong>, <strong style={{color:"var(--gold-lt)"}}>Dungeon</strong>, <strong style={{color:"var(--gold-lt)"}}>Delves</strong>, <strong style={{color:"var(--gold-lt)"}}>World Quests</strong>, <strong style={{color:"var(--gold-lt)"}}>Renown</strong>, <strong style={{color:"var(--gold-lt)"}}>Prey</strong>, <strong style={{color:"var(--gold-lt)"}}>Crafted</strong>, or <strong style={{color:"var(--gold-lt)"}}>PvP</strong>. Export sends the active mode only.
+            Build your own ranked list — up to 3 options per slot. Wowhead BiS, Character Scan, and Custom Builder now live under one character card with separate mode saves. Tip: click <strong style={{color:"var(--gold-lt)"}}>Load Suggested BiS → Apply All</strong> first to pre-fill a base list, then override individual slots with your own research. For custom sources, use clear labels like <strong style={{color:"var(--gold-lt)"}}>Raid</strong>, <strong style={{color:"var(--gold-lt)"}}>Dungeon</strong>, <strong style={{color:"var(--gold-lt)"}}>Delves</strong>, <strong style={{color:"var(--gold-lt)"}}>World Quests</strong>, <strong style={{color:"var(--gold-lt)"}}>Renown</strong>, <strong style={{color:"var(--gold-lt)"}}>Prey</strong>, <strong style={{color:"var(--gold-lt)"}}>Crafted</strong>, or <strong style={{color:"var(--gold-lt)"}}>PvP</strong>. Export sends the active mode only.
           </span>
         </div>
       )}
@@ -3501,7 +1988,25 @@ function Tracker({ cls, spec, charName, initialMode = "", onBack }) {
           ) : (
             <>
               <div style={{ fontSize:".85rem", color:"var(--parch-dk)", marginBottom:".75rem", lineHeight:1.6 }}>
-                Paste your SimC string below. Your character will be scanned and any BiS items you are currently wearing will be <strong style={{ color:"var(--gold-lt)" }}>automatically checked off</strong>.
+                Paste your SimC string below. Character Scan builds a comparison snapshot against your selected target list, so your core <strong style={{ color:"var(--gold-lt)" }}>Wowhead BiS</strong> and <strong style={{ color:"var(--gold-lt)" }}>Custom Builder</strong> saves stay untouched.
+              </div>
+              <div style={{ display:"flex", flexWrap:"wrap", gap:".5rem", alignItems:"center", marginBottom:".75rem" }}>
+                <span style={{ fontFamily:"Cinzel,serif", fontSize:".72rem", letterSpacing:".08em", color:"var(--gold)" }}>Compare against:</span>
+                {[{id:"community", label:"Wowhead BiS"},{id:"custom", label:"Custom Builder"}].map(opt => {
+                  const hasData = Object.values(readModeData(opt.id) || {}).some(v => v?.name);
+                  return (
+                    <button
+                      key={opt.id}
+                      className={"tbtn " + (scanTargetMode === opt.id ? "pri" : "sec")}
+                      onClick={() => setScanTargetMode(opt.id)}
+                      disabled={!hasData}
+                      title={hasData ? "" : `${opt.label} has no saved items yet.`}
+                      style={{ fontSize:".74rem", padding:".32rem .8rem", opacity: hasData ? 1 : .45 }}
+                    >
+                      {opt.label}
+                    </button>
+                  );
+                })}
               </div>
               <textarea
                 value={simcStr}
@@ -3510,6 +2015,22 @@ function Tracker({ cls, spec, charName, initialMode = "", onBack }) {
                 style={{ width:"100%", height:"100px", background:"var(--bg2)", border:"1px solid var(--bdr2)", color:"var(--parch)", fontFamily:"monospace", fontSize:".78rem", padding:".5rem", resize:"vertical", outline:"none" }}
               />
               <div style={{ display:"flex", gap:".5rem", marginTop:".5rem", flexWrap:"wrap", alignItems:"center" }}>
+              {simcSummary && (
+                <div style={{ marginTop:".9rem", background:"rgba(0,0,0,.18)", border:"1px solid var(--bdr)", padding:".85rem" }}>
+                  <div style={{ display:"flex", justifyContent:"space-between", gap:".75rem", flexWrap:"wrap", marginBottom:".5rem" }}>
+                    <div style={{ fontFamily:"Cinzel,serif", fontSize:".72rem", letterSpacing:".08em", color:"var(--gold)" }}>CURRENTLY EQUIPPED SNAPSHOT</div>
+                    <div style={{ fontSize:".76rem", color:"var(--parch-dk)" }}>Compared against <strong style={{ color:"var(--gold-lt)" }}>{simcSummary.targetMode === "custom" ? "Custom Builder" : "Wowhead BiS"}</strong> · <strong style={{ color:"var(--gold-lt)" }}>{simcSummary.matched}</strong> matched</div>
+                  </div>
+                  <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit, minmax(220px, 1fr))", gap:".35rem .9rem" }}>
+                    {simcSummary.scanned.map(row => (
+                      <div key={row.slot} style={{ fontSize:".78rem", color:"var(--parch-dk)", lineHeight:1.5 }}>
+                        <strong style={{ color:"var(--gold-lt)", fontFamily:"Cinzel,serif", fontSize:".68rem", letterSpacing:".06em" }}>{SLOT_LABELS[row.slot] || row.slot}</strong>
+                        <div style={{ color:"var(--parch)" }}>{row.name || "Unknown"}{row.track ? <span style={{ color:"var(--parch-dk)" }}> · {row.track}</span> : null}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
                 <button className="tbtn pri" onClick={async () => {
                   if (!simcStr.trim()) { alert("Paste your SimC string first."); return; }
                   const worn = await parseSimC(simcStr);
@@ -3658,7 +2179,7 @@ function Tracker({ cls, spec, charName, initialMode = "", onBack }) {
           } else {
             alert("Could not save this list in your browser.");
           }
-        }}>{bisMode === 'custom' ? 'Save Custom' : bisMode === 'community' ? 'Save Suggested BiS' : 'Save Scan'}</button>
+        }}>{bisMode === 'custom' ? 'Save Custom' : bisMode === 'community' ? 'Save Community' : 'Save Scan'}</button>
         <button className="tbtn sec" onClick={() => {
           const code = exportForAddon();
           if (!code) { alert("Nothing exportable found yet for this mode. Load suggestions only previews them. Click Apply All, or enter and save at least one real item before exporting."); return; }
@@ -3851,7 +2372,7 @@ function splitSaveLabel(charName) {
   return { base, mode };
 }
 function modeNice(m) {
-  return ({ community:"Wowhead", custom:"Custom", simc:"SimC", scan:"Scan" }[m] || m);
+  return ({ community:"Wowhead", custom:"Custom", simc:"Character Scan", scan:"Scan" }[m] || m);
 }
 
 const SAVE_REGISTRY_KEY = "wbt-save-registry-v3";
@@ -4073,28 +2594,16 @@ function GroupPlanner() {
     allSaved.forEach(entry => {
       const { base, mode } = splitSaveLabel(entry.charName);
       const key = `${base}||${entry.cls.id}`;
-      if (!grouped[key]) grouped[key] = { key, base, cls: entry.cls, specs: {} };
-      const specKey = entry.spec.id;
-      if (!grouped[key].specs[specKey]) grouped[key].specs[specKey] = { spec: entry.spec, saves: {} };
-      grouped[key].specs[specKey].saves[mode] = entry;
+      if (!grouped[key]) grouped[key] = { key, base, cls: entry.cls, saves: {} };
+      grouped[key].saves[mode] = entry;
     });
     return Object.values(grouped);
   })();
   const [selectedGroupKey, setSelectedGroupKey] = useState("");
   const [groupMode, setGroupMode] = useState({});
-  const [groupSpec, setGroupSpec] = useState({});
   const activeGroup = groupedSaves.find(g => g.key === selectedGroupKey) || groupedSaves[0];
-  const defaultSpecId = activeGroup
-    ? Object.values(activeGroup.specs)
-        .sort((a, b) => a.spec.name.localeCompare(b.spec.name))[0]?.spec.id
-    : "";
-  const activeSpecId = activeGroup ? (groupSpec[activeGroup.key] || defaultSpecId) : "";
-  const activeSpecBucket = activeGroup?.specs?.[activeSpecId]
-    || (activeGroup ? Object.values(activeGroup.specs)[0] : null);
-  const activeMode = activeSpecBucket
-    ? (groupMode[`${activeGroup.key}||${activeSpecBucket.spec.id}`] || (activeSpecBucket.saves.community ? "community" : Object.keys(activeSpecBucket.saves)[0]))
-    : "";
-  const selectedSaved = activeSpecBucket ? (activeSpecBucket.saves[activeMode] || activeSpecBucket.saves[Object.keys(activeSpecBucket.saves)[0]]) : null;
+  const activeMode = activeGroup ? (groupMode[activeGroup.key] || (activeGroup.saves.community ? "community" : Object.keys(activeGroup.saves)[0])) : "";
+  const selectedSaved = activeGroup ? activeGroup.saves[activeMode] : null;
   const myCode = selectedSaved ? encodeFarmList(JSON.parse(localStorage.getItem(selectedSaved.key) || "{}")) : "";
 
   const copyCode = () => {
@@ -4120,14 +2629,9 @@ function GroupPlanner() {
           <div style={{ fontFamily:"Cinzel,serif", fontSize:".65rem", letterSpacing:".1em", color:"var(--gold)", marginBottom:".5rem" }}>STEP 1 — COPY YOUR FARM CODE</div>
           <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit,minmax(260px,1fr))", gap:".55rem", marginBottom:".7rem" }}>
             {groupedSaves.map(group => {
-              const specBuckets = Object.values(group.specs).sort((a, b) => a.spec.name.localeCompare(b.spec.name));
-              const defaultSpec = specBuckets[0]?.spec.id || "";
-              const chosenSpecId = groupSpec[group.key] || defaultSpec;
-              const specBucket = group.specs[chosenSpecId] || specBuckets[0];
-              const modeKey = `${group.key}||${specBucket?.spec?.id || ""}`;
-              const defaultMode = specBucket?.saves?.community ? "community" : Object.keys(specBucket?.saves || {})[0];
-              const active = groupMode[modeKey] || defaultMode;
-              const entry = specBucket?.saves?.[active] || specBucket?.saves?.[defaultMode];
+              const defaultMode = group.saves.community ? "community" : Object.keys(group.saves)[0];
+              const active = groupMode[group.key] || defaultMode;
+              const entry = group.saves[active] || group.saves[defaultMode];
               return (
                 <div key={group.key} style={{ border:`1px solid ${group.cls.color}44`, background:"rgba(0,0,0,.12)", padding:".65rem .75rem" }}>
                   <div style={{ display:"flex", alignItems:"center", gap:".4rem", marginBottom:".35rem" }}>
@@ -4136,13 +2640,10 @@ function GroupPlanner() {
                   </div>
                   <div style={{ fontSize:".7rem", color:"var(--parch-dk)", marginBottom:".4rem" }}>{group.cls.name}</div>
                   <div style={{ display:"flex", gap:".35rem", alignItems:"center", flexWrap:"wrap" }}>
-                    <select value={chosenSpecId} onChange={e => setGroupSpec(prev => ({ ...prev, [group.key]: e.target.value }))} style={{ background:"var(--bg2)", border:"1px solid var(--bdr2)", color:"var(--parch)", padding:".2rem .45rem", fontFamily:"Cinzel,serif", fontSize:".66rem" }}>
-                      {specBuckets.map(({ spec }) => <option key={spec.id} value={spec.id}>{spec.name}</option>)}
+                    <select value={active} onChange={e => setGroupMode(prev => ({ ...prev, [group.key]: e.target.value }))} style={{ background:"var(--bg2)", border:"1px solid var(--bdr2)", color:"var(--parch)", padding:".2rem .45rem", fontFamily:"Cinzel,serif", fontSize:".66rem" }}>
+                      {SAVE_MODE_ORDER.filter(mode => group.saves[mode]).map(mode => <option key={mode} value={mode}>{modeNice(mode)}</option>)}
                     </select>
-                    <select value={active} onChange={e => setGroupMode(prev => ({ ...prev, [modeKey]: e.target.value }))} style={{ background:"var(--bg2)", border:"1px solid var(--bdr2)", color:"var(--parch)", padding:".2rem .45rem", fontFamily:"Cinzel,serif", fontSize:".66rem" }}>
-                      {SAVE_MODE_ORDER.filter(mode => specBucket?.saves?.[mode]).map(mode => <option key={mode} value={mode}>{modeNice(mode)}</option>)}
-                    </select>
-                    <div style={{ fontSize:".72rem", color:"var(--parch)" }}><span style={{ display:"inline-flex", alignItems:"center", gap:".4rem" }}><SpecIcon spec={entry?.spec || specBucket?.spec} size={18} /><span>{entry?.spec?.name || specBucket?.spec?.name}</span></span></div>
+                    <div style={{ fontSize:".72rem", color:"var(--parch)" }}><span style={{ display:"inline-flex", alignItems:"center", gap:".4rem" }}><SpecIcon spec={entry?.spec} size={18} /><span>{entry?.spec?.name}</span></span></div>
                   </div>
                 </div>
               );
@@ -4604,94 +3105,65 @@ function Home({ onSelectClass, onLoadCharacter }) {
 
       <div style={{ marginTop:"2.5rem" }} />
       <div id="vs-addon" className="sh">Website vs In-Game Addon</div>
-      <p style={{ fontSize:".9rem", color:"var(--parch-dk)", marginBottom:"1.5rem", lineHeight:1.7 }}>
-        Both tools are free. Use either independently, or together — export from the addon to sync your progress to the website.
+      <p style={{ fontSize:".9rem", color:"var(--parch-dk)", marginBottom:"1.25rem", lineHeight:1.7, maxWidth:"880px" }}>
+        Use the website for planning and printing. Use the addon for fast in-game checks. They can sync both ways, so you do not have to pick one forever.
       </p>
 
-      <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"1.25rem", marginBottom:"1rem" }}>
-
-        
-        <div style={{ background:"var(--panel)", border:"1px solid var(--bdr2)", display:"flex", flexDirection:"column" }}>
-          <div style={{ background:"rgba(201,146,42,.08)", borderBottom:"1px solid var(--bdr2)", padding:"1rem 1.25rem" }}>
-            <div style={{ fontFamily:"Cinzel,serif", fontSize:".78rem", letterSpacing:".14em", color:"var(--gold)", marginBottom:".3rem" }}>THIS WEBSITE</div>
-            <div style={{ fontSize:".85rem", color:"var(--parch-dk)", lineHeight:1.6 }}>Plan and track your gear from any browser. No download required.</div>
-          </div>
-          <div style={{ padding:"1.25rem", flex:1 }}>
-            {[
-              { title:"All characters at a glance", desc:"Every character and spec tracked in one place without switching between them." },
-              { title:"SimC import", desc:"Paste a SimC string to instantly fill in every item you're wearing and its gear track." },
-              { title:"Export to addon", desc:"Generate a code to push your website progress into the in-game addon." },
-              { title:"Group planning links", desc:"Share a URL on Discord so your party can coordinate farm runs — no addon needed on their end." },
-              { title:"Print farm lists", desc:"Clean printable farm priority list for the week. Works as PDF too." },
-              { title:"Visual progress", desc:"Progress bars across all specs and characters. Good for seeing where you are at a glance." },
-            ].map(({ title, desc }) => (
-              <div key={title} style={{ paddingBottom:"1rem", marginBottom:"1rem", borderBottom:"1px solid var(--bdr)" }}>
-                <div style={{ fontFamily:"Cinzel,serif", fontSize:".72rem", letterSpacing:".06em", color:"var(--parch)", marginBottom:".35rem" }}>{title}</div>
-                <div style={{ fontSize:".82rem", color:"var(--parch-dk)", lineHeight:1.65 }}>{desc}</div>
-              </div>
-            ))}
-            <div style={{ background:"rgba(0,0,0,.2)", border:"1px solid var(--bdr2)", padding:"1rem", marginTop:".25rem" }}>
-              <div style={{ fontFamily:"Cinzel,serif", fontSize:".68rem", letterSpacing:".1em", color:"var(--gold)", marginBottom:".75rem" }}>HOW TO USE THIS SITE</div>
-              {[
-                "Select your class and spec below",
-                "Click Load Suggested BiS → Apply All",
-                "Mark acquired items using the checkboxes",
-                "Set each item's gear track with the track pills",
-                "Check Farm Priority to see what to run this week",
-                "Use SimC Import to auto-fill from your character data",
-              ].map((s, i) => (
-                <div key={s} style={{ display:"flex", gap:".6rem", marginBottom:".5rem", fontSize:".82rem", color:"var(--parch-dk)" }}>
-                  <span style={{ color:"var(--gold)", fontFamily:"Cinzel,serif", fontSize:".7rem", flexShrink:0, marginTop:".1rem" }}>{i+1}.</span>
-                  <span style={{ lineHeight:1.6 }}>{s}</span>
+      <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit, minmax(320px, 1fr))", gap:"1rem", marginBottom:"1rem" }}>
+        {[
+          {
+            title:"Website",
+            lead:"Best for planning across characters, printing, and group coordination.",
+            bullets:[
+              "Track every spec in one browser view",
+              "Use Wowhead BiS, Custom Builder, or Character Scan comparison",
+              "Print clean farm lists and tracker sheets",
+              "Share Group Planner links without needing the addon"
+            ],
+            footerTitle:"Use it when you want to",
+            footerBody:"plan your week, compare characters, print a checklist, or coordinate with friends outside the game."
+          },
+          {
+            title:"In-Game Addon",
+            lead:"Best for fast decisions while you are actually playing.",
+            bullets:[
+              "Auto-load your spec and scan equipped gear",
+              "See Farm Priority and Strategy without alt-tabbing",
+              "Check Great Vault matches and item tooltips in game",
+              "Use group planning with party exports"
+            ],
+            footerTitle:"Use it when you want to",
+            footerBody:"check what to run next, what a drop does for you, or what to spend bonus rolls and upgrade resources on mid-session."
+          }
+        ].map(card => (
+          <div key={card.title} style={{ background:"var(--panel)", border:"1px solid var(--bdr2)", padding:"1.15rem 1.2rem" }}>
+            <div style={{ fontFamily:"Cinzel,serif", fontSize:".8rem", letterSpacing:".12em", color:"var(--gold)", marginBottom:".45rem" }}>{card.title}</div>
+            <div style={{ fontSize:".86rem", color:"var(--parch-dk)", lineHeight:1.65, marginBottom:".85rem" }}>{card.lead}</div>
+            <div style={{ display:"grid", gap:".55rem" }}>
+              {card.bullets.map(b => (
+                <div key={b} style={{ display:"flex", gap:".55rem", alignItems:"flex-start" }}>
+                  <span style={{ color:"var(--gold-lt)", lineHeight:1 }}>✦</span>
+                  <span style={{ fontSize:".83rem", color:"var(--parch)", lineHeight:1.6 }}>{b}</span>
                 </div>
               ))}
             </div>
-          </div>
-        </div>
-
-        
-        <div style={{ background:"var(--panel)", border:"1px solid var(--bdr2)", display:"flex", flexDirection:"column" }}>
-          <div style={{ background:"rgba(201,146,42,.08)", borderBottom:"1px solid var(--bdr2)", padding:"1rem 1.25rem" }}>
-            <div style={{ fontFamily:"Cinzel,serif", fontSize:".78rem", letterSpacing:".14em", color:"var(--gold)", marginBottom:".3rem" }}>IN-GAME ADDON</div>
-            <div style={{ fontSize:".85rem", color:"var(--parch-dk)", lineHeight:1.6 }}>Works standalone inside WoW. BiS list loads automatically — no setup, no website needed.</div>
-          </div>
-          <div style={{ padding:"1.25rem", flex:1 }}>
-            {[
-              { title:"Auto-loads for your spec", desc:"Detects your class and spec on login. Switch specs mid-session and it switches instantly." },
-              { title:"Scan Gear", desc:"Reads your equipped items and auto-detects their gear track directly from the in-game tooltip. No guessing." },
-              { title:"Farm Priority", desc:"Shows exactly which dungeons and raids to run this week, sorted by how many items you need there." },
-              { title:"All My Specs farm view", desc:"One click shows every location that has BiS items across all your specs. A single run can gear your Resto, Guardian, and Balance Druid simultaneously. No other addon does this." },
-              { title:"In-game group planning", desc:"Type /wowbis share in your party. The Group Plan tab shows which locations overlap with your party members." },
-              { title:"Item tooltips", desc:"Hover any item anywhere in the game — bags, auction house, loot window — to see its BiS status for your spec." },
-            ].map(({ title, desc }) => (
-              <div key={title} style={{ paddingBottom:"1rem", marginBottom:"1rem", borderBottom:"1px solid var(--bdr)" }}>
-                <div style={{ fontFamily:"Cinzel,serif", fontSize:".72rem", letterSpacing:".06em", color:"var(--parch)", marginBottom:".35rem" }}>{title}</div>
-                <div style={{ fontSize:".82rem", color:"var(--parch-dk)", lineHeight:1.65 }}>{desc}</div>
-              </div>
-            ))}
-            <div style={{ background:"rgba(0,0,0,.2)", border:"1px solid var(--bdr2)", padding:"1rem", marginTop:".25rem" }}>
-              <div style={{ fontFamily:"Cinzel,serif", fontSize:".68rem", letterSpacing:".1em", color:"var(--gold)", marginBottom:".75rem" }}>HOW TO INSTALL</div>
-              {[
-                "Download the zip and extract it",
-                "Move the WoWBiSTracker folder to your AddOns directory",
-                "Log in — your BiS list loads automatically",
-                "Click the minimap button or type /wowbis",
-              ].map((s, i) => (
-                <div key={s} style={{ display:"flex", gap:".6rem", marginBottom:".5rem", fontSize:".82rem", color:"var(--parch-dk)" }}>
-                  <span style={{ color:"var(--gold)", fontFamily:"Cinzel,serif", fontSize:".7rem", flexShrink:0, marginTop:".1rem" }}>{i+1}.</span>
-                  <span style={{ lineHeight:1.6 }}>{s}</span>
-                </div>
-              ))}
-              <a href="https://github.com/onyxicca/wowbistracker-addon/releases/tag/v1.0.0" target="_blank" rel="noreferrer" style={{ display:"inline-block", marginTop:".85rem", fontFamily:"Cinzel,serif", fontSize:".72rem", letterSpacing:".08em", padding:".45rem 1.1rem", background:"var(--gold)", color:"var(--ink)", textDecoration:"none", fontWeight:700 }}>Download Addon</a>
-              <span style={{ display:"block", marginTop:".4rem", fontSize:".72rem", color:"var(--parch-dk)", fontStyle:"italic" }}>Coming to CurseForge soon</span>
+            <div style={{ marginTop:".95rem", paddingTop:".85rem", borderTop:"1px solid var(--bdr)" }}>
+              <div style={{ fontFamily:"Cinzel,serif", fontSize:".68rem", letterSpacing:".08em", color:"var(--gold)", marginBottom:".25rem" }}>{card.footerTitle}</div>
+              <div style={{ fontSize:".8rem", color:"var(--parch-dk)", lineHeight:1.6 }}>{card.footerBody}</div>
             </div>
+            {card.title === "In-Game Addon" && (
+              <div style={{ marginTop:".95rem", display:"flex", gap:".7rem", flexWrap:"wrap", alignItems:"center" }}>
+                <a href="https://github.com/onyxicca/wowbistracker-addon/releases/tag/v1.0.0" target="_blank" rel="noreferrer" style={{ display:"inline-block", fontFamily:"Cinzel,serif", fontSize:".72rem", letterSpacing:".08em", padding:".45rem 1.05rem", background:"var(--gold)", color:"var(--ink)", textDecoration:"none", fontWeight:700 }}>Download Addon</a>
+                <span style={{ fontSize:".76rem", color:"var(--parch-dk)", fontStyle:"italic" }}>Install it in Interface/AddOns/WoWBiSTracker</span>
+              </div>
+            )}
           </div>
-        </div>
+        ))}
       </div>
 
-      <div style={{ background:"rgba(201,146,42,.06)", border:"1px solid rgba(201,146,42,.25)", padding:"1rem 1.25rem", marginBottom:"2rem", fontSize:".85rem", color:"var(--parch-dk)", lineHeight:1.7 }}>
-        <strong style={{ fontFamily:"Cinzel,serif", fontSize:".68rem", letterSpacing:".1em", color:"var(--gold-lt)" }}>USING BOTH?</strong>
-        {"  "}The addon exports a code you can paste into the website to sync your in-game progress to the browser view. The website can also export a code back into the addon. Both tools stay in sync without requiring SimC.
+      <div style={{ background:"rgba(201,146,42,.06)", border:"1px solid rgba(201,146,42,.25)", padding:".9rem 1.1rem", marginBottom:"2rem", fontSize:".84rem", color:"var(--parch-dk)", lineHeight:1.7 }}>
+        <strong style={{ fontFamily:"Cinzel,serif", fontSize:".68rem", letterSpacing:".1em", color:"var(--gold-lt)" }}>USING BOTH</strong>
+        {"  "}The website is the cleaner planning view. The addon is the faster in-game view. Export between them whenever you want to keep progress in sync.
       </div>
 
     </div>
@@ -4733,7 +3205,7 @@ export default function App() {
             {page === "home" && (
               <div style={{ display:"flex", justifyContent:"center", gap:"1rem", marginTop:"1.4rem", flexWrap:"wrap" }}>
                 {[
-                  { icon:"📖", line1:"Browse BiS by", line2:"class & spec", sub:"Wowhead guides, every spec", scrollId:"select-class" },
+                  { icon:"📖", line1:"Browse BiS by", line2:"class & spec", sub:"Community guides, every spec", scrollId:"select-class" },
                   { icon:"🗺", line1:"Plan your", line2:"farm", sub:"Farm Priority · Raid vs Dungeon", scrollId:"group-planner" },
                   { icon:"👥", line1:"Group", line2:"planning", sub:"Share farm lists · See who needs what", scrollId:"group-planner" },
                   { icon:"✏️", line1:"Build your", line2:"own list", sub:"Up to 3 options per slot", scrollId:"select-class" },
