@@ -1309,8 +1309,8 @@ input::placeholder{color:rgba(240,222,180,.22);font-style:italic}
   .slot-entry, .rank-block { display: flex !important; border: 1.5px solid #000 !important; }
   .slot-fields, .rank-inputs { flex: 1; min-width: 0 !important; }
   .rank-label { display:flex !important; align-items:center !important; gap:.2rem !important; padding:.18rem .28rem !important; border-bottom:1px solid #000 !important; background:#fff !important; }
-  .sf-name { font-size: .74rem !important; color: #000 !important; padding: .22rem .32rem .14rem !important; display: block; border-bottom: 1px solid #000 !important; font-weight: 700; white-space: nowrap !important; overflow: hidden !important; text-overflow: clip !important; line-height: 1.1 !important; min-height: 0 !important; word-break: normal !important; }
-  .sf-src { font-size: .68rem !important; color: #000 !important; padding: .18rem .32rem !important; display: block; font-style: normal !important; white-space: nowrap !important; overflow: hidden !important; text-overflow: clip !important; line-height: 1.1 !important; word-break: normal !important; }
+  .sf-name { font-size: .6rem !important; color: #000 !important; padding: .18rem .26rem .12rem !important; display: block; border-bottom: 1px solid #000 !important; font-weight: 700; white-space: nowrap !important; overflow: visible !important; text-overflow: unset !important; line-height: 1.05 !important; min-height: 0 !important; word-break: normal !important; }
+  .sf-src { font-size: .58rem !important; color: #000 !important; padding: .14rem .26rem !important; display: block; font-style: normal !important; white-space: nowrap !important; overflow: visible !important; text-overflow: unset !important; line-height: 1.05 !important; word-break: normal !important; }
   .slot-chk { width: 26px; flex-shrink: 0; border-left: 1px solid #000 !important; display: flex !important; align-items: center; justify-content: center; font-size: 1rem; }
   .slot-chk:not(.done) { color: transparent !important; }
   .slot-chk.done, .slot-chk.soft { color: #000 !important; background: transparent !important; }
@@ -1320,7 +1320,9 @@ input::placeholder{color:rgba(240,222,180,.22);font-style:italic}
     color: #000 !important; background: #fff !important; border: 1.5px solid #000 !important; font-weight: 700 !important; opacity:1 !important;
   }
   .rank-set-btn, .rank-targeting { display:none !important; }
-  .rank-have { margin-left:.18rem !important; padding:.04rem .22rem !important; min-width: 1rem !important; font-size:.58rem !important; line-height:1 !important; }
+  .rank-have { margin-left:.18rem !important; padding:0 !important; width:12px !important; min-width:12px !important; height:12px !important; font-size:0 !important; line-height:0 !important; position:relative !important; }
+  .rank-have::before { content:""; position:absolute; inset:0; border:1.5px solid #000; background:#fff; }
+  .rank-have.done::after { content:"✓"; position:absolute; left:1px; top:-4px; font-size:12px; line-height:12px; color:#000; }
   .rank-have.done { background:#fff !important; color:#000 !important; border-color:#000 !important; }
   .rank-badge.r1, .rank-badge.r2, .rank-badge.r3 { color:#000 !important; border-color:#000 !important; }
   .slot-track-row button[data-selected="true"], .rank-block button[data-selected="true"] {
@@ -1499,7 +1501,7 @@ function Slot({ label, id, data, onChange, targetTrack, bisMode }) {
               )}
             </div>
             <div className="rank-inputs">
-              <input className="sf-name" placeholder={`Rank ${idx+1} item name...`} value={r.name || ""} onChange={e => upRank(idx, "name", e.target.value)} style={{ marginBottom:".2rem" }} />
+              <input className="sf-name" placeholder="" value={r.name || ""} onChange={e => upRank(idx, "name", e.target.value)} style={{ marginBottom:".2rem" }} />
               <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:".35rem", marginBottom:".25rem" }}>
                 <select className="sf-src" value={r.sourceType || inferSourceType(r.src)} onChange={e => {
                   const t = e.target.value;
@@ -1518,7 +1520,7 @@ function Slot({ label, id, data, onChange, targetTrack, bisMode }) {
                   <option value="">Specific source</option>
                   {((r.sourceType || inferSourceType(r.src)) === 'Raid' ? CURRENT_SEASON_RAIDS : (r.sourceType || inferSourceType(r.src)) === 'Dungeon' ? CURRENT_SEASON_DUNGEONS : OTHER_SOURCE_OPTIONS).map(opt => <option key={opt} value={opt}>{opt}</option>)}
                 </select>
-                <input className="sf-src" style={{ gridColumn:"1 / span 2" }} list={`src-list-${id}-${idx}`} placeholder="Final source line..." value={r.src || ""} onChange={e => upRank(idx, "src", e.target.value)} />
+                <input className="sf-src" style={{ gridColumn:"1 / span 2" }} list={`src-list-${id}-${idx}`} placeholder="" value={r.src || ""} onChange={e => upRank(idx, "src", e.target.value)} />
                 <datalist id={`src-list-${id}-${idx}`}>
                   {CURRENT_SEASON_RAIDS.map(v => <option key={v} value={`${v} (Raid)`} />)}
                   {CURRENT_SEASON_DUNGEONS.map(v => <option key={v} value={`Dungeon • ${v}`} />)}
@@ -1723,18 +1725,19 @@ function Tracker({ cls, spec, charName, initialMode = "", onBack }) {
     weapon2h:"16", mainhand:"16", offhand:"17"
   };
 
-  const exportForAddon = () => {
+  const serializeAddonMode = (mode, modeData) => {
     const cleanField = (v) => (v || "").replace(/[|:\^~#]/g, " ").trim();
+    const sourceData = modeData || {};
     const parts = [];
     allSlotIds.forEach(id => {
-      const d = data[id];
+      const d = sourceData[id];
       const slotNum = ADDON_SLOT_MAP[id];
-      if (!slotNum) return;
+      if (!slotNum || !d) return;
       let itemName = d?.name;
       let itemSrc = d?.src;
       let rankBlob = "";
       let activeIdx = 0;
-      if (bisMode === "custom" && d?.ranks) {
+      if (mode === "custom" && d?.ranks) {
         activeIdx = d.activeRank ?? 0;
         itemName = d.ranks[activeIdx]?.name || d.name;
         itemSrc = d.ranks[activeIdx]?.src || d.src;
@@ -1759,10 +1762,25 @@ function Tracker({ cls, spec, charName, initialMode = "", onBack }) {
       }
     });
     if (!parts.length) {
-      const hasRankedDraft = bisMode === "custom" && allSlotIds.some(id => (data[id]?.ranks || []).some(r => (r?.name || "").trim().length > 0));
+      const hasRankedDraft = mode === "custom" && allSlotIds.some(id => (sourceData[id]?.ranks || []).some(r => (r?.name || "").trim().length > 0));
       if (!hasRankedDraft) return null;
     }
-    return `WBISMODE=${bisMode};` + parts.join("|");
+    return `WBISMODE=${mode};` + parts.join("|");
+  };
+
+  const exportForAddon = () => {
+    const liveModeData = data || {};
+    const wowheadData = bisMode === "community" ? liveModeData : readModeData("community");
+    const customData = bisMode === "custom" ? liveModeData : readModeData("custom");
+
+    const sections = [
+      serializeAddonMode("community", wowheadData),
+      serializeAddonMode("custom", customData),
+    ].filter(Boolean);
+
+    if (!sections.length) return null;
+    if (sections.length === 1) return sections[0];
+    return "WBISBUNDLE=1###" + sections.join("###");
   };
 
   const loadSuggestions = async () => {
@@ -1971,8 +1989,18 @@ function Tracker({ cls, spec, charName, initialMode = "", onBack }) {
         <div className="bis-bar" style={{ flexDirection:"column", alignItems:"flex-start", gap:".3rem" }}>
           <span className="bis-txt" style={{ fontFamily:"Cinzel,serif", letterSpacing:".1em" }}>✦ Custom BiS Builder</span>
           <span style={{ fontSize:".8rem", color:"var(--parch-dk)", fontStyle:"italic" }}>
-            Build your own ranked list — up to 3 options per slot. Wowhead BiS, Character Scan, and Custom Builder now live under one character card with separate mode saves. Tip: click <strong style={{color:"var(--gold-lt)"}}>Load Suggested BiS → Apply All</strong> first to pre-fill a base list, then override individual slots with your own research. For custom sources, use clear labels like <strong style={{color:"var(--gold-lt)"}}>Raid</strong>, <strong style={{color:"var(--gold-lt)"}}>Dungeon</strong>, <strong style={{color:"var(--gold-lt)"}}>Delves</strong>, <strong style={{color:"var(--gold-lt)"}}>World Quests</strong>, <strong style={{color:"var(--gold-lt)"}}>Renown</strong>, <strong style={{color:"var(--gold-lt)"}}>Prey</strong>, <strong style={{color:"var(--gold-lt)"}}>Crafted</strong>, or <strong style={{color:"var(--gold-lt)"}}>PvP</strong>. Export sends the active mode only.
+            Build your own ranked list — up to 3 options per slot. Wowhead BiS, Character Scan, and Custom Builder now live under one character card with separate mode saves. Tip: click <strong style={{color:"var(--gold-lt)"}}>Load Suggested BiS → Apply All</strong> first to pre-fill a base list, then override individual slots with your own research. For custom sources, use clear labels like <strong style={{color:"var(--gold-lt)"}}>Raid</strong>, <strong style={{color:"var(--gold-lt)"}}>Dungeon</strong>, <strong style={{color:"var(--gold-lt)"}}>Delves</strong>, <strong style={{color:"var(--gold-lt)"}}>World Quests</strong>, <strong style={{color:"var(--gold-lt)"}}>Renown</strong>, <strong style={{color:"var(--gold-lt)"}}>Prey</strong>, <strong style={{color:"var(--gold-lt)"}}>Crafted</strong>, or <strong style={{color:"var(--gold-lt)"}}>PvP</strong>. Export now includes all saved addon-compatible BiS lists for this spec.
           </span>
+          <div style={{ display:"flex", gap:".5rem", flexWrap:"wrap" }}>
+            <button className="bis-btn" onClick={loadSuggestions} disabled={loading}>
+              {loading ? "Loading..." : sugs ? "↺ Refresh Suggested BiS" : "✦ Load Suggested BiS"}
+            </button>
+            {sugs && !sugs.error && (
+              <button className="bis-btn" onClick={applyAll} style={{ background:"rgba(201,146,42,.15)", borderColor:"var(--gold)", color:"var(--gold-lt)" }}>
+                Apply All to Custom Builder
+              </button>
+            )}
+          </div>
         </div>
       )}
 
@@ -2142,7 +2170,7 @@ function Tracker({ cls, spec, charName, initialMode = "", onBack }) {
         <Slot label="Trinket 2" id="trinket2" data={data} onChange={upSlot} targetTrack={targetTrack} bisMode={bisMode} />
       </div>
 
-      {sugs && bisMode !== "custom" && (
+      {sugs && (
         <div className="sug-panel fade" ref={sugRef}>
           <div className="sug-head">
             <span className="sug-title">BiS Suggestions{sugs.patch ? ` — ${sugs.patch}` : ""}</span>
@@ -2193,13 +2221,13 @@ function Tracker({ cls, spec, charName, initialMode = "", onBack }) {
         }}>{bisMode === 'custom' ? 'Save Custom' : bisMode === 'community' ? 'Save Suggested BiS' : 'Save Scan'}</button>
         <button className="tbtn sec" onClick={() => {
           const code = exportForAddon();
-          if (!code) { alert("Nothing exportable found yet for this mode. Load suggestions only previews them. Click Apply All, or enter and save at least one real item before exporting."); return; }
+          if (!code) { alert("Nothing exportable found yet. Load Suggested BiS and click Apply All, or save at least one real Wowhead or Custom item before exporting."); return; }
           window.__wowbisExportCode = code;
           const modal = document.createElement("div");
           modal.style.cssText = "position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.85);z-index:9999;display:flex;align-items:center;justify-content:center;";
           const inner = document.createElement("div");
           inner.style.cssText = "background:#150f08;border:1px solid #c9922a;padding:1.5rem;max-width:540px;width:90%;font-family:Cinzel,serif;";
-          inner.innerHTML = `<div style="font-size:.75rem;letter-spacing:.15em;color:#c9922a;margin-bottom:.75rem">EXPORT FOR ADDON</div><div style="font-size:.85rem;color:#c8a96a;margin-bottom:.75rem;font-family:Crimson Pro,serif;line-height:1.6;">Copy this code and paste it into the WoW BiS Tracker addon in-game using the Import BiS button. This export contains only the active mode.</div>`;
+          inner.innerHTML = `<div style="font-size:.75rem;letter-spacing:.15em;color:#c9922a;margin-bottom:.75rem">EXPORT FOR ADDON</div><div style="font-size:.85rem;color:#c8a96a;margin-bottom:.75rem;font-family:Crimson Pro,serif;line-height:1.6;">Copy this code and paste it into the WoW BiS Tracker addon in-game using the Import BiS button. This export includes all saved addon-compatible BiS lists for this spec. If Wowhead BiS and Custom Builder are both saved, one import will load both into the addon.</div>`;
           const ta = document.createElement("textarea");
           ta.readOnly = true;
           ta.value = code;
