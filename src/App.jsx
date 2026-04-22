@@ -1718,18 +1718,19 @@ function Tracker({ cls, spec, charName, initialMode = "", onBack }) {
     weapon2h:"16", mainhand:"16", offhand:"17"
   };
 
-  const exportForAddon = () => {
+  const serializeAddonMode = (mode, sourceData) => {
     const cleanField = (v) => (v || "").replace(/[|:\^~#]/g, " ").trim();
     const parts = [];
+    const source = sourceData || {};
     allSlotIds.forEach(id => {
-      const d = data[id];
+      const d = source[id];
       const slotNum = ADDON_SLOT_MAP[id];
       if (!slotNum) return;
       let itemName = d?.name;
       let itemSrc = d?.src;
       let rankBlob = "";
       let activeIdx = 0;
-      if (bisMode === "custom" && d?.ranks) {
+      if (mode === "custom" && d?.ranks) {
         activeIdx = d.activeRank ?? 0;
         itemName = d.ranks[activeIdx]?.name || d.name;
         itemSrc = d.ranks[activeIdx]?.src || d.src;
@@ -1748,16 +1749,31 @@ function Tracker({ cls, spec, charName, initialMode = "", onBack }) {
       const n = cleanField(itemName);
       if (n) {
         const s = cleanField(itemSrc || "Unknown");
-        const acquired = d.done ? "1" : "0";
-        const trackCode = d.track ? d.track[0].toLowerCase() : "n";
+        const acquired = d?.done ? "1" : "0";
+        const trackCode = d?.track ? d.track[0].toLowerCase() : "n";
         parts.push(slotNum + ":" + n + ":" + s + ":" + acquired + ":" + trackCode + rankBlob);
       }
     });
     if (!parts.length) {
-      const hasRankedDraft = bisMode === "custom" && allSlotIds.some(id => (data[id]?.ranks || []).some(r => (r?.name || "").trim().length > 0));
+      const hasRankedDraft = mode === "custom" && allSlotIds.some(id => (source[id]?.ranks || []).some(r => (r?.name || "").trim().length > 0));
       if (!hasRankedDraft) return null;
     }
-    return `WBISMODE=${bisMode};` + parts.join("|");
+    return `WBISMODE=${mode};` + parts.join("|");
+  };
+
+  const exportForAddon = () => {
+    const liveModeData = data || {};
+    const communityData = bisMode === "community" ? liveModeData : readModeData("community");
+    const customData = bisMode === "custom" ? liveModeData : readModeData("custom");
+
+    const sections = [
+      serializeAddonMode("community", communityData),
+      serializeAddonMode("custom", customData),
+    ].filter(Boolean);
+
+    if (!sections.length) return null;
+    if (sections.length === 1) return sections[0];
+    return "WBISBUNDLE=1###" + sections.join("###");
   };
 
   const loadSuggestions = async () => {
@@ -1966,7 +1982,7 @@ function Tracker({ cls, spec, charName, initialMode = "", onBack }) {
         <div className="bis-bar" style={{ flexDirection:"column", alignItems:"flex-start", gap:".3rem" }}>
           <span className="bis-txt" style={{ fontFamily:"Cinzel,serif", letterSpacing:".1em" }}>✦ Custom BiS Builder</span>
           <span style={{ fontSize:".8rem", color:"var(--parch-dk)", fontStyle:"italic" }}>
-            Build your own ranked list — up to 3 options per slot. Wowhead BiS, Character Scan, and Custom Builder now live under one character card with separate mode saves. Tip: click <strong style={{color:"var(--gold-lt)"}}>Load Suggested BiS → Apply All</strong> first to pre-fill a base list, then override individual slots with your own research. For custom sources, use clear labels like <strong style={{color:"var(--gold-lt)"}}>Raid</strong>, <strong style={{color:"var(--gold-lt)"}}>Dungeon</strong>, <strong style={{color:"var(--gold-lt)"}}>Delves</strong>, <strong style={{color:"var(--gold-lt)"}}>World Quests</strong>, <strong style={{color:"var(--gold-lt)"}}>Renown</strong>, <strong style={{color:"var(--gold-lt)"}}>Prey</strong>, <strong style={{color:"var(--gold-lt)"}}>Crafted</strong>, or <strong style={{color:"var(--gold-lt)"}}>PvP</strong>. Export sends the active mode only.
+            Build your own ranked list — up to 3 options per slot. Wowhead BiS, Character Scan, and Custom Builder now live under one character card with separate mode saves. Tip: click <strong style={{color:"var(--gold-lt)"}}>Load Suggested BiS → Apply All</strong> first to pre-fill a base list, then override individual slots with your own research. For custom sources, use clear labels like <strong style={{color:"var(--gold-lt)"}}>Raid</strong>, <strong style={{color:"var(--gold-lt)"}}>Dungeon</strong>, <strong style={{color:"var(--gold-lt)"}}>Delves</strong>, <strong style={{color:"var(--gold-lt)"}}>World Quests</strong>, <strong style={{color:"var(--gold-lt)"}}>Renown</strong>, <strong style={{color:"var(--gold-lt)"}}>Prey</strong>, <strong style={{color:"var(--gold-lt)"}}>Crafted</strong>, or <strong style={{color:"var(--gold-lt)"}}>PvP</strong>. Export includes every saved addon-compatible BiS list for this spec. If Wowhead BiS and Custom Builder are both saved, one export bundles both for the addon.
           </span>
         </div>
       )}
@@ -2188,13 +2204,13 @@ function Tracker({ cls, spec, charName, initialMode = "", onBack }) {
         }}>{bisMode === 'custom' ? 'Save Custom' : bisMode === 'community' ? 'Save Suggested BiS' : 'Save Scan'}</button>
         <button className="tbtn sec" onClick={() => {
           const code = exportForAddon();
-          if (!code) { alert("Nothing exportable found yet for this mode. Load suggestions only previews them. Click Apply All, or enter and save at least one real item before exporting."); return; }
+          if (!code) { alert("Nothing exportable found yet for Wowhead BiS or Custom Builder. Load Suggested BiS and click Apply All, or enter and save at least one real custom item before exporting."); return; }
           window.__wowbisExportCode = code;
           const modal = document.createElement("div");
           modal.style.cssText = "position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.85);z-index:9999;display:flex;align-items:center;justify-content:center;";
           const inner = document.createElement("div");
           inner.style.cssText = "background:#150f08;border:1px solid #c9922a;padding:1.5rem;max-width:540px;width:90%;font-family:Cinzel,serif;";
-          inner.innerHTML = `<div style="font-size:.75rem;letter-spacing:.15em;color:#c9922a;margin-bottom:.75rem">EXPORT FOR ADDON</div><div style="font-size:.85rem;color:#c8a96a;margin-bottom:.75rem;font-family:Crimson Pro,serif;line-height:1.6;">Copy this code and paste it into the WoW BiS Tracker addon in-game using the Import BiS button. This export contains only the active mode.</div>`;
+          inner.innerHTML = `<div style="font-size:.75rem;letter-spacing:.15em;color:#c9922a;margin-bottom:.75rem">EXPORT FOR ADDON</div><div style="font-size:.85rem;color:#c8a96a;margin-bottom:.75rem;font-family:Crimson Pro,serif;line-height:1.6;">Copy this code and paste it into the WoW BiS Tracker addon in-game using the Import BiS button. This export includes every saved addon-compatible BiS list for this spec. If Wowhead BiS and Custom Builder are both saved, one import will load both into the addon.</div>`;
           const ta = document.createElement("textarea");
           ta.readOnly = true;
           ta.value = code;
