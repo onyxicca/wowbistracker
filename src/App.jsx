@@ -4073,16 +4073,28 @@ function GroupPlanner() {
     allSaved.forEach(entry => {
       const { base, mode } = splitSaveLabel(entry.charName);
       const key = `${base}||${entry.cls.id}`;
-      if (!grouped[key]) grouped[key] = { key, base, cls: entry.cls, saves: {} };
-      grouped[key].saves[mode] = entry;
+      if (!grouped[key]) grouped[key] = { key, base, cls: entry.cls, specs: {} };
+      const specKey = entry.spec.id;
+      if (!grouped[key].specs[specKey]) grouped[key].specs[specKey] = { spec: entry.spec, saves: {} };
+      grouped[key].specs[specKey].saves[mode] = entry;
     });
     return Object.values(grouped);
   })();
   const [selectedGroupKey, setSelectedGroupKey] = useState("");
   const [groupMode, setGroupMode] = useState({});
+  const [groupSpec, setGroupSpec] = useState({});
   const activeGroup = groupedSaves.find(g => g.key === selectedGroupKey) || groupedSaves[0];
-  const activeMode = activeGroup ? (groupMode[activeGroup.key] || (activeGroup.saves.community ? "community" : Object.keys(activeGroup.saves)[0])) : "";
-  const selectedSaved = activeGroup ? activeGroup.saves[activeMode] : null;
+  const defaultSpecId = activeGroup
+    ? Object.values(activeGroup.specs)
+        .sort((a, b) => a.spec.name.localeCompare(b.spec.name))[0]?.spec.id
+    : "";
+  const activeSpecId = activeGroup ? (groupSpec[activeGroup.key] || defaultSpecId) : "";
+  const activeSpecBucket = activeGroup?.specs?.[activeSpecId]
+    || (activeGroup ? Object.values(activeGroup.specs)[0] : null);
+  const activeMode = activeSpecBucket
+    ? (groupMode[`${activeGroup.key}||${activeSpecBucket.spec.id}`] || (activeSpecBucket.saves.community ? "community" : Object.keys(activeSpecBucket.saves)[0]))
+    : "";
+  const selectedSaved = activeSpecBucket ? (activeSpecBucket.saves[activeMode] || activeSpecBucket.saves[Object.keys(activeSpecBucket.saves)[0]]) : null;
   const myCode = selectedSaved ? encodeFarmList(JSON.parse(localStorage.getItem(selectedSaved.key) || "{}")) : "";
 
   const copyCode = () => {
@@ -4108,9 +4120,14 @@ function GroupPlanner() {
           <div style={{ fontFamily:"Cinzel,serif", fontSize:".65rem", letterSpacing:".1em", color:"var(--gold)", marginBottom:".5rem" }}>STEP 1 — COPY YOUR FARM CODE</div>
           <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit,minmax(260px,1fr))", gap:".55rem", marginBottom:".7rem" }}>
             {groupedSaves.map(group => {
-              const defaultMode = group.saves.community ? "community" : Object.keys(group.saves)[0];
-              const active = groupMode[group.key] || defaultMode;
-              const entry = group.saves[active] || group.saves[defaultMode];
+              const specBuckets = Object.values(group.specs).sort((a, b) => a.spec.name.localeCompare(b.spec.name));
+              const defaultSpec = specBuckets[0]?.spec.id || "";
+              const chosenSpecId = groupSpec[group.key] || defaultSpec;
+              const specBucket = group.specs[chosenSpecId] || specBuckets[0];
+              const modeKey = `${group.key}||${specBucket?.spec?.id || ""}`;
+              const defaultMode = specBucket?.saves?.community ? "community" : Object.keys(specBucket?.saves || {})[0];
+              const active = groupMode[modeKey] || defaultMode;
+              const entry = specBucket?.saves?.[active] || specBucket?.saves?.[defaultMode];
               return (
                 <div key={group.key} style={{ border:`1px solid ${group.cls.color}44`, background:"rgba(0,0,0,.12)", padding:".65rem .75rem" }}>
                   <div style={{ display:"flex", alignItems:"center", gap:".4rem", marginBottom:".35rem" }}>
@@ -4119,10 +4136,13 @@ function GroupPlanner() {
                   </div>
                   <div style={{ fontSize:".7rem", color:"var(--parch-dk)", marginBottom:".4rem" }}>{group.cls.name}</div>
                   <div style={{ display:"flex", gap:".35rem", alignItems:"center", flexWrap:"wrap" }}>
-                    <select value={active} onChange={e => setGroupMode(prev => ({ ...prev, [group.key]: e.target.value }))} style={{ background:"var(--bg2)", border:"1px solid var(--bdr2)", color:"var(--parch)", padding:".2rem .45rem", fontFamily:"Cinzel,serif", fontSize:".66rem" }}>
-                      {SAVE_MODE_ORDER.filter(mode => group.saves[mode]).map(mode => <option key={mode} value={mode}>{modeNice(mode)}</option>)}
+                    <select value={chosenSpecId} onChange={e => setGroupSpec(prev => ({ ...prev, [group.key]: e.target.value }))} style={{ background:"var(--bg2)", border:"1px solid var(--bdr2)", color:"var(--parch)", padding:".2rem .45rem", fontFamily:"Cinzel,serif", fontSize:".66rem" }}>
+                      {specBuckets.map(({ spec }) => <option key={spec.id} value={spec.id}>{spec.name}</option>)}
                     </select>
-                    <div style={{ fontSize:".72rem", color:"var(--parch)" }}><span style={{ display:"inline-flex", alignItems:"center", gap:".4rem" }}><SpecIcon spec={entry?.spec} size={18} /><span>{entry?.spec?.name}</span></span></div>
+                    <select value={active} onChange={e => setGroupMode(prev => ({ ...prev, [modeKey]: e.target.value }))} style={{ background:"var(--bg2)", border:"1px solid var(--bdr2)", color:"var(--parch)", padding:".2rem .45rem", fontFamily:"Cinzel,serif", fontSize:".66rem" }}>
+                      {SAVE_MODE_ORDER.filter(mode => specBucket?.saves?.[mode]).map(mode => <option key={mode} value={mode}>{modeNice(mode)}</option>)}
+                    </select>
+                    <div style={{ fontSize:".72rem", color:"var(--parch)" }}><span style={{ display:"inline-flex", alignItems:"center", gap:".4rem" }}><SpecIcon spec={entry?.spec || specBucket?.spec} size={18} /><span>{entry?.spec?.name || specBucket?.spec?.name}</span></span></div>
                   </div>
                 </div>
               );
