@@ -1812,11 +1812,32 @@ function Tracker({ cls, spec, charName, initialMode = "", onBack }) {
     const nd = {};
     Object.entries(sugs.slots).forEach(([k, v]) => {
       const mapped = mapKey(k, sugs.slots);
-      nd[mapped] = { name: v.name, src: v.source, done: false };
+      if (bisMode === "custom") {
+        const inferredType = inferSourceType(v.source || "");
+        const inferredDetail = inferSourceDetail(v.source || "", inferredType);
+        nd[mapped] = {
+          name: v.name,
+          src: v.source,
+          done: false,
+          activeRank: 0,
+          ranks: [
+            {
+              name: v.name,
+              src: v.source,
+              have: false,
+              sourceType: inferredType,
+              sourceDetail: inferredDetail,
+            },
+            { name: "", src: "", have: false, sourceType: "", sourceDetail: "" },
+            { name: "", src: "", have: false, sourceType: "", sourceDetail: "" },
+          ],
+        };
+      } else {
+        nd[mapped] = { name: v.name, src: v.source, done: false };
+      }
     });
     setData(nd);
-    writeModeData(bisMode, nd)
-    setSugs(null);
+    writeModeData(bisMode, nd);
   };
 
   const applyOne = (k, v) => {
@@ -2808,6 +2829,95 @@ function GroupPlanner() {
 
 
 
+
+function WeeklyResetHeroCard({ onClick }) {
+  const [resetRegion, setResetRegion] = useState("NA");
+  const getNextReset = useCallback((region) => {
+    const now = new Date();
+    const next = new Date(now);
+    if (region === "NA") {
+      next.setUTCHours(15, 0, 0, 0);
+      const day = next.getUTCDay();
+      let add = (2 - day + 7) % 7;
+      if (add === 0 && now >= next) add = 7;
+      next.setUTCDate(next.getUTCDate() + add);
+    } else {
+      next.setUTCHours(7, 0, 0, 0);
+      const day = next.getUTCDay();
+      let add = (3 - day + 7) % 7;
+      if (add === 0 && now >= next) add = 7;
+      next.setUTCDate(next.getUTCDate() + add);
+    }
+    return next;
+  }, []);
+  const formatRemaining = useCallback((target) => {
+    const ms = Math.max(0, target - new Date());
+    const total = Math.floor(ms / 1000);
+    const d = Math.floor(total / 86400);
+    const h = Math.floor((total % 86400) / 3600);
+    const m = Math.floor((total % 3600) / 60);
+    const s = total % 60;
+    return `${d}d ${h}h ${m}m`;
+  }, []);
+  const [timeLeft, setTimeLeft] = useState(() => formatRemaining(getNextReset("NA")));
+  useEffect(() => {
+    const tick = () => setTimeLeft(formatRemaining(getNextReset(resetRegion)));
+    tick();
+    const id = setInterval(tick, 1000);
+    return () => clearInterval(id);
+  }, [resetRegion, getNextReset, formatRemaining]);
+
+  return (
+    <div
+      onClick={onClick}
+      style={{
+        cursor:"pointer",
+        padding:".8rem .8rem .7rem",
+        border:"1px solid var(--bdr)",
+        background:"rgba(201,146,42,.04)",
+        textAlign:"center",
+        minWidth:"180px",
+        flex:"1 1 220px",
+        transition:"all .18s"
+      }}
+      onMouseEnter={e=>{ e.currentTarget.style.borderColor="var(--gold)"; e.currentTarget.style.background="rgba(201,146,42,.10)"; }}
+      onMouseLeave={e=>{ e.currentTarget.style.borderColor="var(--bdr)"; e.currentTarget.style.background="rgba(201,146,42,.04)"; }}
+    >
+      <div style={{ fontSize:"1.5rem", marginBottom:".35rem" }}>🗓</div>
+      <div style={{ fontFamily:"Cinzel,serif", fontSize:".85rem", color:"var(--gold-lt)", letterSpacing:".07em", lineHeight:1.3 }}>
+        Weekly reset<br />& Vault
+      </div>
+      <div style={{ display:"flex", justifyContent:"center", gap:".3rem", marginTop:".45rem", marginBottom:".45rem" }} onClick={e=>e.stopPropagation()}>
+        {["NA","EU"].map(r => (
+          <button
+            key={r}
+            onClick={() => setResetRegion(r)}
+            style={{
+              fontFamily:"Cinzel,serif",
+              fontSize:".6rem",
+              letterSpacing:".08em",
+              padding:".15rem .45rem",
+              background: resetRegion === r ? "var(--gold)" : "transparent",
+              border:"1px solid " + (resetRegion === r ? "var(--gold)" : "var(--bdr2)"),
+              color: resetRegion === r ? "var(--ink)" : "var(--parch-dk)",
+              cursor:"pointer"
+            }}
+          >{r}</button>
+        ))}
+      </div>
+      <div style={{ fontFamily:"Cinzel,serif", fontSize:"1.05rem", color:"var(--gold-lt)", lineHeight:1.1 }}>{timeLeft}</div>
+      <div style={{ fontSize:".74rem", color:"var(--parch-dk)", fontStyle:"italic", marginTop:".25rem", lineHeight:1.35 }}>
+        {resetRegion === "NA" ? "Tue · 8am Pacific" : "Wed · 8am CET"}
+      </div>
+      <div style={{ fontSize:".72rem", color:"var(--parch-dk)", marginTop:".38rem", lineHeight:1.35 }}>
+        Vault highlight
+      </div>
+      <div style={{ fontSize:".75rem", color:"var(--gold-lt)", marginTop:".28rem" }}>↓ click</div>
+    </div>
+  );
+}
+
+
 function WeeklyResetPanel({ compact = false }) {
   const [resetRegion, setResetRegion] = useState("NA");
   const getNextReset = useCallback((region) => {
@@ -3257,14 +3367,12 @@ export default function App() {
             <p className="hero-sub">Plan your BiS list. Track your farm. Beat the reset.</p>
 
             {page === "home" && (
-              <div style={{ display:"flex", justifyContent:"center", gap:"1rem", marginTop:"1.4rem", flexWrap:"wrap" }}>
+              <div style={{ display:"flex", justifyContent:"center", gap:"1rem", marginTop:"1.4rem", flexWrap:"wrap", alignItems:"stretch" }}>
                 {[
-                  { icon:"📖", line1:"Browse BiS by", line2:"class & spec", sub:"Community guides, every spec", scrollId:"select-class" },
-                  { icon:"🗺", line1:"Plan your", line2:"farm", sub:"Farm Priority · Raid vs Dungeon", scrollId:"group-planner" },
-                  { icon:"👥", line1:"Group", line2:"planning", sub:"Share farm lists · See who needs what", scrollId:"group-planner" },
-                  { icon:"✏️", line1:"Build your", line2:"own list", sub:"Up to 3 options per slot", scrollId:"select-class" },
+                  { icon:"📖", line1:"Browse BiS", line2:"& specs", sub:"Wowhead guides · every spec", scrollId:"select-class" },
+                  { icon:"✏️", line1:"Build your", line2:"own list", sub:"Load Suggested BiS · then override", scrollId:"select-class" },
+                  { icon:"🗺", line1:"Farm & group", line2:"planning", sub:"Farm Priority · shared overlap", scrollId:"group-planner" },
                   { icon:"🎮", line1:"Track", line2:"in-game", sub:"Free addon · Mini overlay", scrollId:"addon-sync" },
-                  { icon:"🗓", line1:"Weekly reset", line2:"& Vault", sub:"Reset timer · Vault highlight", scrollId:"weekly-reset" },
                 ].map(({ icon, line1, line2, sub, scrollId, href }) => (
                   <div key={line1+line2}
                     onClick={() => {
@@ -3274,16 +3382,22 @@ export default function App() {
                         if (el) { el.scrollIntoView({ behavior:"smooth", block:"start" }); el.style.outline="2px solid var(--gold)"; setTimeout(()=>{ el.style.outline=""; },1400); }
                       }
                     }}
-                    style={{ textAlign:"center", minWidth:"100px", maxWidth:"140px", cursor:"pointer", padding:".65rem .5rem", border:"1px solid var(--bdr)", background:"rgba(201,146,42,.04)", transition:"all .18s" }}
+                    style={{ textAlign:"center", minWidth:"140px", maxWidth:"180px", cursor:"pointer", padding:".8rem .65rem", border:"1px solid var(--bdr)", background:"rgba(201,146,42,.04)", transition:"all .18s", flex:"1 1 180px" }}
                     onMouseEnter={e=>{ e.currentTarget.style.borderColor="var(--gold)"; e.currentTarget.style.background="rgba(201,146,42,.10)"; }}
                     onMouseLeave={e=>{ e.currentTarget.style.borderColor="var(--bdr)"; e.currentTarget.style.background="rgba(201,146,42,.04)"; }}
                   >
-                    <div style={{ fontSize:"1.5rem", marginBottom:".35rem" }}>{icon}</div>
-                    <div style={{ fontFamily:"Cinzel,serif", fontSize:".85rem", color:"var(--gold-lt)", letterSpacing:".07em", lineHeight:1.3 }}>{line1}<br/>{line2}</div>
-                    <div style={{ fontSize:".82rem", color:"var(--parch-dk)", fontStyle:"italic", marginTop:".3rem", lineHeight:1.3 }}>{sub}</div>
-                    <div style={{ fontSize:".75rem", color:"var(--gold)", marginTop:".35rem", opacity:.7, letterSpacing:".05em" }}>↓ click</div>
+                    <div style={{ fontSize:"1.45rem", marginBottom:".35rem" }}>{icon}</div>
+                    <div style={{ fontFamily:"Cinzel,serif", fontSize:".95rem", color:"var(--gold-lt)", letterSpacing:".07em", lineHeight:1.3 }}>{line1}<br/>{line2}</div>
+                    <div style={{ fontSize:".82rem", color:"var(--parch-dk)", fontStyle:"italic", marginTop:".34rem", lineHeight:1.35 }}>{sub}</div>
+                    <div style={{ fontSize:".75rem", color:"var(--gold-lt)", marginTop:".35rem" }}>↓ click</div>
                   </div>
                 ))}
+                <WeeklyResetHeroCard onClick={() => {
+                  const el = document.getElementById("weekly-reset");
+                  if (el) { el.scrollIntoView({ behavior:"smooth", block:"start" }); el.style.outline="2px solid var(--gold)"; setTimeout(()=>{ el.style.outline=""; },1400); }
+                }} />
+              </div>
+            )}
               </div>
             )}
           </div>
