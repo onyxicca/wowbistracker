@@ -2827,62 +2827,11 @@ function GroupPlanner() {
 
 
 function WeeklyResetPanel({ compact = false }) {
-  const [resetRegion, setResetRegion] = useState("NA");
-  const getNextReset = useCallback((region) => {
-    const now = new Date();
-    const next = new Date(now);
-    if (region === "NA") {
-      next.setUTCHours(15, 0, 0, 0); // Tuesday 8am Pacific approx standard reference
-      const day = next.getUTCDay();
-      let add = (2 - day + 7) % 7;
-      if (add === 0 && now >= next) add = 7;
-      next.setUTCDate(next.getUTCDate() + add);
-    } else {
-      next.setUTCHours(7, 0, 0, 0); // Wednesday 8am CET approx standard reference
-      const day = next.getUTCDay();
-      let add = (3 - day + 7) % 7;
-      if (add === 0 && now >= next) add = 7;
-      next.setUTCDate(next.getUTCDate() + add);
-    }
-    return next;
-  }, []);
-  const formatRemaining = useCallback((target) => {
-    const ms = Math.max(0, target - new Date());
-    const total = Math.floor(ms / 1000);
-    const d = Math.floor(total / 86400);
-    const h = Math.floor((total % 86400) / 3600);
-    const m = Math.floor((total % 3600) / 60);
-    const s = total % 60;
-    return `${d}d ${h}h ${m}m ${s}s`;
-  }, []);
-  const [timeLeft, setTimeLeft] = useState(() => formatRemaining(getNextReset("NA")));
-  useEffect(() => {
-    const tick = () => setTimeLeft(formatRemaining(getNextReset(resetRegion)));
-    tick();
-    const id = setInterval(tick, 1000);
-    return () => clearInterval(id);
-  }, [resetRegion, getNextReset, formatRemaining]);
-
   return (
-    <div id="weekly-reset" style={{ background:"var(--panel)", border:"1px solid var(--bdr2)", padding: compact ? "1rem" : "1.25rem", borderRadius:0, marginBottom: compact ? 0 : "1.5rem" }}>
-      <div style={{ display:"flex", alignItems:"center", gap:".6rem", marginBottom:".75rem", flexWrap:"wrap" }}>
-        <div style={{ fontFamily:"Cinzel,serif", fontSize:".72rem", letterSpacing:".14em", color:"var(--gold)" }}>WEEKLY RESET</div>
-        <div className="exp-badge" style={{ margin:0, padding:".15rem .6rem", fontSize:".6rem" }}>Midnight · S1</div>
-        <div style={{ display:"flex", gap:".3rem", marginLeft:"auto" }}>
-          {["NA","EU"].map(r => (
-            <button key={r} onClick={() => setResetRegion(r)} style={{ fontFamily:"Cinzel,serif", fontSize:".65rem", letterSpacing:".08em", padding:".18rem .55rem", background: resetRegion === r ? "var(--gold)" : "transparent", border:"1px solid " + (resetRegion === r ? "var(--gold)" : "var(--bdr2)"), color: resetRegion === r ? "var(--ink)" : "var(--parch-dk)", cursor:"pointer" }}>{r}</button>
-          ))}
-        </div>
-      </div>
-      <div style={{ fontSize:"2rem", fontFamily:"Cinzel,serif", color:"var(--gold-lt)", letterSpacing:".04em", lineHeight:1, marginBottom:".75rem" }}>{timeLeft}</div>
-      <div style={{ fontSize:".78rem", color:"var(--parch-dk)", fontStyle:"italic", lineHeight:1.5, marginBottom:"1rem" }}>
-        {resetRegion === "NA" ? "Tuesday · 8am Pacific" : "Wednesday · 8am CET"}
-      </div>
-      <div style={{ borderTop:"1px solid var(--bdr)", paddingTop:".85rem" }}>
-        <div style={{ fontFamily:"Cinzel,serif", fontSize:".65rem", letterSpacing:".1em", color:"var(--gold)", marginBottom:".5rem" }}>GREAT VAULT</div>
-        <div style={{ fontSize:".92rem", color:"var(--parch-dk)", lineHeight:1.6 }}>
-          Open your Great Vault in-game after each reset. The <strong style={{ color:"var(--gold-lt)" }}>WoW BiS Tracker addon</strong> will automatically highlight any vault options that match your BiS list — including gear track.
-        </div>
+    <div id="weekly-reset" style={{ background:"var(--panel)", border:"1px solid var(--bdr2)", padding: compact ? "1rem" : "1.1rem 1.25rem", borderRadius:0, marginBottom: compact ? 0 : "1.5rem" }}>
+      <div style={{ fontFamily:"Cinzel,serif", fontSize:".72rem", letterSpacing:".14em", color:"var(--gold)", marginBottom:".75rem" }}>GREAT VAULT</div>
+      <div style={{ fontSize:".92rem", color:"var(--parch-dk)", lineHeight:1.7 }}>
+        Open your Great Vault in-game after each reset. The <strong style={{ color:"var(--gold-lt)" }}>WoW BiS Tracker addon</strong> will automatically highlight any vault options that match your BiS list — including gear track.
       </div>
     </div>
   );
@@ -3303,13 +3252,7 @@ export default function App() {
               ))}
 
               <div
-                onClick={() => {
-                  const el = document.getElementById("weekly-reset");
-                  if (el) { el.scrollIntoView({ behavior:"smooth", block:"start" }); el.style.outline="2px solid var(--gold)"; setTimeout(()=>{ el.style.outline=""; },1400); }
-                }}
-                style={{ textAlign:"center", cursor:"pointer", padding:".8rem .8rem", border:"1px solid var(--gold)", background:"rgba(201,146,42,.07)", transition:"all .18s", gridColumn:"span 2", minHeight:"100%" }}
-                onMouseEnter={e=>{ e.currentTarget.style.background="rgba(201,146,42,.13)"; }}
-                onMouseLeave={e=>{ e.currentTarget.style.background="rgba(201,146,42,.07)"; }}
+                style={{ textAlign:"center", padding:".8rem .8rem", border:"1px solid var(--gold)", background:"rgba(201,146,42,.07)", transition:"all .18s", gridColumn:"span 2", minHeight:"100%" }}
               >
                 <div style={{ fontSize:"1.35rem", marginBottom:".25rem" }}>🗓</div>
                 <div style={{ fontFamily:"Cinzel,serif", fontSize:"1rem", color:"var(--gold-lt)", letterSpacing:".07em", lineHeight:1.25 }}>Weekly Reset<br/>& Vault</div>
@@ -3326,8 +3269,7 @@ export default function App() {
                 <div style={{ fontSize:".8rem", color:"var(--parch-dk)", fontStyle:"italic", marginTop:".3rem", lineHeight:1.35 }}>
                   {homeResetRegion === "NA" ? "Tuesday · 8am Pacific" : "Wednesday · 8am CET"}<br/>Vault highlight in addon
                 </div>
-                <div style={{ fontSize:".75rem", color:"var(--gold)", marginTop:".4rem", opacity:.7, letterSpacing:".05em" }}>↓ click</div>
-              </div>
+                              </div>
             </div>
           </div>
         )}
