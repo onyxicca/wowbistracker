@@ -1627,12 +1627,18 @@ function Tracker({ cls, spec, charName, initialMode = "", onBack }) {
 
   const TRACK_ORDER = ["Veteran","Champion","Hero","Myth"];
   const trackRank = t => TRACK_ORDER.indexOf(t);
+  const hasOwnedState = d => {
+    if (!d) return false;
+    if (d.done) return true;
+    if (d.track) return true;
+    return false;
+  };
   const meetsTarget = d => {
-    if (!d?.done) return false;
-    if (!d?.track) return true;
+    if (!hasOwnedState(d)) return false;
+    if (!d?.track) return !!d?.done;
     return trackRank(d.track) >= trackRank(targetTrack);
   };
-  const softBis = d => d?.done && d?.track && trackRank(d.track) < trackRank(targetTrack);
+  const softBis = d => hasOwnedState(d) && d?.track && trackRank(d.track) < trackRank(targetTrack);
   const [bisMode, setBisMode] = useState(() => {
     try { return initialMode || localStorage.getItem(`bismode-${storageKey}`) || "community"; } catch { return initialMode || "community"; }
   });
@@ -2492,7 +2498,7 @@ function getTrackerCounts(data) {
   });
   return {
     slotCount: values.length,
-    acquired: values.filter(d => d?.done).length,
+    acquired: values.filter(d => !!d?.done || !!d?.track).length,
   };
 }
 function getSavedCharacters() {
@@ -3247,7 +3253,7 @@ export default function App() {
                   <div style={{ fontSize:"1.4rem", marginBottom:".35rem" }}>{icon}</div>
                   <div style={{ fontFamily:"Cinzel,serif", fontSize:".92rem", color:"var(--gold-lt)", letterSpacing:".07em", lineHeight:1.3 }}>{line1}<br/>{line2}</div>
                   <div style={{ fontSize:".85rem", color:"var(--parch-dk)", fontStyle:"italic", marginTop:".35rem", lineHeight:1.35 }}>{sub}</div>
-                  <div style={{ fontSize:".75rem", color:"var(--gold)", marginTop:".4rem", opacity:.7, letterSpacing:".05em" }}>↓ click</div>
+                  
                 </div>
               ))}
 
@@ -3267,7 +3273,7 @@ export default function App() {
                 </div>
                 <div style={{ fontFamily:"Cinzel,serif", fontSize:"1.25rem", color:"var(--gold-lt)", marginTop:".6rem", lineHeight:1.1 }}>{homeResetTime}</div>
                 <div style={{ fontSize:".8rem", color:"var(--parch-dk)", fontStyle:"italic", marginTop:".3rem", lineHeight:1.35 }}>
-                  {homeResetRegion === "NA" ? "Tuesday · 8am Pacific" : "Wednesday · 8am CET"}<br/>Vault highlight in addon
+                  {homeResetRegion === "NA" ? "Tuesday · 8am Pacific" : "Wednesday · 8am CET"}<br/>Addon vault alert
                 </div>
                               </div>
             </div>
