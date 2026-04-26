@@ -3229,7 +3229,7 @@ export default function App() {
           <div className="hero">
             <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit, minmax(190px, 1fr))", gap:"1rem", alignItems:"stretch" }}>
               {[
-                { icon:"📖", line1:"Plan your", line2:"farm", sub:"Choose suggested or custom BiS", scrollId:"select-class" },
+                { icon:"📖", line1:"Plan your", line2:"farm", sub:"Choose suggested or custom BiS · Print your tracker sheet", scrollId:"select-class" },
                 { icon:"👥", line1:"Prioritize", line2:"together", sub:"See where to go first · Compare overlaps with friends", scrollId:"group-planner" },
                 { icon:"🎮", line1:"Track", line2:"in-game", sub:"Free addon · Mini overlay", note:"Addon highlights BiS in Vault", scrollId:"vs-addon" },
               ].map(({ icon, line1, line2, sub, note, scrollId }) => (
