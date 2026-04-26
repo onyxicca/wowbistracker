@@ -1145,8 +1145,6 @@ body{font-family:'Crimson Pro',Georgia,serif;font-size:1.05rem;background:var(--
 
 .hero{text-align:center;padding:3.5rem 2rem 2.5rem;position:relative;overflow:hidden;background:radial-gradient(ellipse 70% 50% at 50% 0%,rgba(110,64,201,.08),transparent 70%)}
 .hero::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:60%;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
-.hero::after{content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:80%;height:1px;background:linear-gradient(90deg,transparent,var(--bdr2),transparent)}
-
 .hero-tagline{display:flex;align-items:center;justify-content:center;gap:.8rem;margin-top:.5rem;flex-wrap:wrap}
 .hero-mark{width:clamp(38px,5vw,64px);height:clamp(38px,5vw,64px);object-fit:contain;opacity:.82;filter:drop-shadow(0 0 14px rgba(201,146,42,.18));flex:0 0 auto}
 .hero-sub{font-family:'Crimson Pro',serif;font-style:italic;font-size:1.3rem;color:var(--parch-dk);margin:0}
@@ -1159,11 +1157,11 @@ body{font-family:'Crimson Pro',Georgia,serif;font-size:1.05rem;background:var(--
 .sh::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,var(--bdr2),transparent)}
 .class-picker-head{display:flex;align-items:center;justify-content:space-between;gap:1rem;margin-bottom:1rem}
 .class-picker-head .sh{margin-bottom:0;flex:1 1 auto;min-width:220px}
-.role-filter-card{display:flex;align-items:center;gap:.7rem;padding:.45rem .62rem;border:1px solid rgba(201,146,42,.34);background:linear-gradient(135deg,rgba(201,146,42,.08),rgba(110,64,201,.10) 55%,rgba(0,0,0,.18));box-shadow:0 10px 30px rgba(0,0,0,.28),inset 0 1px 0 rgba(232,184,75,.10);flex:0 0 auto}
-.role-filter-label{font-family:'Cinzel',serif;font-size:.64rem;letter-spacing:.14em;text-transform:uppercase;color:var(--parch-dk);white-space:nowrap}
+.role-filter-card{display:flex;align-items:center;gap:.65rem;padding:0;border:0;background:transparent;box-shadow:none;flex:0 0 auto}
+.role-filter-label{font-family:'Cinzel',serif;font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;color:var(--parch-dk);white-space:nowrap;opacity:.9}
 
-.role-strip{display:flex;gap:.38rem;flex-wrap:wrap;margin-bottom:0}
-.rpill{padding:.34rem .78rem;font-family:'Cinzel',serif;font-size:.72rem;letter-spacing:.06em;border:1px solid;cursor:pointer;transition:all .15s;background:transparent;clip-path:polygon(7px 0%,100% 0%,calc(100% - 7px) 100%,0% 100%);display:flex;align-items:center;gap:.32rem;white-space:nowrap}
+.role-strip{display:flex;gap:.34rem;flex-wrap:wrap;margin-bottom:0;justify-content:flex-end}
+.rpill{padding:.32rem .74rem;font-family:'Cinzel',serif;font-size:.72rem;letter-spacing:.06em;border:1px solid;cursor:pointer;transition:all .15s;background:transparent;clip-path:polygon(7px 0%,100% 0%,calc(100% - 7px) 100%,0% 100%);display:flex;align-items:center;gap:.32rem;white-space:nowrap}
 
 .class-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:.7rem;margin-bottom:2.5rem}
 @media(max-width:760px){.class-picker-head{align-items:stretch;flex-direction:column}.role-filter-card{justify-content:space-between;flex-wrap:wrap}.role-strip{justify-content:flex-start}}
@@ -1172,8 +1170,8 @@ body{font-family:'Crimson Pro',Georgia,serif;font-size:1.05rem;background:var(--
 .cc::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--cc-color,var(--gold));transform:scaleX(0);transition:transform .18s}
 .cc:hover{border-color:var(--cc-color,var(--gold));transform:translateY(-3px);box-shadow:0 6px 24px rgba(0,0,0,.5)}
 .cc:hover::before{transform:scaleX(1)}
-.cc-name{font-family:'Cinzel',serif;font-size:1rem;font-weight:600;letter-spacing:.04em;margin-bottom:.25rem;position:relative;z-index:1;text-shadow:0 2px 3px #000,0 3px 10px #000,0 0 18px #000,0 0 30px rgba(0,0,0,.98),0 0 44px rgba(0,0,0,.9)}
-.cc-specs{font-size:.7rem;opacity:.72;margin-top:.15rem;position:relative;z-index:1;text-shadow:0 2px 3px #000,0 0 12px #000,0 0 24px rgba(0,0,0,.95)}
+.cc-name{font-family:'Cinzel',serif;font-size:1.12rem;font-weight:600;letter-spacing:.04em;margin-bottom:.25rem;position:relative;z-index:1;text-shadow:0 2px 3px #000,0 3px 10px #000,0 0 18px #000,0 0 30px rgba(0,0,0,.98),0 0 44px rgba(0,0,0,.9)}
+.cc-specs{font-size:.78rem;opacity:.78;margin-top:.15rem;position:relative;z-index:1;text-shadow:0 2px 3px #000,0 0 12px #000,0 0 24px rgba(0,0,0,.95)}
 .cc-dots{display:flex;justify-content:center;gap:3px;margin-top:.5rem;position:relative;z-index:1}
 .rdot{width:8px;height:8px;border-radius:50%}
 
@@ -3229,7 +3227,7 @@ export default function App() {
             <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit, minmax(190px, 1fr))", gap:"1rem", alignItems:"stretch" }}>
               {[
                 { icon:"📖", line1:"Plan your", line2:"farm", sub:"Choose suggested or custom BiS", scrollId:"select-class" },
-                { icon:"🗺", line1:"Prioritize", line2:"together", sub:"See where to go first · Compare overlaps with friends", scrollId:"group-planner" },
+                { icon:"👥", line1:"Prioritize", line2:"together", sub:"See where to go first · Compare overlaps with friends", scrollId:"group-planner" },
                 { icon:"🎮", line1:"Track", line2:"in-game", sub:"Free addon · Mini overlay", scrollId:"vs-addon" },
               ].map(({ icon, line1, line2, sub, scrollId }) => (
                 <div key={line1+line2}
