@@ -3187,6 +3187,9 @@ function Home({ onSelectClass, onLoadCharacter }) {
       <div style={{ background:"rgba(201,146,42,.06)", border:"1px solid rgba(201,146,42,.25)", padding:".9rem 1.1rem", marginBottom:"2rem", fontSize:".84rem", color:"var(--parch-dk)", lineHeight:1.7 }}>
         <strong style={{ fontFamily:"Cinzel,serif", fontSize:".68rem", letterSpacing:".1em", color:"var(--gold-lt)" }}>USING BOTH</strong>
         {"  "}The website is the cleaner planning view. The addon is the faster in-game view. Export between them whenever you want to keep progress in sync.
+        <div style={{ display:"flex", justifyContent:"center", marginTop:"1.1rem" }}>
+          <img src={BRAND_MARK} alt="WoW BiS Tracker" style={{ width:"112px", maxWidth:"32vw", opacity:.96 }} />
+        </div>
       </div>
 
     </div>
@@ -3249,9 +3252,9 @@ export default function App() {
               ))}
 
               <div
-                style={{ textAlign:"center", padding:"1.05rem .9rem", border:"1px solid var(--gold)", background:"rgba(201,146,42,.07)", transition:"all .18s", minHeight:"100%", display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center" }}
-                onMouseEnter={e=>{ e.currentTarget.style.background="rgba(201,146,42,.12)"; }}
-                onMouseLeave={e=>{ e.currentTarget.style.background="rgba(201,146,42,.07)"; }}
+                style={{ textAlign:"center", padding:"1.05rem .9rem", border:"1px solid var(--bdr)", background:"rgba(201,146,42,.04)", transition:"all .18s", minHeight:"100%", display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center" }}
+                onMouseEnter={e=>{ e.currentTarget.style.borderColor="var(--gold)"; e.currentTarget.style.background="rgba(201,146,42,.10)"; }}
+                onMouseLeave={e=>{ e.currentTarget.style.borderColor="var(--bdr)"; e.currentTarget.style.background="rgba(201,146,42,.04)"; }}
               >
                 <div style={{ fontSize:"1.35rem", marginBottom:".3rem" }}>🗓</div>
                 <div style={{ fontFamily:"Cinzel,serif", fontSize:"1rem", color:"var(--gold-lt)", letterSpacing:".07em", lineHeight:1.28 }}>Weekly Reset<br/>& Vault</div>
@@ -3266,7 +3269,7 @@ export default function App() {
                 </div>
                 <div style={{ fontFamily:"Cinzel,serif", fontSize:"1.35rem", color:"var(--gold-lt)", marginTop:".6rem", lineHeight:1.1 }}>{homeResetTime}</div>
                 <div style={{ fontSize:".82rem", color:"var(--parch-dk)", fontStyle:"italic", marginTop:".35rem", lineHeight:1.4 }}>
-                  {homeResetRegion === "NA" ? "Tuesday · 8am Pacific" : "Wednesday · 8am CET"}<br/>Vault highlight in addon
+                  {homeResetRegion === "NA" ? "Tuesday · 8am Pacific" : "Wednesday · 8am CET"}<br/>Addon highlights BiS in Vault
                 </div>
               </div>
             </div>
@@ -3284,19 +3287,19 @@ export default function App() {
 
         <button
           onClick={() => window.scrollTo({ top: 0, behavior:"smooth" })}
-          style={{ position:"fixed", bottom:"1.5rem", right:"1.5rem", zIndex:200, fontFamily:"Cinzel,serif", fontSize:".72rem", letterSpacing:".08em", padding:".45rem .8rem", background:"var(--panel)", border:"1px solid var(--gold)", color:"var(--gold-lt)", cursor:"pointer", clipPath:"polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%)", transition:"all .18s", boxShadow:"0 2px 12px rgba(0,0,0,.5)" }}
+          style={{ position:"fixed", bottom:"1.5rem", right:"1.5rem", zIndex:200, fontFamily:"Cinzel,serif", fontSize:".72rem", letterSpacing:".08em", padding:".45rem .62rem", background:"var(--panel)", border:"1px solid var(--gold)", color:"var(--gold-lt)", cursor:"pointer", clipPath:"polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%)", transition:"all .18s", boxShadow:"0 2px 12px rgba(0,0,0,.5)" }}
           onMouseEnter={e=>e.currentTarget.style.background="var(--gold)"}
           onMouseLeave={e=>e.currentTarget.style.background="var(--panel)"}
           title="Back to top"
-        >↑ Top</button>
+        >↑</button>
 
         <button
           onClick={() => window.scrollTo({ top: document.body.scrollHeight, behavior:"smooth" })}
-          style={{ position:"fixed", bottom:"1.5rem", right:"5.5rem", zIndex:200, fontFamily:"Cinzel,serif", fontSize:".72rem", letterSpacing:".08em", padding:".45rem .8rem", background:"var(--panel)", border:"1px solid var(--bdr2)", color:"var(--parch-dk)", cursor:"pointer", clipPath:"polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%)", transition:"all .18s", boxShadow:"0 2px 12px rgba(0,0,0,.5)" }}
+          style={{ position:"fixed", bottom:"1.5rem", right:"4.3rem", zIndex:200, fontFamily:"Cinzel,serif", fontSize:".72rem", letterSpacing:".08em", padding:".45rem .62rem", background:"var(--panel)", border:"1px solid var(--bdr2)", color:"var(--parch-dk)", cursor:"pointer", clipPath:"polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%)", transition:"all .18s", boxShadow:"0 2px 12px rgba(0,0,0,.5)" }}
           onMouseEnter={e=>e.currentTarget.style.borderColor="var(--gold)"}
           onMouseLeave={e=>e.currentTarget.style.borderColor="var(--bdr2)"}
           title="Go to bottom"
-        >↓ Bot</button>
+        >↓</button>
 
         <footer className="ftr">
           <span>Art &amp; Design by <a href="https://embernal.com" style={{ color: "var(--gold)", textDecoration: "none" }} target="_blank" rel="noreferrer">Onyxicca</a></span>
