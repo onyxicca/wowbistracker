@@ -1162,8 +1162,8 @@ body{font-family:'Crimson Pro',Georgia,serif;font-size:1.05rem;background:var(--
 .rpill{padding:.38rem 1rem;font-family:'Cinzel',serif;font-size:.78rem;letter-spacing:.06em;border:1px solid;cursor:pointer;transition:all .15s;background:transparent;clip-path:polygon(7px 0%,100% 0%,calc(100% - 7px) 100%,0% 100%);display:flex;align-items:center;gap:.35rem}
 
 .class-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:.7rem;margin-bottom:2.5rem}
-.cc{background:var(--panel);border:1px solid var(--bdr);padding:1rem .75rem .85rem;cursor:pointer;transition:all .18s;text-align:center;position:relative;overflow:hidden}
-.cc-bg-icon{position:absolute;inset:50% auto auto 50%;width:clamp(118px,76%,190px);height:auto;max-width:none;object-fit:contain;transform:translate(-50%,-50%);opacity:.105;filter:saturate(.98) contrast(1.08);pointer-events:none;z-index:0}
+.cc{aspect-ratio:1/1;background:var(--panel);border:1px solid var(--bdr);padding:.82rem .7rem;cursor:pointer;transition:all .18s;text-align:center;position:relative;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.cc-bg-icon{position:absolute;inset:0;width:100%;height:100%;max-width:none;object-fit:cover;opacity:.12;filter:saturate(.98) contrast(1.08);pointer-events:none;z-index:0}
 .cc::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--cc-color,var(--gold));transform:scaleX(0);transition:transform .18s}
 .cc:hover{border-color:var(--cc-color,var(--gold));transform:translateY(-3px);box-shadow:0 6px 24px rgba(0,0,0,.5)}
 .cc:hover::before{transform:scaleX(1)}
@@ -3287,11 +3287,11 @@ export default function App() {
 
             <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit, minmax(150px, 1fr))", gap:"1rem", marginTop:"1.4rem", alignItems:"stretch" }}>
               {[
-                { icon:"📖", line1:"BiS &", line2:"Custom", sub:"Wowhead guides · Build your list", scrollId:"select-class" },
-                { icon:"🗺", line1:"Plan your", line2:"farm", sub:"Farm Priority · Raid vs Dungeon", scrollId:"group-planner" },
-                { icon:"👥", line1:"Group", line2:"planning", sub:"Share farm lists · See overlap", scrollId:"group-planner" },
+                { mark:true, line1:"WoW BiS", line2:"Tracker", sub:"Plan your list · Beat the reset", scrollId:"select-class" },
+                { icon:"📖", line1:"Plan your", line2:"farm", sub:"Choose suggested or custom BiS", scrollId:"select-class" },
+                { icon:"🗺", line1:"Prioritize", line2:"together", sub:"See where to go first · Share with friends", scrollId:"group-planner" },
                 { icon:"🎮", line1:"Track", line2:"in-game", sub:"Free addon · Mini overlay", scrollId:"addon-sync" },
-              ].map(({ icon, line1, line2, sub, scrollId, href }) => (
+              ].map(({ icon, mark, line1, line2, sub, scrollId, href }) => (
                 <div key={line1+line2}
                   onClick={() => {
                     if (href) { window.open(href, "_blank"); return; }
@@ -3300,16 +3300,21 @@ export default function App() {
                       if (el) { el.scrollIntoView({ behavior:"smooth", block:"start" }); el.style.outline="2px solid var(--gold)"; setTimeout(()=>{ el.style.outline=""; },1400); }
                     }
                   }}
-                  style={{ textAlign:"center", cursor:"pointer", padding:".8rem .65rem", border:"1px solid var(--bdr)", background:"rgba(201,146,42,.04)", transition:"all .18s", minHeight:"100%" }}
+                  style={{ textAlign:"center", cursor:"pointer", padding:".8rem .65rem", border:"1px solid var(--bdr)", background:"rgba(201,146,42,.04)", transition:"all .18s", minHeight:"100%", display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center" }}
                   onMouseEnter={e=>{ e.currentTarget.style.borderColor="var(--gold)"; e.currentTarget.style.background="rgba(201,146,42,.10)"; }}
                   onMouseLeave={e=>{ e.currentTarget.style.borderColor="var(--bdr)"; e.currentTarget.style.background="rgba(201,146,42,.04)"; }}
                 >
-                  <div style={{ fontSize:"1.4rem", marginBottom:".35rem" }}>{icon}</div>
+                  {mark ? (
+                    <img src={BRAND_MARK} alt="WoW BiS Tracker" style={{ width:"clamp(42px, 38%, 72px)", height:"auto", objectFit:"contain", opacity:1, marginBottom:".35rem", filter:"none" }} />
+                  ) : (
+                    <div style={{ fontSize:"1.4rem", marginBottom:".35rem" }}>{icon}</div>
+                  )}
                   <div style={{ fontFamily:"Cinzel,serif", fontSize:".92rem", color:"var(--gold-lt)", letterSpacing:".07em", lineHeight:1.3 }}>{line1}<br/>{line2}</div>
                   <div style={{ fontSize:".85rem", color:"var(--parch-dk)", fontStyle:"italic", marginTop:".35rem", lineHeight:1.35 }}>{sub}</div>
                   <div style={{ fontSize:".75rem", color:"var(--gold)", marginTop:".4rem", opacity:.7, letterSpacing:".05em" }}>↓ click</div>
                 </div>
               ))}
+
 
               <div
                 onClick={() => {
