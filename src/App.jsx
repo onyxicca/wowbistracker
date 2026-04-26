@@ -1163,7 +1163,7 @@ body{font-family:'Crimson Pro',Georgia,serif;font-size:1.05rem;background:var(--
 
 .class-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:.7rem;margin-bottom:2.5rem}
 .cc{background:var(--panel);border:1px solid var(--bdr);padding:1rem .75rem .85rem;cursor:pointer;transition:all .18s;text-align:center;position:relative;overflow:hidden}
-.cc-bg-icon{position:absolute;inset:50% auto auto 50%;width:92px;height:92px;object-fit:contain;transform:translate(-50%,-50%);opacity:.11;filter:saturate(.95) contrast(1.1);pointer-events:none;z-index:0}
+.cc-bg-icon{position:absolute;inset:50% auto auto 50%;width:clamp(118px,76%,190px);height:auto;max-width:none;object-fit:contain;transform:translate(-50%,-50%);opacity:.105;filter:saturate(.98) contrast(1.08);pointer-events:none;z-index:0}
 .cc::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--cc-color,var(--gold));transform:scaleX(0);transition:transform .18s}
 .cc:hover{border-color:var(--cc-color,var(--gold));transform:translateY(-3px);box-shadow:0 6px 24px rgba(0,0,0,.5)}
 .cc:hover::before{transform:scaleX(1)}
