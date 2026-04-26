@@ -1163,12 +1163,12 @@ body{font-family:'Crimson Pro',Georgia,serif;font-size:1.05rem;background:var(--
 
 .class-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:.7rem;margin-bottom:2.5rem}
 .cc{aspect-ratio:1/1;background:var(--panel);border:1px solid var(--bdr);padding:.82rem .7rem;cursor:pointer;transition:all .18s;text-align:center;position:relative;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center}
-.cc-bg-icon{position:absolute;inset:0;width:100%;height:100%;max-width:none;object-fit:cover;opacity:.12;filter:saturate(.98) contrast(1.08);pointer-events:none;z-index:0}
+.cc-bg-icon{position:absolute;inset:0;width:100%;height:100%;max-width:none;object-fit:cover;opacity:.12;filter:saturate(.98) contrast(1.08);transform:scale(1.06);pointer-events:none;z-index:0}
 .cc::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--cc-color,var(--gold));transform:scaleX(0);transition:transform .18s}
 .cc:hover{border-color:var(--cc-color,var(--gold));transform:translateY(-3px);box-shadow:0 6px 24px rgba(0,0,0,.5)}
 .cc:hover::before{transform:scaleX(1)}
-.cc-name{font-family:'Cinzel',serif;font-size:1rem;font-weight:600;letter-spacing:.04em;margin-bottom:.25rem;position:relative;z-index:1;text-shadow:0 2px 4px #000,0 0 10px #000,0 0 18px rgba(0,0,0,.95),0 0 28px rgba(0,0,0,.85)}
-.cc-specs{font-size:.7rem;opacity:.62;margin-top:.15rem;position:relative;z-index:1;text-shadow:0 1px 3px #000,0 0 10px #000}
+.cc-name{font-family:'Cinzel',serif;font-size:1rem;font-weight:600;letter-spacing:.04em;margin-bottom:.25rem;position:relative;z-index:1;text-shadow:0 2px 3px #000,0 3px 10px #000,0 0 18px #000,0 0 30px rgba(0,0,0,.98),0 0 44px rgba(0,0,0,.9)}
+.cc-specs{font-size:.7rem;opacity:.72;margin-top:.15rem;position:relative;z-index:1;text-shadow:0 2px 3px #000,0 0 12px #000,0 0 24px rgba(0,0,0,.95)}
 .cc-dots{display:flex;justify-content:center;gap:3px;margin-top:.5rem;position:relative;z-index:1}
 .rdot{width:8px;height:8px;border-radius:50%}
 
@@ -3210,7 +3210,7 @@ export default function App() {
               <span className="logo-main">WoW BiS Tracker</span>
             </button>
             <div className="hdr-btns">
-              <a className="btn-addon" href="https://github.com/onyxicca/wowbistracker-addon/releases/tag/v1.0.0" target="_blank" rel="noreferrer">⬇ Get the In-Game Addon</a>
+              <a className="btn-addon" href="https://github.com/onyxicca/wowbistracker-addon/releases/tag/v1.0.0" target="_blank" rel="noreferrer">⬇ Download Addon</a>
               <a className="btn-sup" href="https://embernal.com/pages/support" target="_blank" rel="noreferrer">♥ Support Onyxicca</a>
             </div>
           </div>
@@ -3218,11 +3218,11 @@ export default function App() {
 
         {page === "home" && (
           <div className="hero">
-            <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit, minmax(220px, 1fr))", gap:"1rem", alignItems:"stretch" }}>
+            <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit, minmax(190px, 1fr))", gap:"1rem", alignItems:"stretch" }}>
               {[
                 { icon:"📖", line1:"Plan your", line2:"farm", sub:"Choose suggested or custom BiS", scrollId:"select-class" },
                 { icon:"🗺", line1:"Prioritize", line2:"together", sub:"See where to go first · Share with friends", scrollId:"group-planner" },
-                { icon:"🎮", line1:"Track", line2:"in-game", sub:"Free addon · Mini overlay", scrollId:"addon-sync" },
+                { icon:"🎮", line1:"Track", line2:"in-game", sub:"Free addon · Mini overlay", scrollId:"vs-addon" },
               ].map(({ icon, line1, line2, sub, scrollId }) => (
                 <div key={line1+line2}
                   onClick={() => {
@@ -3243,12 +3243,12 @@ export default function App() {
               ))}
 
               <div
-                style={{ textAlign:"center", padding:"1.15rem 1.35rem", border:"1px solid var(--gold)", background:"rgba(201,146,42,.07)", transition:"all .18s", gridColumn:"1 / -1" }}
+                style={{ textAlign:"center", padding:"1.05rem .9rem", border:"1px solid var(--gold)", background:"rgba(201,146,42,.07)", transition:"all .18s", minHeight:"100%", display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center" }}
                 onMouseEnter={e=>{ e.currentTarget.style.background="rgba(201,146,42,.12)"; }}
                 onMouseLeave={e=>{ e.currentTarget.style.background="rgba(201,146,42,.07)"; }}
               >
-                <div style={{ fontSize:"1.35rem", marginBottom:".25rem" }}>🗓</div>
-                <div style={{ fontFamily:"Cinzel,serif", fontSize:"1.08rem", color:"var(--gold-lt)", letterSpacing:".07em", lineHeight:1.25 }}>Weekly Reset<br/>& Vault</div>
+                <div style={{ fontSize:"1.35rem", marginBottom:".3rem" }}>🗓</div>
+                <div style={{ fontFamily:"Cinzel,serif", fontSize:"1rem", color:"var(--gold-lt)", letterSpacing:".07em", lineHeight:1.28 }}>Weekly Reset<br/>& Vault</div>
                 <div style={{ display:"flex", justifyContent:"center", gap:".35rem", marginTop:".55rem", flexWrap:"wrap" }}>
                   {["NA","EU"].map(r => (
                     <button
@@ -3258,12 +3258,9 @@ export default function App() {
                     >{r}</button>
                   ))}
                 </div>
-                <div style={{ fontFamily:"Cinzel,serif", fontSize:"1.45rem", color:"var(--gold-lt)", marginTop:".65rem", lineHeight:1.1 }}>{homeResetTime}</div>
+                <div style={{ fontFamily:"Cinzel,serif", fontSize:"1.35rem", color:"var(--gold-lt)", marginTop:".6rem", lineHeight:1.1 }}>{homeResetTime}</div>
                 <div style={{ fontSize:".82rem", color:"var(--parch-dk)", fontStyle:"italic", marginTop:".35rem", lineHeight:1.4 }}>
                   {homeResetRegion === "NA" ? "Tuesday · 8am Pacific" : "Wednesday · 8am CET"}<br/>Vault highlight in addon
-                </div>
-                <div style={{ maxWidth:"760px", margin:".9rem auto 0", paddingTop:".85rem", borderTop:"1px solid var(--bdr)", fontSize:".9rem", color:"var(--parch-dk)", lineHeight:1.6 }}>
-                  Open your Great Vault in-game after each reset. The <strong style={{ color:"var(--gold-lt)" }}>WoW BiS Tracker addon</strong> will automatically highlight any vault options that match your BiS list — including gear track.
                 </div>
               </div>
             </div>
