@@ -3023,20 +3023,7 @@ function Home({ onSelectClass, onLoadCharacter }) {
 
   return (
     <div className="fade">
-      <div id="select-class" className="sh">Filter by Role</div>
-      <div className="role-strip">
-        {roles.map(r => (
-          <button key={r} className="rpill" onClick={() => setRoleFilter(r)} style={{
-            borderColor: r === "All" ? "var(--gold)" : ROLE_COLOR[r],
-            color:       roleFilter === r ? "var(--ink)" : r === "All" ? "var(--gold-lt)" : ROLE_COLOR[r],
-            background:  roleFilter === r ? r === "All" ? "var(--gold)" : ROLE_COLOR[r] : "transparent",
-          }}>
-            {r !== "All" && ROLE_ICON[r]} {r}
-          </button>
-        ))}
-      </div>
-
-      <div className="sh">Select Your Class</div>
+      <div id="select-class" className="sh">Select Your Class</div>
       <div className="class-grid">
         {filtered.map(cls => (
           <div key={cls.id} className="cc" style={{ "--cc-color": cls.color }} onClick={() => onSelectClass(cls)}>
@@ -3049,6 +3036,19 @@ function Home({ onSelectClass, onLoadCharacter }) {
               ))}
             </div>
           </div>
+        ))}
+      </div>
+
+      <div className="sh" style={{ marginTop:"1.35rem" }}>Filter by Role</div>
+      <div className="role-strip">
+        {roles.map(r => (
+          <button key={r} className="rpill" onClick={() => setRoleFilter(r)} style={{
+            borderColor: r === "All" ? "var(--gold)" : ROLE_COLOR[r],
+            color:       roleFilter === r ? "var(--ink)" : r === "All" ? "var(--gold-lt)" : ROLE_COLOR[r],
+            background:  roleFilter === r ? r === "All" ? "var(--gold)" : ROLE_COLOR[r] : "transparent",
+          }}>
+            {r !== "All" && ROLE_ICON[r]} {r}
+          </button>
         ))}
       </div>
 
@@ -3221,7 +3221,7 @@ export default function App() {
             <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit, minmax(190px, 1fr))", gap:"1rem", alignItems:"stretch" }}>
               {[
                 { icon:"📖", line1:"Plan your", line2:"farm", sub:"Choose suggested or custom BiS", scrollId:"select-class" },
-                { icon:"🗺", line1:"Prioritize", line2:"together", sub:"See where to go first · Share with friends", scrollId:"group-planner" },
+                { icon:"🗺", line1:"Prioritize", line2:"together", sub:"See where to go first · Compare overlaps with friends", scrollId:"group-planner" },
                 { icon:"🎮", line1:"Track", line2:"in-game", sub:"Free addon · Mini overlay", scrollId:"vs-addon" },
               ].map(({ icon, line1, line2, sub, scrollId }) => (
                 <div key={line1+line2}
