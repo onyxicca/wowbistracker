@@ -3231,8 +3231,8 @@ export default function App() {
               {[
                 { icon:"📖", line1:"Plan your", line2:"farm", sub:"Choose suggested or custom BiS", scrollId:"select-class" },
                 { icon:"👥", line1:"Prioritize", line2:"together", sub:"See where to go first · Compare overlaps with friends", scrollId:"group-planner" },
-                { icon:"🎮", line1:"Track", line2:"in-game", sub:"Free addon · Mini overlay", scrollId:"vs-addon" },
-              ].map(({ icon, line1, line2, sub, scrollId }) => (
+                { icon:"🎮", line1:"Track", line2:"in-game", sub:"Free addon · Mini overlay", note:"Addon highlights BiS in Vault", scrollId:"vs-addon" },
+              ].map(({ icon, line1, line2, sub, note, scrollId }) => (
                 <div key={line1+line2}
                   onClick={() => {
                     if (scrollId) {
@@ -3246,7 +3246,7 @@ export default function App() {
                 >
                   <div style={{ fontSize:"1.45rem", marginBottom:".4rem" }}>{icon}</div>
                   <div style={{ fontFamily:"Cinzel,serif", fontSize:"1rem", color:"var(--gold-lt)", letterSpacing:".07em", lineHeight:1.28 }}>{line1}<br/>{line2}</div>
-                  <div style={{ fontSize:".88rem", color:"var(--parch-dk)", fontStyle:"italic", marginTop:".4rem", lineHeight:1.35 }}>{sub}</div>
+                  <div style={{ fontSize:".88rem", color:"var(--parch-dk)", fontStyle:"italic", marginTop:".4rem", lineHeight:1.35 }}>{sub}{note ? <><br/>{note}</> : null}</div>
                   <div style={{ fontSize:".75rem", color:"var(--gold)", marginTop:".45rem", opacity:.7, letterSpacing:".05em" }}>↓ click</div>
                 </div>
               ))}
@@ -3257,7 +3257,7 @@ export default function App() {
                 onMouseLeave={e=>{ e.currentTarget.style.borderColor="var(--bdr)"; e.currentTarget.style.background="rgba(201,146,42,.04)"; }}
               >
                 <div style={{ fontSize:"1.35rem", marginBottom:".3rem" }}>🗓</div>
-                <div style={{ fontFamily:"Cinzel,serif", fontSize:"1rem", color:"var(--gold-lt)", letterSpacing:".07em", lineHeight:1.28 }}>Weekly Reset<br/>& Vault</div>
+                <div style={{ fontFamily:"Cinzel,serif", fontSize:"1rem", color:"var(--gold-lt)", letterSpacing:".07em", lineHeight:1.28 }}>Weekly Reset</div>
                 <div style={{ display:"flex", justifyContent:"center", gap:".35rem", marginTop:".55rem", flexWrap:"wrap" }}>
                   {["NA","EU"].map(r => (
                     <button
@@ -3269,7 +3269,7 @@ export default function App() {
                 </div>
                 <div style={{ fontFamily:"Cinzel,serif", fontSize:"1.35rem", color:"var(--gold-lt)", marginTop:".6rem", lineHeight:1.1 }}>{homeResetTime}</div>
                 <div style={{ fontSize:".82rem", color:"var(--parch-dk)", fontStyle:"italic", marginTop:".35rem", lineHeight:1.4 }}>
-                  {homeResetRegion === "NA" ? "Tuesday · 8am Pacific" : "Wednesday · 8am CET"}<br/>Addon highlights BiS in Vault
+                  {homeResetRegion === "NA" ? "Tuesday · 8am Pacific" : "Wednesday · 8am CET"}
                 </div>
               </div>
             </div>
