@@ -1157,11 +1157,16 @@ body{font-family:'Crimson Pro',Georgia,serif;font-size:1.05rem;background:var(--
 
 .sh{font-family:'Cinzel',serif;font-size:.85rem;letter-spacing:.2em;color:var(--gold);text-transform:uppercase;display:flex;align-items:center;gap:.75rem;margin-bottom:1rem}
 .sh::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,var(--bdr2),transparent)}
+.class-picker-head{display:flex;align-items:center;justify-content:space-between;gap:1rem;margin-bottom:1rem}
+.class-picker-head .sh{margin-bottom:0;flex:1 1 auto;min-width:220px}
+.role-filter-card{display:flex;align-items:center;gap:.7rem;padding:.45rem .62rem;border:1px solid rgba(201,146,42,.34);background:linear-gradient(135deg,rgba(201,146,42,.08),rgba(110,64,201,.10) 55%,rgba(0,0,0,.18));box-shadow:0 10px 30px rgba(0,0,0,.28),inset 0 1px 0 rgba(232,184,75,.10);flex:0 0 auto}
+.role-filter-label{font-family:'Cinzel',serif;font-size:.64rem;letter-spacing:.14em;text-transform:uppercase;color:var(--parch-dk);white-space:nowrap}
 
-.role-strip{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1.5rem}
-.rpill{padding:.38rem 1rem;font-family:'Cinzel',serif;font-size:.78rem;letter-spacing:.06em;border:1px solid;cursor:pointer;transition:all .15s;background:transparent;clip-path:polygon(7px 0%,100% 0%,calc(100% - 7px) 100%,0% 100%);display:flex;align-items:center;gap:.35rem}
+.role-strip{display:flex;gap:.38rem;flex-wrap:wrap;margin-bottom:0}
+.rpill{padding:.34rem .78rem;font-family:'Cinzel',serif;font-size:.72rem;letter-spacing:.06em;border:1px solid;cursor:pointer;transition:all .15s;background:transparent;clip-path:polygon(7px 0%,100% 0%,calc(100% - 7px) 100%,0% 100%);display:flex;align-items:center;gap:.32rem;white-space:nowrap}
 
 .class-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:.7rem;margin-bottom:2.5rem}
+@media(max-width:760px){.class-picker-head{align-items:stretch;flex-direction:column}.role-filter-card{justify-content:space-between;flex-wrap:wrap}.role-strip{justify-content:flex-start}}
 .cc{aspect-ratio:1/1;background:var(--panel);border:1px solid var(--bdr);padding:.82rem .7rem;cursor:pointer;transition:all .18s;text-align:center;position:relative;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center}
 .cc-bg-icon{position:absolute;inset:0;width:100%;height:100%;max-width:none;object-fit:cover;opacity:.12;filter:saturate(.98) contrast(1.08);transform:scale(1.06);pointer-events:none;z-index:0}
 .cc::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--cc-color,var(--gold));transform:scaleX(0);transition:transform .18s}
@@ -3023,7 +3028,23 @@ function Home({ onSelectClass, onLoadCharacter }) {
 
   return (
     <div className="fade">
-      <div id="select-class" className="sh">Select Your Class</div>
+      <div id="select-class" className="class-picker-head">
+        <div className="sh">Select Your Class</div>
+        <div className="role-filter-card" aria-label="Filter by role">
+          <div className="role-filter-label">Filter by Role</div>
+          <div className="role-strip">
+            {roles.map(r => (
+              <button key={r} className="rpill" onClick={() => setRoleFilter(r)} style={{
+                borderColor: r === "All" ? "var(--gold)" : ROLE_COLOR[r],
+                color:       roleFilter === r ? "var(--ink)" : r === "All" ? "var(--gold-lt)" : ROLE_COLOR[r],
+                background:  roleFilter === r ? r === "All" ? "var(--gold)" : ROLE_COLOR[r] : "transparent",
+              }}>
+                {r !== "All" && ROLE_ICON[r]} {r}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
       <div className="class-grid">
         {filtered.map(cls => (
           <div key={cls.id} className="cc" style={{ "--cc-color": cls.color }} onClick={() => onSelectClass(cls)}>
@@ -3036,19 +3057,6 @@ function Home({ onSelectClass, onLoadCharacter }) {
               ))}
             </div>
           </div>
-        ))}
-      </div>
-
-      <div className="sh" style={{ marginTop:"1.35rem" }}>Filter by Role</div>
-      <div className="role-strip">
-        {roles.map(r => (
-          <button key={r} className="rpill" onClick={() => setRoleFilter(r)} style={{
-            borderColor: r === "All" ? "var(--gold)" : ROLE_COLOR[r],
-            color:       roleFilter === r ? "var(--ink)" : r === "All" ? "var(--gold-lt)" : ROLE_COLOR[r],
-            background:  roleFilter === r ? r === "All" ? "var(--gold)" : ROLE_COLOR[r] : "transparent",
-          }}>
-            {r !== "All" && ROLE_ICON[r]} {r}
-          </button>
         ))}
       </div>
 
