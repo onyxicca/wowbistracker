@@ -3176,7 +3176,7 @@ function Home({ onSelectClass, onLoadCharacter }) {
             </div>
             {card.title === "In-Game Addon" && (
               <div style={{ marginTop:".95rem", display:"flex", gap:".7rem", flexWrap:"wrap", alignItems:"center" }}>
-                <a href="https://github.com/onyxicca/wowbistracker-addon/releases/tag/v1.0.0" target="_blank" rel="noreferrer" style={{ display:"inline-block", fontFamily:"Cinzel,serif", fontSize:".72rem", letterSpacing:".08em", padding:".45rem 1.05rem", background:"var(--gold)", color:"var(--ink)", textDecoration:"none", fontWeight:700 }}>Download Addon</a>
+                <a href="https://github.com/onyxicca/wowbistracker-best-in-slot-addon/releases/tag/v1.0.0" target="_blank" rel="noreferrer" style={{ display:"inline-block", fontFamily:"Cinzel,serif", fontSize:".72rem", letterSpacing:".08em", padding:".45rem 1.05rem", background:"var(--gold)", color:"var(--ink)", textDecoration:"none", fontWeight:700 }}>Download Addon</a>
                 <span style={{ fontSize:".76rem", color:"var(--parch-dk)", fontStyle:"italic" }}>Install it in Interface/AddOns/WoWBiSTracker</span>
               </div>
             )}
@@ -3219,7 +3219,7 @@ export default function App() {
               <span className="logo-main">WoW BiS Tracker</span>
             </button>
             <div className="hdr-btns">
-              <a className="btn-addon" href="https://github.com/onyxicca/wowbistracker-addon/releases/tag/v1.0.0" target="_blank" rel="noreferrer">⬇ Download Addon</a>
+              <a className="btn-addon" href="https://github.com/onyxicca/wowbistracker-best-in-slot-addon/releases/tag/v1.0.0" target="_blank" rel="noreferrer">⬇ Download Addon</a>
               <a className="btn-sup" href="https://embernal.com/pages/support" target="_blank" rel="noreferrer">♥ Support Onyxicca</a>
             </div>
           </div>
