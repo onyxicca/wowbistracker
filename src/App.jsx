@@ -3229,10 +3229,10 @@ export default function App() {
           <div className="hero">
             <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit, minmax(190px, 1fr))", gap:"1rem", alignItems:"stretch" }}>
               {[
-                { icon:"📖", line1:"Plan your", line2:"farm", sub:"Choose suggested or custom BiS · Print your tracker sheet", scrollId:"select-class" },
-                { icon:"👥", line1:"Prioritize", line2:"together", sub:"See where to go first · Compare overlaps with friends", scrollId:"group-planner" },
-                { icon:"🎮", line1:"Track", line2:"in-game", sub:"Free addon · Mini overlay", note:"Addon highlights BiS in Vault", scrollId:"vs-addon" },
-              ].map(({ icon, line1, line2, sub, note, scrollId }) => (
+                { line1:"Plan your", line2:"farm", sub:"Choose suggested or custom BiS · Print your tracker sheet", scrollId:"select-class" },
+                { line1:"Prioritize", line2:"together", sub:"See where to go first · Compare overlaps with friends", scrollId:"group-planner" },
+                { line1:"Track", line2:"in-game", sub:"Free addon · Mini overlay", note:"Addon highlights BiS in Vault", scrollId:"vs-addon" },
+              ].map(({ line1, line2, sub, note, scrollId }) => (
                 <div key={line1+line2}
                   onClick={() => {
                     if (scrollId) {
@@ -3240,11 +3240,10 @@ export default function App() {
                       if (el) { el.scrollIntoView({ behavior:"smooth", block:"start" }); el.style.outline="2px solid var(--gold)"; setTimeout(()=>{ el.style.outline=""; },1400); }
                     }
                   }}
-                  style={{ textAlign:"center", cursor:"pointer", padding:"1.05rem .9rem", border:"1px solid var(--bdr)", background:"rgba(201,146,42,.04)", transition:"all .18s", minHeight:"100%", display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center" }}
+                  style={{ textAlign:"center", cursor:"pointer", padding:".95rem .9rem", border:"1px solid var(--bdr)", background:"rgba(201,146,42,.04)", transition:"all .18s", minHeight:"100%", display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center" }}
                   onMouseEnter={e=>{ e.currentTarget.style.borderColor="var(--gold)"; e.currentTarget.style.background="rgba(201,146,42,.10)"; }}
                   onMouseLeave={e=>{ e.currentTarget.style.borderColor="var(--bdr)"; e.currentTarget.style.background="rgba(201,146,42,.04)"; }}
                 >
-                  <div style={{ fontSize:"1.45rem", marginBottom:".4rem" }}>{icon}</div>
                   <div style={{ fontFamily:"Cinzel,serif", fontSize:"1rem", color:"var(--gold-lt)", letterSpacing:".07em", lineHeight:1.28 }}>{line1}<br/>{line2}</div>
                   <div style={{ fontSize:".88rem", color:"var(--parch-dk)", fontStyle:"italic", marginTop:".4rem", lineHeight:1.35 }}>{sub}{note ? <><br/>{note}</> : null}</div>
                   <div style={{ fontSize:".75rem", color:"var(--gold)", marginTop:".45rem", opacity:.7, letterSpacing:".05em" }}>↓ click</div>
@@ -3252,11 +3251,10 @@ export default function App() {
               ))}
 
               <div
-                style={{ textAlign:"center", padding:"1.05rem .9rem", border:"1px solid var(--bdr)", background:"rgba(201,146,42,.04)", transition:"all .18s", minHeight:"100%", display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center" }}
+                style={{ textAlign:"center", padding:".95rem .9rem", border:"1px solid var(--bdr)", background:"rgba(201,146,42,.04)", transition:"all .18s", minHeight:"100%", display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center" }}
                 onMouseEnter={e=>{ e.currentTarget.style.borderColor="var(--gold)"; e.currentTarget.style.background="rgba(201,146,42,.10)"; }}
                 onMouseLeave={e=>{ e.currentTarget.style.borderColor="var(--bdr)"; e.currentTarget.style.background="rgba(201,146,42,.04)"; }}
               >
-                <div style={{ fontSize:"1.35rem", marginBottom:".3rem" }}>🗓</div>
                 <div style={{ fontFamily:"Cinzel,serif", fontSize:"1rem", color:"var(--gold-lt)", letterSpacing:".07em", lineHeight:1.28 }}>Weekly Reset</div>
                 <div style={{ display:"flex", justifyContent:"center", gap:".35rem", marginTop:".55rem", flexWrap:"wrap" }}>
                   {["NA","EU"].map(r => (
