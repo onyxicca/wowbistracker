@@ -1465,6 +1465,22 @@ function buildSourceLabel(type, detail) {
   return detail || type || '';
 }
 
+const MANUAL_STATUS_OPTIONS_PRIMARY = [
+  { value: "best", label: "Counts as BiS" },
+];
+const MANUAL_STATUS_OPTIONS_SECONDARY = [
+  { value: "equivalent", label: "Equivalent" },
+  { value: "strong", label: "Strong Alternative" },
+  { value: "alt", label: "Alternative" },
+];
+const DEFAULT_MANUAL_STATUS = ["best", "strong", "alt"];
+const manualStatusOptionsForRank = (idx = 0) => idx === 0 ? MANUAL_STATUS_OPTIONS_PRIMARY : MANUAL_STATUS_OPTIONS_SECONDARY;
+const manualStatusLabel = (value, idx = 0) => {
+  const v = value || DEFAULT_MANUAL_STATUS[idx] || "alt";
+  const options = idx === 0 ? MANUAL_STATUS_OPTIONS_PRIMARY : [...MANUAL_STATUS_OPTIONS_PRIMARY, ...MANUAL_STATUS_OPTIONS_SECONDARY];
+  return options.find(opt => opt.value === v)?.label || "Alternative";
+};
+
 function Slot({ label, id, data, onChange, targetTrack, bisMode }) {
   const d = data[id] || {};
   const up = (f, v) => onChange(id, { ...d, [f]: v });
@@ -1489,7 +1505,7 @@ function Slot({ label, id, data, onChange, targetTrack, bisMode }) {
       onChange(id, { ...d, ranks: nr });
     };
     const RBADGE = ["r1","r2","r3"];
-    const RLABEL = ["BiS","Alt 1","Alt 2"];
+    const RLABEL = ranks.map((r, idx) => manualStatusLabel(r?.status, idx));
     return (
       <div className="slot-wrap">
         <div className="slot-lbl">{label}</div>
@@ -1531,6 +1547,13 @@ function Slot({ label, id, data, onChange, targetTrack, bisMode }) {
                 </select>
                 <input className="sf-src" style={{ gridColumn:"1 / span 2" }} list={`src-list-${id}-${idx}`} placeholder="" value={r.src || ""} onChange={e => upRank(idx, "src", e.target.value)} />
                 <input className="sf-src no-print" style={{ gridColumn:"1 / span 2" }} inputMode="numeric" placeholder="Item ID required for addon import" value={r.itemId || ""} onChange={e => upRank(idx, "itemId", e.target.value.replace(/[^0-9]/g, ""))} />
+                {idx === 0 ? (
+                  <div className="sf-src no-print" style={{ gridColumn:"1 / span 2", opacity:.9, display:"flex", alignItems:"center", minHeight:"2.1rem" }}>Counts as BiS</div>
+                ) : (
+                  <select className="sf-src no-print" style={{ gridColumn:"1 / span 2" }} value={r.status || DEFAULT_MANUAL_STATUS[idx] || "alt"} onChange={e => upRank(idx, "status", e.target.value)}>
+                    {manualStatusOptionsForRank(idx).map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
+                  </select>
+                )}
                 <datalist id={`src-list-${id}-${idx}`}>
                   {CURRENT_SEASON_RAIDS.map(v => <option key={v} value={`${v} (Raid)`} />)}
                   {CURRENT_SEASON_DUNGEONS.map(v => <option key={v} value={`Dungeon • ${v}`} />)}
@@ -1745,7 +1768,7 @@ function Tracker({ cls, spec, charName, initialMode = "", onBack }) {
         const hasAny = Boolean((r?.name || "").trim() || (r?.src || "").trim() || (r?.sourceType || "").trim() || (r?.sourceDetail || "").trim());
         const itemId = String(r?.itemId || "").replace(/[^0-9]/g, "");
         if (hasAny && !itemId) {
-          errors.push(`${SLOT_LABELS[id] || id} ${idx === 0 ? "BiS" : `Alt ${idx}`}: missing Item ID`);
+          errors.push(`${SLOT_LABELS[id] || id} ${idx === 0 ? "BiS" : `Rank ${idx + 1}`}: missing Item ID`);
         }
       });
     });
@@ -1769,15 +1792,20 @@ function Tracker({ cls, spec, charName, initialMode = "", onBack }) {
         itemName = d.ranks[activeIdx]?.name || d.name;
         itemSrc = d.ranks[activeIdx]?.src || d.src;
         const ranked = d.ranks
-          .map(r => ({
-            name: cleanField(r?.name),
-            src: cleanField(r?.src || "Unknown"),
-            have: r?.have ? "1" : "0",
-            itemId: r?.itemId ? String(r.itemId).replace(/[^0-9]/g, "") : "",
-          }))
+          .map((r, idx) => {
+            const rawStatus = idx === 0 ? "best" : (r?.status || DEFAULT_MANUAL_STATUS[idx] || "alt");
+            const status = idx > 0 && rawStatus === "best" ? "equivalent" : rawStatus;
+            return {
+              name: cleanField(r?.name),
+              src: cleanField(r?.src || "Unknown"),
+              have: r?.have ? "1" : "0",
+              itemId: r?.itemId ? String(r.itemId).replace(/[^0-9]/g, "") : "",
+              status: cleanField(status),
+            };
+          })
           .filter(r => r.name);
         if (ranked.length) {
-          rankBlob = "#T" + String(activeIdx + 1) + "#" + ranked.map(r => [r.name, r.src, r.have, r.itemId].join("~")).join("^");
+          rankBlob = "#T" + String(activeIdx + 1) + "#" + ranked.map(r => [r.name, r.src, r.have, r.itemId, r.status].join("~")).join("^");
         }
       }
       const n = cleanField(itemName);
@@ -2280,7 +2308,7 @@ function Tracker({ cls, spec, charName, initialMode = "", onBack }) {
           modal.style.cssText = "position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.85);z-index:9999;display:flex;align-items:center;justify-content:center;";
           const inner = document.createElement("div");
           inner.style.cssText = "background:#150f08;border:1px solid #c9922a;padding:1.5rem;max-width:540px;width:90%;font-family:Cinzel,serif;";
-          inner.innerHTML = `<div style="font-size:.75rem;letter-spacing:.15em;color:#c9922a;margin-bottom:.75rem">EXPORT FOR ADDON</div><div style="font-size:.85rem;color:#c8a96a;margin-bottom:.75rem;font-family:Crimson Pro,serif;line-height:1.6;">Copy this code and paste it into the WoW BiS Tracker addon in-game using the Import BiS button. Manual Builder exports require Item IDs so the addon can track the exact items instead of guessing from names. If Wowhead BiS and Manual Builder are both saved, one import will load both into the addon.</div>`;
+          inner.innerHTML = `<div style="font-size:.75rem;letter-spacing:.15em;color:#c9922a;margin-bottom:.75rem">EXPORT FOR ADDON</div><div style="font-size:.85rem;color:#c8a96a;margin-bottom:.75rem;font-family:Crimson Pro,serif;line-height:1.6;">Copy this code and paste it into the WoW BiS Tracker addon in-game using the Import BiS button. Manual Builder exports require Item IDs so the addon can track exact items. Rank 1 always counts as BiS. Rank 2 and Rank 3 can be marked as Equivalent, Strong Alternative, or Alternative. If Wowhead BiS and Manual Builder are both saved, one import will load both into the addon.</div>`;
           const ta = document.createElement("textarea");
           ta.readOnly = true;
           ta.value = code;
