@@ -1530,6 +1530,7 @@ function Slot({ label, id, data, onChange, targetTrack, bisMode }) {
                   {((r.sourceType || inferSourceType(r.src)) === 'Raid' ? CURRENT_SEASON_RAIDS : (r.sourceType || inferSourceType(r.src)) === 'Dungeon' ? CURRENT_SEASON_DUNGEONS : OTHER_SOURCE_OPTIONS).map(opt => <option key={opt} value={opt}>{opt}</option>)}
                 </select>
                 <input className="sf-src" style={{ gridColumn:"1 / span 2" }} list={`src-list-${id}-${idx}`} placeholder="" value={r.src || ""} onChange={e => upRank(idx, "src", e.target.value)} />
+                <input className="sf-src no-print" style={{ gridColumn:"1 / span 2" }} inputMode="numeric" placeholder="Item ID required for addon import" value={r.itemId || ""} onChange={e => upRank(idx, "itemId", e.target.value.replace(/[^0-9]/g, ""))} />
                 <datalist id={`src-list-${id}-${idx}`}>
                   {CURRENT_SEASON_RAIDS.map(v => <option key={v} value={`${v} (Raid)`} />)}
                   {CURRENT_SEASON_DUNGEONS.map(v => <option key={v} value={`Dungeon • ${v}`} />)}
@@ -1586,7 +1587,7 @@ function Slot({ label, id, data, onChange, targetTrack, bisMode }) {
 function Tracker({ cls, spec, charName, initialMode = "", onBack }) {
   const storageKey = `bis-${cls.id}-${spec.id}-${charName || "default"}`;
   const modeStorageKey = (mode) => `${storageKey}-${mode}`;
-  const modeLabel = (mode) => mode === "custom" ? "Custom Builder" : mode === "community" ? "Wowhead BiS" : "Character Scan";
+  const modeLabel = (mode) => mode === "custom" ? "Manual Builder" : mode === "community" ? "Wowhead BiS" : "Character Scan";
   const isPlaceholderName = (name) => {
     const n = (name || "").trim();
     return !n || /^x+$/i.test(n) || /^unknown$/i.test(n);
@@ -1732,6 +1733,23 @@ function Tracker({ cls, spec, charName, initialMode = "", onBack }) {
     legs:"7", feet:"8", finger1:"11", finger2:"12",
     trinket1:"13", trinket2:"14",
     weapon2h:"16", mainhand:"16", offhand:"17"
+  };
+
+  const getManualAddonImportErrors = (modeData) => {
+    const sourceData = modeData || {};
+    const errors = [];
+    allSlotIds.forEach(id => {
+      const d = sourceData[id];
+      if (!d?.ranks) return;
+      d.ranks.forEach((r, idx) => {
+        const hasAny = Boolean((r?.name || "").trim() || (r?.src || "").trim() || (r?.sourceType || "").trim() || (r?.sourceDetail || "").trim());
+        const itemId = String(r?.itemId || "").replace(/[^0-9]/g, "");
+        if (hasAny && !itemId) {
+          errors.push(`${SLOT_LABELS[id] || id} ${idx === 0 ? "BiS" : `Alt ${idx}`}: missing Item ID`);
+        }
+      });
+    });
+    return errors;
   };
 
   const serializeAddonMode = (mode, modeData) => {
@@ -1982,7 +2000,7 @@ function Tracker({ cls, spec, charName, initialMode = "", onBack }) {
         </button>
         <div className="bis-mode-divider" />
         <button className={"bis-mode-btn" + (bisMode === "custom" ? " active" : "")} onClick={() => switchBisMode("custom")}>
-          Custom Builder
+          Manual Builder
         </button>
       </div>
 
@@ -2007,16 +2025,16 @@ function Tracker({ cls, spec, charName, initialMode = "", onBack }) {
 
       {bisMode === "simc" && (
         <div className="bis-bar no-print">
-          <span className="bis-txt">✦ Compare your currently equipped gear against a target list without changing your Wowhead or Custom Builder saves</span>
+          <span className="bis-txt">✦ Compare your currently equipped gear against a target list without changing your Wowhead or Manual Builder saves</span>
           <button className="bis-btn" onClick={() => setShowSimC(s => !s)} style={{ background:"rgba(201,146,42,.15)", borderColor:"var(--gold)", color:"var(--gold-lt)" }}>📋 {showSimC ? "Close" : "Open SimC Scanner"}</button>
         </div>
       )}
 
       {bisMode === "custom" && (
         <div className="bis-bar" style={{ flexDirection:"column", alignItems:"flex-start", gap:".3rem" }}>
-          <span className="bis-txt" style={{ fontFamily:"Cinzel,serif", letterSpacing:".1em" }}>✦ Custom BiS Builder</span>
+          <span className="bis-txt" style={{ fontFamily:"Cinzel,serif", letterSpacing:".1em" }}>✦ Manual BiS Builder</span>
           <span style={{ fontSize:".8rem", color:"var(--parch-dk)", fontStyle:"italic" }}>
-            Build your own ranked list — up to 3 options per slot. Wowhead BiS, Character Scan, and Custom Builder now live under one character card with separate mode saves. Tip: click <strong style={{color:"var(--gold-lt)"}}>Load Suggested BiS → Apply All</strong> first to pre-fill a base list, then override individual slots with your own research. For custom sources, use clear labels like <strong style={{color:"var(--gold-lt)"}}>Raid</strong>, <strong style={{color:"var(--gold-lt)"}}>Dungeon</strong>, <strong style={{color:"var(--gold-lt)"}}>Delves</strong>, <strong style={{color:"var(--gold-lt)"}}>World Quests</strong>, <strong style={{color:"var(--gold-lt)"}}>Renown</strong>, <strong style={{color:"var(--gold-lt)"}}>Prey</strong>, <strong style={{color:"var(--gold-lt)"}}>Crafted</strong>, or <strong style={{color:"var(--gold-lt)"}}>PvP</strong>. Export now includes all saved addon-compatible BiS lists for this spec.
+            Build your own ranked list — up to 3 options per slot. Wowhead BiS, Character Scan, and Manual Builder now live under one character card with separate mode saves. Tip: click <strong style={{color:"var(--gold-lt)"}}>Load Suggested BiS → Apply All</strong> first to pre-fill a base list, then override individual slots with your own research. For manual sources, use clear labels like <strong style={{color:"var(--gold-lt)"}}>Raid</strong>, <strong style={{color:"var(--gold-lt)"}}>Dungeon</strong>, <strong style={{color:"var(--gold-lt)"}}>Delves</strong>, <strong style={{color:"var(--gold-lt)"}}>World Quests</strong>, <strong style={{color:"var(--gold-lt)"}}>Renown</strong>, <strong style={{color:"var(--gold-lt)"}}>Prey</strong>, <strong style={{color:"var(--gold-lt)"}}>Crafted</strong>, or <strong style={{color:"var(--gold-lt)"}}>PvP</strong>. Export now includes all saved addon-compatible BiS lists for this spec.
           </span>
           <div style={{ display:"flex", gap:".5rem", flexWrap:"wrap" }}>
             <button className="bis-btn" onClick={loadSuggestions} disabled={loading}>
@@ -2024,7 +2042,7 @@ function Tracker({ cls, spec, charName, initialMode = "", onBack }) {
             </button>
             {sugs && !sugs.error && (
               <button className="bis-btn" onClick={applyAll} style={{ background:"rgba(201,146,42,.15)", borderColor:"var(--gold)", color:"var(--gold-lt)" }}>
-                Apply All to Custom Builder
+                Apply All to Manual Builder
               </button>
             )}
           </div>
@@ -2048,11 +2066,11 @@ function Tracker({ cls, spec, charName, initialMode = "", onBack }) {
           ) : (
             <>
               <div style={{ fontSize:".85rem", color:"var(--parch-dk)", marginBottom:".75rem", lineHeight:1.6 }}>
-                Paste your SimC string below. Character Scan builds a comparison snapshot against your selected target list, so your core <strong style={{ color:"var(--gold-lt)" }}>Wowhead BiS</strong> and <strong style={{ color:"var(--gold-lt)" }}>Custom Builder</strong> saves stay untouched.
+                Paste your SimC string below. Character Scan builds a comparison snapshot against your selected target list, so your core <strong style={{ color:"var(--gold-lt)" }}>Wowhead BiS</strong> and <strong style={{ color:"var(--gold-lt)" }}>Manual Builder</strong> saves stay untouched.
               </div>
               <div style={{ display:"flex", flexWrap:"wrap", gap:".5rem", alignItems:"center", marginBottom:".75rem" }}>
                 <span style={{ fontFamily:"Cinzel,serif", fontSize:".72rem", letterSpacing:".08em", color:"var(--gold)" }}>Compare against:</span>
-                {[{id:"community", label:"Wowhead BiS"},{id:"custom", label:"Custom Builder"}].map(opt => {
+                {[{id:"community", label:"Wowhead BiS"},{id:"custom", label:"Manual Builder"}].map(opt => {
                   const hasData = Object.values(readModeData(opt.id) || {}).some(v => v?.name);
                   return (
                     <button
@@ -2085,7 +2103,7 @@ function Tracker({ cls, spec, charName, initialMode = "", onBack }) {
                 <div style={{ marginTop:".9rem", background:"rgba(0,0,0,.18)", border:"1px solid var(--bdr)", padding:".85rem" }}>
                   <div style={{ display:"flex", justifyContent:"space-between", gap:".75rem", flexWrap:"wrap", marginBottom:".5rem" }}>
                     <div style={{ fontFamily:"Cinzel,serif", fontSize:".72rem", letterSpacing:".08em", color:"var(--gold)" }}>CURRENTLY EQUIPPED SNAPSHOT</div>
-                    <div style={{ fontSize:".76rem", color:"var(--parch-dk)" }}>Compared against <strong style={{ color:"var(--gold-lt)" }}>{simcSummary.targetMode === "custom" ? "Custom Builder" : "Wowhead BiS"}</strong> · <strong style={{ color:"var(--gold-lt)" }}>{simcSummary.matched}</strong> matched</div>
+                    <div style={{ fontSize:".76rem", color:"var(--parch-dk)" }}>Compared against <strong style={{ color:"var(--gold-lt)" }}>{simcSummary.targetMode === "custom" ? "Manual Builder" : "Wowhead BiS"}</strong> · <strong style={{ color:"var(--gold-lt)" }}>{simcSummary.matched}</strong> matched</div>
                   </div>
                   <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit, minmax(220px, 1fr))", gap:".35rem .9rem" }}>
                     {simcSummary.scanned.map(row => (
@@ -2245,16 +2263,24 @@ function Tracker({ cls, spec, charName, initialMode = "", onBack }) {
           } else {
             alert("Could not save this list in your browser.");
           }
-        }}>{bisMode === 'custom' ? 'Save Custom' : bisMode === 'community' ? 'Save Suggested BiS' : 'Save Scan'}</button>
+        }}>{bisMode === 'custom' ? 'Save Manual' : bisMode === 'community' ? 'Save Suggested BiS' : 'Save Scan'}</button>
         <button className="tbtn sec" onClick={() => {
+          const manualData = bisMode === "custom" ? (data || {}) : readModeData("custom");
+          const manualErrors = getManualAddonImportErrors(manualData);
+          if (manualErrors.length) {
+            const preview = manualErrors.slice(0, 12).join("\n");
+            const more = manualErrors.length > 12 ? `\n…and ${manualErrors.length - 12} more.` : "";
+            alert(`Manual Builder needs Item IDs before addon export.\n\n${preview}${more}\n\nPrinting can still use names only, but the in-game addon import needs Item IDs so it tracks the exact items.`);
+            return;
+          }
           const code = exportForAddon();
-          if (!code) { alert("Nothing exportable found yet. Load Suggested BiS and click Apply All, or save at least one real Wowhead or Custom item before exporting."); return; }
+          if (!code) { alert("Nothing exportable found yet. Load Suggested BiS and click Apply All, or save at least one real Wowhead or Manual item before exporting."); return; }
           window.__wowbisExportCode = code;
           const modal = document.createElement("div");
           modal.style.cssText = "position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.85);z-index:9999;display:flex;align-items:center;justify-content:center;";
           const inner = document.createElement("div");
           inner.style.cssText = "background:#150f08;border:1px solid #c9922a;padding:1.5rem;max-width:540px;width:90%;font-family:Cinzel,serif;";
-          inner.innerHTML = `<div style="font-size:.75rem;letter-spacing:.15em;color:#c9922a;margin-bottom:.75rem">EXPORT FOR ADDON</div><div style="font-size:.85rem;color:#c8a96a;margin-bottom:.75rem;font-family:Crimson Pro,serif;line-height:1.6;">Copy this code and paste it into the WoW BiS Tracker addon in-game using the Import BiS button. This export includes all saved addon-compatible BiS lists for this spec. If Wowhead BiS and Custom Builder are both saved, one import will load both into the addon.</div>`;
+          inner.innerHTML = `<div style="font-size:.75rem;letter-spacing:.15em;color:#c9922a;margin-bottom:.75rem">EXPORT FOR ADDON</div><div style="font-size:.85rem;color:#c8a96a;margin-bottom:.75rem;font-family:Crimson Pro,serif;line-height:1.6;">Copy this code and paste it into the WoW BiS Tracker addon in-game using the Import BiS button. Manual Builder exports require Item IDs so the addon can track the exact items instead of guessing from names. If Wowhead BiS and Manual Builder are both saved, one import will load both into the addon.</div>`;
           const ta = document.createElement("textarea");
           ta.readOnly = true;
           ta.value = code;
@@ -2438,7 +2464,7 @@ function splitSaveLabel(charName) {
   return { base, mode };
 }
 function modeNice(m) {
-  return ({ community:"Wowhead", custom:"Custom", simc:"Character Scan", scan:"Scan" }[m] || m);
+  return ({ community:"Wowhead", custom:"Manual", simc:"Character Scan", scan:"Scan" }[m] || m);
 }
 
 const SAVE_REGISTRY_KEY = "wbt-save-registry-v3";
@@ -3139,7 +3165,7 @@ function Home({ onSelectClass, onLoadCharacter }) {
             lead:"Best for planning across characters, printing, and group coordination.",
             bullets:[
               "Track every spec in one browser view",
-              "Use Wowhead BiS, Custom Builder, or Character Scan comparison",
+              "Use Wowhead BiS, Manual Builder, or Character Scan comparison",
               "Print clean farm lists and tracker sheets",
               "Share Group Planner links without needing the addon"
             ],
@@ -3229,7 +3255,7 @@ export default function App() {
           <div className="hero">
             <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit, minmax(190px, 1fr))", gap:"1rem", alignItems:"stretch" }}>
               {[
-                { line1:"Plan your", line2:"farm", sub:"Choose suggested or custom BiS · Print your tracker sheet", scrollId:"select-class" },
+                { line1:"Plan your", line2:"farm", sub:"Choose suggested or manual BiS · Print your tracker sheet", scrollId:"select-class" },
                 { line1:"Prioritize", line2:"together", sub:"See where to go first · Compare overlaps with friends", scrollId:"group-planner" },
                 { line1:"Track", line2:"in-game", sub:"Free addon · Mini overlay", note:"Addon highlights BiS in Vault", scrollId:"vs-addon" },
               ].map(({ line1, line2, sub, note, scrollId }) => (
