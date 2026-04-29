@@ -1243,6 +1243,9 @@ body{font-family:'Crimson Pro',Georgia,serif;font-size:1.05rem;background:var(--
 .sf-name,.sf-src{display:block;width:100%;background:transparent;border:none;outline:none;font-family:'Crimson Pro',serif;color:var(--parch);padding:.42rem .65rem;transition:background .15s}
 .sf-name{font-size:1rem}
 .sf-name:focus{background:rgba(201,146,42,.05)}
+.item-preview-link{display:inline-flex;align-items:center;gap:.25rem;width:max-content;margin:.15rem .65rem .4rem;font-family:'Cinzel',serif;font-size:.58rem;letter-spacing:.06em;text-transform:uppercase;color:var(--gold-lt);text-decoration:none;border-bottom:1px solid rgba(201,146,42,.35)}
+.item-preview-link:hover{color:var(--gold);border-bottom-color:var(--gold)}
+.print-only{display:none}
 .sf-src{font-size:.85rem;color:var(--parch-dk);border-top:1px solid var(--bdr);font-style:italic}
 .sf-src:focus{background:rgba(201,146,42,.03)}
 input::placeholder{color:rgba(240,222,180,.22);font-style:italic}
@@ -1302,6 +1305,7 @@ input::placeholder{color:rgba(240,222,180,.22);font-style:italic}
     --crimson: #000; --void: #000; --ink: #000;
   }
   .hdr, .hero, .bis-bar, .bis-mode-bar, .tactions, .back, .sug-panel, .ftr, .farm-priority-section, .no-print, [data-noprint] { display: none !important; }
+  .print-only { display: inline !important; }
   body, html, .app { background: #fff !important; }
   body { color: #000 !important; }
   * { background: transparent !important; box-shadow: none !important; text-shadow: none !important; clip-path: none !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
@@ -1386,6 +1390,8 @@ async function parseSimC(str) {
       const parts = afterEq.split(",");
       const rawName = parts[0].trim();
       const ilvlPart = parts.find(p => p.trim().startsWith("item_level="));
+      const idPart = parts.find(p => p.trim().startsWith("id="));
+      const detectedId = idPart ? idPart.trim().slice(3) : "";
       const detectedIlvl = ilvlPart ? parseInt(ilvlPart.trim().slice(11)) : null;
       const detectedTrack = detectedIlvl ? (
         detectedIlvl >= 276 ? "Myth" :
@@ -1397,26 +1403,54 @@ async function parseSimC(str) {
         const name = rawName.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase()).trim();
         if (name) {
           result[ourKey] = name;
+          if (detectedId) result[ourKey + "_id"] = detectedId;
+          if (detectedIlvl) result[ourKey + "_ilvl"] = detectedIlvl;
           if (detectedTrack) result[ourKey + "_track"] = detectedTrack;
         }
       } else {
-        const idPart = parts.find(p => p.trim().startsWith("id="));
-        if (idPart) { idLookups.push({ slot: ourKey, id: idPart.trim().slice(3), track: detectedTrack }); }
+        if (idPart) { idLookups.push({ slot: ourKey, id: detectedId, track: detectedTrack, ilvl: detectedIlvl }); }
       }
       break;
     }
   }
   if (idLookups.length > 0) {
-    await Promise.allSettled(idLookups.map(async ({ slot, id }) => {
+    await Promise.allSettled(idLookups.map(async ({ slot, id, track, ilvl }) => {
       try {
         const r = await fetch(`https://nether.wowhead.com/tooltip/item/${id}?json`);
         const j = await r.json();
         if (j.name) { result[slot] = j.name; }
         else result[slot] = `Item #${id}`;
       } catch { result[slot] = `Item #${id}`; }
+      result[slot + "_id"] = id;
+      if (ilvl) result[slot + "_ilvl"] = ilvl;
+      if (track) result[slot + "_track"] = track;
     }));
   }
   return result;
+}
+
+
+function parseSimCCharacter(str) {
+  const lines = str.replace(/\r\n/g, "\n").replace(/\r/g, "\n").split("\n");
+  const summary = {};
+  const classLine = lines.find(line => /^(death_knight|demon_hunter|druid|evoker|hunter|mage|monk|paladin|priest|rogue|shaman|warlock|warrior)=/i.test(line.trim()));
+  if (classLine) {
+    const m = classLine.trim().match(/^([^=]+)=\"?([^\"]+)\"?/);
+    if (m) {
+      summary.classToken = m[1].replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+      summary.character = m[2];
+    }
+  }
+  for (const line of lines) {
+    const trimmed = line.trim();
+    const spec = trimmed.match(/^spec=(.+)$/i);
+    if (spec) summary.spec = spec[1].replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+    const server = trimmed.match(/^server=(.+)$/i);
+    if (server) summary.realm = server[1].replace(/_/g, " ");
+    const region = trimmed.match(/^region=(.+)$/i);
+    if (region) summary.region = region[1].toUpperCase();
+  }
+  return summary;
 }
 
 function normalize(s) {
@@ -1481,12 +1515,106 @@ const manualStatusLabel = (value, idx = 0) => {
   return options.find(opt => opt.value === v)?.label || "Alternative";
 };
 
-function Slot({ label, id, data, onChange, targetTrack, bisMode }) {
+const wowheadItemUrl = (itemId) => itemId ? `https://www.wowhead.com/item=${String(itemId).replace(/[^0-9]/g, "")}` : "";
+
+function ItemPreviewLink({ itemId, name, label = "Preview item" }) {
+  const cleanId = String(itemId || "").replace(/[^0-9]/g, "");
+  if (!cleanId) return null;
+  return (
+    <a
+      className="item-preview-link no-print"
+      href={wowheadItemUrl(cleanId)}
+      data-wowhead={`item=${cleanId}`}
+      target="_blank"
+      rel="noreferrer"
+      title={name ? `Preview ${name}` : "Preview item"}
+    >
+      {label}
+    </a>
+  );
+}
+
+function ItemNameLink({ itemId, name }) {
+  const cleanId = String(itemId || "").replace(/[^0-9]/g, "");
+  if (!name) return null;
+  if (!cleanId) return <span>{name}</span>;
+  return (
+    <>
+      <a
+        className="item-name-link no-print"
+        href={wowheadItemUrl(cleanId)}
+        data-wowhead={`item=${cleanId}`}
+        target="_blank"
+        rel="noreferrer"
+        title={`Preview ${name}`}
+      >
+        {name}
+      </a>
+      <span className="print-only">{name}</span>
+    </>
+  );
+}
+
+function EquippedCompareLine({ target, equipped, bisMode }) {
+  if (!equipped?.name) return null;
+  const equippedId = String(equipped.itemID || equipped.itemId || "").replace(/[^0-9]/g, "");
+  const findManualMatch = () => {
+    const ranks = target?.ranks || [];
+    return ranks.find((r, idx) => {
+      const rankId = String(r?.itemId || r?.itemID || "").replace(/[^0-9]/g, "");
+      if (equippedId && rankId && equippedId === rankId) return true;
+      return r?.name && isBiSMatch(equipped.name, r.name);
+    });
+  };
+  const match = bisMode === "custom" ? findManualMatch() : null;
+  const directMatch = bisMode !== "custom" && target?.name && isBiSMatch(equipped.name, target.name);
+  let status = "Different item equipped";
+  if (bisMode === "custom" && match) {
+    const idx = (target.ranks || []).indexOf(match);
+    const statusValue = idx === 0 ? "best" : (match.status || DEFAULT_MANUAL_STATUS[idx] || "alt");
+    status = statusValue === "best" ? "Counts as BiS equipped" : statusValue === "equivalent" ? "Equivalent equipped" : statusValue === "strong" ? "Strong Alternative equipped" : "Alternative equipped";
+  } else if (directMatch) {
+    status = "Target equipped";
+  }
+  return (
+    <div className="equipped-compare no-print">
+      <span className="eq-label">Equipped:</span>{" "}
+      <ItemNameLink itemId={equippedId} name={equipped.name} />
+      {equipped.ilvl ? <span className="eq-muted"> · ilvl {equipped.ilvl}</span> : null}
+      {equipped.track ? <span className="eq-muted"> · {equipped.track}</span> : null}
+      <span className={status.includes("Different") ? "eq-status diff" : "eq-status match"}>{status}</span>
+    </div>
+  );
+}
+
+function Slot({ label, id, data, onChange, targetTrack, bisMode, equipped }) {
   const d = data[id] || {};
   const up = (f, v) => onChange(id, { ...d, [f]: v });
   const track = d.track || "";
   const softBisSlot = d.done && track && targetTrack &&
     GLOBAL_TRACK_ORDER.indexOf(track) < GLOBAL_TRACK_ORDER.indexOf(targetTrack);
+
+  if (bisMode === "simc") {
+    return (
+      <div className="slot-wrap snapshot-slot">
+        <div className="slot-lbl">{label}</div>
+        <div className="snapshot-entry">
+          {d.name ? (
+            <>
+              <div className="snapshot-item"><ItemNameLink itemId={d.itemID || d.itemId} name={d.name} /></div>
+              <div className="snapshot-meta">
+                {d.itemID || d.itemId ? <span>ID {d.itemID || d.itemId}</span> : null}
+                {d.ilvl ? <span>ilvl {d.ilvl}</span> : null}
+                {d.track ? <span>{d.track}</span> : null}
+              </div>
+            </>
+          ) : (
+            <div className="snapshot-empty">Empty or unused</div>
+          )}
+        </div>
+      </div>
+    );
+  }
 
   if (bisMode === "custom") {
     const ranks = d.ranks || [{name:"",src:""},{name:"",src:""},{name:"",src:""}];
@@ -1547,6 +1675,7 @@ function Slot({ label, id, data, onChange, targetTrack, bisMode }) {
                 </select>
                 <input className="sf-src" style={{ gridColumn:"1 / span 2" }} list={`src-list-${id}-${idx}`} placeholder="" value={r.src || ""} onChange={e => upRank(idx, "src", e.target.value)} />
                 <input className="sf-src no-print" style={{ gridColumn:"1 / span 2" }} inputMode="numeric" placeholder="Item ID required for addon import" value={r.itemId || ""} onChange={e => upRank(idx, "itemId", e.target.value.replace(/[^0-9]/g, ""))} />
+                {r.itemId && <div className="no-print" style={{ gridColumn:"1 / span 2", marginTop:"-.15rem" }}><ItemPreviewLink itemId={r.itemId} name={r.name} /></div>}
                 {idx === 0 ? (
                   <div className="sf-src no-print" style={{ gridColumn:"1 / span 2", opacity:.9, display:"flex", alignItems:"center", minHeight:"2.1rem" }}>Counts as BiS</div>
                 ) : (
@@ -1563,6 +1692,7 @@ function Slot({ label, id, data, onChange, targetTrack, bisMode }) {
             </div>
           </div>
         ))}
+        <EquippedCompareLine target={d} equipped={equipped} bisMode={bisMode} />
         {d.name && (
           <div className="custom-track-row" style={{ display:"flex", gap:".25rem", padding:".2rem .4rem", background:"rgba(0,0,0,.15)", border:"1px solid var(--bdr)", borderTop:"none" }}>
             <span style={{ fontFamily:"Cinzel,serif", fontSize:".58rem", color:"var(--parch-dk)", alignSelf:"center", letterSpacing:".06em" }}>TRACK:</span>
@@ -1585,7 +1715,9 @@ function Slot({ label, id, data, onChange, targetTrack, bisMode }) {
       <div className="slot-entry">
         <div className="slot-fields">
           <input className="sf-name" placeholder="Item name..." value={d.name || ""} onChange={e => up("name", e.target.value)} />
+          {(d.itemID || d.itemId) && <ItemPreviewLink itemId={d.itemID || d.itemId} name={d.name} />}
           <input className="sf-src" placeholder="Source — Raid / Dungeon / Crafted..." value={d.src || ""} onChange={e => up("src", e.target.value)} />
+          <EquippedCompareLine target={d} equipped={equipped} bisMode={bisMode} />
           <div className="slot-track-row" style={{ display:"flex", gap:".25rem", padding:".2rem .5rem", borderTop:"1px solid var(--bdr)", background:"rgba(0,0,0,.15)" }}>
             {TRACKS.filter(t => t).map(t => (
               <button key={t} data-selected={track === t ? "true" : "false"} onClick={() => up("track", track === t ? "" : t)} style={{ fontFamily:"Cinzel,serif", fontSize:".6rem", letterSpacing:".05em", padding:".12rem .45rem", background: track === t ? TRACK_COLOR[t] : "transparent", border:`1px solid ${track === t ? TRACK_COLOR[t] : "var(--bdr2)"}`, color: track === t ? "#fff" : "var(--parch-dk)", fontWeight: track === t ? 700 : 400, cursor:"pointer", transition:"all .12s", filter: track === t ? "brightness(0.72)" : "none", textShadow: track === t ? "0 1px 2px rgba(0,0,0,.5)" : "none" }}>
@@ -1608,9 +1740,19 @@ function Slot({ label, id, data, onChange, targetTrack, bisMode }) {
 }
 
 function Tracker({ cls, spec, charName, initialMode = "", onBack }) {
+  useEffect(() => {
+    if (typeof document === "undefined") return;
+    if (document.getElementById("wowhead-tooltips")) return;
+    const script = document.createElement("script");
+    script.id = "wowhead-tooltips";
+    script.src = "https://wow.zamimg.com/widgets/power.js";
+    script.async = true;
+    document.body.appendChild(script);
+  }, []);
+
   const storageKey = `bis-${cls.id}-${spec.id}-${charName || "default"}`;
   const modeStorageKey = (mode) => `${storageKey}-${mode}`;
-  const modeLabel = (mode) => mode === "custom" ? "Manual Builder" : mode === "community" ? "Wowhead BiS" : "Character Scan";
+  const modeLabel = (mode) => mode === "custom" ? "Manual Builder" : mode === "community" ? "Wowhead BiS" : "Equipped Snapshot";
   const isPlaceholderName = (name) => {
     const n = (name || "").trim();
     return !n || /^x+$/i.test(n) || /^unknown$/i.test(n);
@@ -1910,6 +2052,10 @@ function Tracker({ cls, spec, charName, initialMode = "", onBack }) {
   const acquired  = allSlotIds.filter(id => meetsTarget(data[id]));
   const softAcq   = allSlotIds.filter(id => softBis(data[id]));
   const pct       = allSlotIds.length ? Math.round(acquired.length / allSlotIds.length * 100) : 0;
+  const snapshotMode = bisMode === "simc";
+  const capturedPct = allSlotIds.length ? Math.round(filled.length / allSlotIds.length * 100) : 0;
+  const progressPct = snapshotMode ? capturedPct : pct;
+  const equippedData = snapshotMode ? {} : readModeData("simc");
 
   const farmPriority = () => {
     const needed = {};
@@ -1941,10 +2087,10 @@ function Tracker({ cls, spec, charName, initialMode = "", onBack }) {
           <div className="ib" key={l}><span className="ib-l">{l}</span><span className="ib-v">{v}</span></div>
         ))}
         <div className="ib">
-          <span className="ib-l">True BiS ({targetTrack})</span>
-          <span className="ib-v">{acquired.length}/{allSlotIds.length} · {pct}%</span>
+          <span className="ib-l">{snapshotMode ? "Equipped Snapshot" : `True BiS (${targetTrack})`}</span>
+          <span className="ib-v">{snapshotMode ? `${filled.length}/${allSlotIds.length} captured` : `${acquired.length}/${allSlotIds.length} · ${pct}%`}</span>
         </div>
-        {softAcq.length > 0 && (
+        {!snapshotMode && softAcq.length > 0 && (
           <div className="ib">
             <span className="ib-l" style={{ color:"#e8b84b" }}>Soft BiS</span>
             <span className="ib-v" style={{ color:"#e8b84b" }}>{softAcq.length} upgrading</span>
@@ -1954,23 +2100,36 @@ function Tracker({ cls, spec, charName, initialMode = "", onBack }) {
 
       {filled.length > 0 && (
         <div className="farm-priority-section no-print" style={{ background:"var(--panel)", border:"1px solid var(--bdr)", marginBottom:".75rem" }}>
-          <div style={{ display:"flex", alignItems:"center", gap:".75rem", padding:".6rem .75rem", borderBottom: showPriority ? "1px solid var(--bdr)" : "none" }}>
+          <div style={{ display:"flex", alignItems:"center", gap:".75rem", padding:".6rem .75rem", borderBottom: (!snapshotMode && showPriority) ? "1px solid var(--bdr)" : "none" }}>
             <div style={{ flex:1 }}>
               <div style={{ display:"flex", alignItems:"center", gap:".6rem", marginBottom:".3rem", flexWrap:"wrap" }}>
-                <span style={{ fontFamily:"Cinzel,serif", fontSize:".72rem", letterSpacing:".12em", color:"var(--gold)" }}>FARM PRIORITY</span>
-                <span style={{ fontSize:".72rem", color:"var(--parch-dk)", fontStyle:"italic" }}>know exactly what to run this week</span>
-                <div style={{ display:"flex", gap:".25rem", marginLeft:"auto" }}>
-                  <span style={{ fontSize:".65rem", color:"var(--parch-dk)", alignSelf:"center" }}>Target:</span>
-                  {["Veteran","Champion","Hero","Myth"].map(t => (
-                    <button key={t} onClick={() => { setTargetTrack(t); try { localStorage.setItem(`target-track-${storageKey}`, t); } catch {} }} style={{ fontFamily:"Cinzel,serif", fontSize:".6rem", letterSpacing:".03em", padding:".1rem .35rem", background: targetTrack === t ? TRACK_COLOR[t] : "transparent", border:`1px solid ${targetTrack === t ? TRACK_COLOR[t] : "var(--bdr2)"}`, color: targetTrack === t ? "#fff" : "var(--parch-dk)", cursor:"pointer", filter: targetTrack === t ? "brightness(0.75)" : "none", transition:"all .12s" }}>{t}</button>
-                  ))}
+                <span style={{ fontFamily:"Cinzel,serif", fontSize:".72rem", letterSpacing:".12em", color:"var(--gold)" }}>{snapshotMode ? "EQUIPPED SNAPSHOT" : "FARM PRIORITY"}</span>
+                <span style={{ fontSize:".72rem", color:"var(--parch-dk)", fontStyle:"italic" }}>{snapshotMode ? "what this character is wearing right now" : "know exactly what to run this week"}</span>
+                {!snapshotMode && (
+                  <div style={{ display:"flex", gap:".25rem", marginLeft:"auto" }}>
+                    <span style={{ fontSize:".65rem", color:"var(--parch-dk)", alignSelf:"center" }}>Target:</span>
+                    {["Veteran","Champion","Hero","Myth"].map(t => (
+                      <button key={t} onClick={() => { setTargetTrack(t); try { localStorage.setItem(`target-track-${storageKey}`, t); } catch {} }} style={{ fontFamily:"Cinzel,serif", fontSize:".6rem", letterSpacing:".03em", padding:".1rem .35rem", background: targetTrack === t ? TRACK_COLOR[t] : "transparent", border:`1px solid ${targetTrack === t ? TRACK_COLOR[t] : "var(--bdr2)"}`, color: targetTrack === t ? "#fff" : "var(--parch-dk)", cursor:"pointer", filter: targetTrack === t ? "brightness(0.75)" : "none", transition:"all .12s" }}>{t}</button>
+                    ))}
+                  </div>
+                )}
+              </div>
+              {snapshotMode ? (
+                <div style={{ border:"1px solid var(--bdr2)", background:"rgba(0,0,0,.16)", padding:".45rem .55rem", fontSize:".74rem", color:"var(--parch-dk)", lineHeight:1.55 }}>
+                  <strong style={{ color:"var(--gold-lt)" }}>{filled.length}</strong> equipped item{filled.length !== 1 ? "s" : ""} captured.
+                  <span style={{ marginLeft:".35rem" }}>{Math.max(allSlotIds.length - filled.length, 0)} empty or unused slot{Math.max(allSlotIds.length - filled.length, 0) !== 1 ? "s" : ""}.</span>
+                  <div style={{ fontSize:".68rem", marginTop:".2rem", fontStyle:"italic" }}>Snapshot is a mirror, not a BiS score. Use Wowhead BiS or Manual Builder to compare targets against this equipped gear.</div>
                 </div>
-              </div>
-              <div style={{ background:"var(--bdr)", height:"5px", position:"relative", borderRadius:"0" }}>
-                <div style={{ position:"absolute", left:0, top:0, height:"100%", width:`${pct}%`, background:`hsl(${pct * 1.2},65%,50%)`, transition:"width .4s" }} />
-              </div>
-              <div style={{ fontSize:".7rem", color:"var(--parch-dk)", marginTop:".25rem" }}>{acquired.length} of {allSlotIds.length} BiS slots acquired · {pct}%</div>
+              ) : (
+                <>
+                  <div style={{ background:"var(--bdr)", height:"5px", position:"relative", borderRadius:"0" }}>
+                    <div style={{ position:"absolute", left:0, top:0, height:"100%", width:`${progressPct}%`, background:`hsl(${progressPct * 1.2},65%,50%)`, transition:"width .4s" }} />
+                  </div>
+                  <div style={{ fontSize:".7rem", color:"var(--parch-dk)", marginTop:".25rem" }}>{`${acquired.length} of ${allSlotIds.length} BiS slots acquired · ${pct}%`}</div>
+                </>
+              )}
             </div>
+            {!snapshotMode && (
             <div style={{ display:"flex", gap:".4rem", flexShrink:0 }}>
               <button onClick={() => setShowPriority(p => !p)} style={{ fontFamily:"Cinzel,serif", fontSize:".72rem", letterSpacing:".06em", padding:".35rem .85rem", background: showPriority ? "var(--gold)" : "transparent", border:"1px solid var(--gold)", color: showPriority ? "var(--ink)" : "var(--gold)", cursor:"pointer", transition:"all .15s" }}>
                 {showPriority ? "▲ Hide" : "▼ Show"}
@@ -1991,8 +2150,9 @@ function Tracker({ cls, spec, charName, initialMode = "", onBack }) {
                 👥 Plan with group
               </button>
             </div>
+            )}
           </div>
-          {showPriority && (
+          {!snapshotMode && showPriority && (
             <div style={{ padding:".75rem" }}>
               {farmPriority().length === 0 ? (
                 <div style={{ fontSize:".88rem", color:"var(--gold-lt)", fontStyle:"italic", textAlign:"center", padding:".5rem" }}>🎉 All BiS items acquired!</div>
@@ -2024,7 +2184,7 @@ function Tracker({ cls, spec, charName, initialMode = "", onBack }) {
         </button>
         <div className="bis-mode-divider" />
         <button className={"bis-mode-btn" + (bisMode === "simc" ? " active" : "")} onClick={() => switchBisMode("simc")}>
-          Character Scan
+          Equipped Snapshot
         </button>
         <div className="bis-mode-divider" />
         <button className={"bis-mode-btn" + (bisMode === "custom" ? " active" : "")} onClick={() => switchBisMode("custom")}>
@@ -2053,8 +2213,8 @@ function Tracker({ cls, spec, charName, initialMode = "", onBack }) {
 
       {bisMode === "simc" && (
         <div className="bis-bar no-print">
-          <span className="bis-txt">✦ Compare your currently equipped gear against a target list without changing your Wowhead or Manual Builder saves</span>
-          <button className="bis-btn" onClick={() => setShowSimC(s => !s)} style={{ background:"rgba(201,146,42,.15)", borderColor:"var(--gold)", color:"var(--gold-lt)" }}>📋 {showSimC ? "Close" : "Open SimC Scanner"}</button>
+          <span className="bis-txt">✦ Save a snapshot of what your character is wearing without changing your Wowhead or Manual Builder saves</span>
+          <button className="bis-btn" onClick={() => setShowSimC(s => !s)} style={{ background:"rgba(201,146,42,.15)", borderColor:"var(--gold)", color:"var(--gold-lt)" }}>📋 {showSimC ? "Close" : "Open Snapshot Tool"}</button>
         </div>
       )}
 
@@ -2062,7 +2222,7 @@ function Tracker({ cls, spec, charName, initialMode = "", onBack }) {
         <div className="bis-bar" style={{ flexDirection:"column", alignItems:"flex-start", gap:".3rem" }}>
           <span className="bis-txt" style={{ fontFamily:"Cinzel,serif", letterSpacing:".1em" }}>✦ Manual BiS Builder</span>
           <span style={{ fontSize:".8rem", color:"var(--parch-dk)", fontStyle:"italic" }}>
-            Build your own ranked list — up to 3 options per slot. Wowhead BiS, Character Scan, and Manual Builder now live under one character card with separate mode saves. Tip: click <strong style={{color:"var(--gold-lt)"}}>Load Suggested BiS → Apply All</strong> first to pre-fill a base list, then override individual slots with your own research. For manual sources, use clear labels like <strong style={{color:"var(--gold-lt)"}}>Raid</strong>, <strong style={{color:"var(--gold-lt)"}}>Dungeon</strong>, <strong style={{color:"var(--gold-lt)"}}>Delves</strong>, <strong style={{color:"var(--gold-lt)"}}>World Quests</strong>, <strong style={{color:"var(--gold-lt)"}}>Renown</strong>, <strong style={{color:"var(--gold-lt)"}}>Prey</strong>, <strong style={{color:"var(--gold-lt)"}}>Crafted</strong>, or <strong style={{color:"var(--gold-lt)"}}>PvP</strong>. Export now includes all saved addon-compatible BiS lists for this spec.
+            Build your own ranked list — up to 3 options per slot. Wowhead BiS, Equipped Snapshot, and Manual Builder now live under one character card with separate mode saves. Tip: click <strong style={{color:"var(--gold-lt)"}}>Load Suggested BiS → Apply All</strong> first to pre-fill a base list, then override individual slots with your own research. For manual sources, use clear labels like <strong style={{color:"var(--gold-lt)"}}>Raid</strong>, <strong style={{color:"var(--gold-lt)"}}>Dungeon</strong>, <strong style={{color:"var(--gold-lt)"}}>Delves</strong>, <strong style={{color:"var(--gold-lt)"}}>World Quests</strong>, <strong style={{color:"var(--gold-lt)"}}>Renown</strong>, <strong style={{color:"var(--gold-lt)"}}>Prey</strong>, <strong style={{color:"var(--gold-lt)"}}>Crafted</strong>, or <strong style={{color:"var(--gold-lt)"}}>PvP</strong>. Export now includes all saved addon-compatible BiS lists for this spec.
           </span>
           <div style={{ display:"flex", gap:".5rem", flexWrap:"wrap" }}>
             <button className="bis-btn" onClick={loadSuggestions} disabled={loading}>
@@ -2080,21 +2240,10 @@ function Tracker({ cls, spec, charName, initialMode = "", onBack }) {
 
       {bisMode === "simc" && showSimC && (
         <div className="no-print" style={{ background:"var(--panel)", border:"1px solid var(--bdr)", padding:"1rem", marginBottom:".75rem" }}>
-          <div style={{ fontFamily:"Cinzel,serif", fontSize:".78rem", letterSpacing:".1em", color:"var(--gold)", marginBottom:".5rem" }}>SCAN YOUR CHARACTER</div>
-          {!Object.values(data).some(d => d?.name) ? (
-            <div style={{ background:"rgba(201,146,42,.08)", border:"1px solid var(--bdr2)", padding:".75rem", fontSize:".88rem", color:"var(--parch-dk)" }}>
-              <div style={{ marginBottom:".5rem" }}>⚠ Load your BiS list first, then come back here to scan your character.</div>
-              <div style={{ display:"flex", gap:".5rem", flexWrap:"wrap" }}>
-                <button className="tbtn sec" style={{ fontSize:".75rem", padding:".3rem .8rem" }} onClick={() => { setShowSimC(false); loadSuggestions(); }}>
-                  1. Load BiS Suggestions
-                </button>
-                <span style={{ alignSelf:"center", opacity:.5, fontSize:".85rem" }}>→ then click Apply All → then return here</span>
-              </div>
-            </div>
-          ) : (
-            <>
+          <div style={{ fontFamily:"Cinzel,serif", fontSize:".78rem", letterSpacing:".1em", color:"var(--gold)", marginBottom:".5rem" }}>EQUIPPED SNAPSHOT</div>
+                      <>
               <div style={{ fontSize:".85rem", color:"var(--parch-dk)", marginBottom:".75rem", lineHeight:1.6 }}>
-                Paste your SimC string below. Character Scan builds a comparison snapshot against your selected target list, so your core <strong style={{ color:"var(--gold-lt)" }}>Wowhead BiS</strong> and <strong style={{ color:"var(--gold-lt)" }}>Manual Builder</strong> saves stay untouched.
+                Paste your SimC string below. Equipped Snapshot saves what your character is wearing as its own snapshot, so your core <strong style={{ color:"var(--gold-lt)" }}>Wowhead BiS</strong> and <strong style={{ color:"var(--gold-lt)" }}>Manual Builder</strong> saves stay untouched.
               </div>
               <div style={{ display:"flex", flexWrap:"wrap", gap:".5rem", alignItems:"center", marginBottom:".75rem" }}>
                 <span style={{ fontFamily:"Cinzel,serif", fontSize:".72rem", letterSpacing:".08em", color:"var(--gold)" }}>Compare against:</span>
@@ -2131,13 +2280,17 @@ function Tracker({ cls, spec, charName, initialMode = "", onBack }) {
                 <div style={{ marginTop:".9rem", background:"rgba(0,0,0,.18)", border:"1px solid var(--bdr)", padding:".85rem" }}>
                   <div style={{ display:"flex", justifyContent:"space-between", gap:".75rem", flexWrap:"wrap", marginBottom:".5rem" }}>
                     <div style={{ fontFamily:"Cinzel,serif", fontSize:".72rem", letterSpacing:".08em", color:"var(--gold)" }}>CURRENTLY EQUIPPED SNAPSHOT</div>
-                    <div style={{ fontSize:".76rem", color:"var(--parch-dk)" }}>Compared against <strong style={{ color:"var(--gold-lt)" }}>{simcSummary.targetMode === "custom" ? "Manual Builder" : "Wowhead BiS"}</strong> · <strong style={{ color:"var(--gold-lt)" }}>{simcSummary.matched}</strong> matched</div>
+                    <div style={{ fontSize:".76rem", color:"var(--parch-dk)" }}>
+                      {simcSummary.character ? <><strong style={{ color:"var(--gold-lt)" }}>{simcSummary.character}</strong>{simcSummary.realm ? ` · ${simcSummary.realm}` : ""} · </> : null}
+                      Compared against <strong style={{ color:"var(--gold-lt)" }}>{simcSummary.targetMode === "custom" ? "Manual Builder" : "Wowhead BiS"}</strong> · <strong style={{ color:"var(--gold-lt)" }}>{simcSummary.matched}</strong> matched
+                    </div>
                   </div>
                   <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit, minmax(220px, 1fr))", gap:".35rem .9rem" }}>
                     {simcSummary.scanned.map(row => (
                       <div key={row.slot} style={{ fontSize:".78rem", color:"var(--parch-dk)", lineHeight:1.5 }}>
                         <strong style={{ color:"var(--gold-lt)", fontFamily:"Cinzel,serif", fontSize:".68rem", letterSpacing:".06em" }}>{SLOT_LABELS[row.slot] || row.slot}</strong>
-                        <div style={{ color:"var(--parch)" }}>{row.name || "Unknown"}{row.track ? <span style={{ color:"var(--parch-dk)" }}> · {row.track}</span> : null}</div>
+                        <div style={{ color:"var(--parch)" }}><span>{row.name || "Unknown"}</span>{row.itemID ? <span style={{ color:"var(--parch-dk)" }}> · ID {row.itemID}</span> : null}{row.ilvl ? <span style={{ color:"var(--parch-dk)" }}> · ilvl {row.ilvl}</span> : null}{row.track ? <span style={{ color:"var(--parch-dk)" }}> · {row.track}</span> : null}{row.itemID ? <ItemPreviewLink itemId={row.itemID} name={row.name} label="Wowhead" /> : null}</div>
+                        {row.targetName ? <div style={{ color: row.matched ? "#7CFC98" : "var(--parch-dk)", fontSize:".74rem" }}>{row.matched ? "Matches" : "Target"}: {row.targetName}</div> : null}
                       </div>
                     ))}
                   </div>
@@ -2146,38 +2299,63 @@ function Tracker({ cls, spec, charName, initialMode = "", onBack }) {
                 <button className="tbtn pri" onClick={async () => {
                   if (!simcStr.trim()) { alert("Paste your SimC string first."); return; }
                   const worn = await parseSimC(simcStr);
-                  if (!Object.keys(worn).length) { alert("No gear slots found. Make sure you copied the full SimC string from the SimulationCraft addon in-game (not a sim result). It should contain lines like: head=item_name,id=12345"); return; }
-                  const vaultItems = parseSimCVaultItems(simcStr);
+                  const wornSlots = Object.keys(worn).filter(k => !k.endsWith("_track") && !k.endsWith("_id") && !k.endsWith("_ilvl"));
+                  if (!wornSlots.length) { alert("No gear slots found. Make sure you copied the full SimC string from the SimulationCraft addon in-game (not a sim result). It should contain lines like: head=item_name,id=12345"); return; }
+                  const meta = parseSimCCharacter(simcStr);
+                  const targetData = readModeData(scanTargetMode);
+                  const snapshot = {};
                   let matched = 0;
-                  setData(prev => {
-                    const next = { ...prev };
-                    Object.entries(worn).forEach(([slot, wornName]) => {
-                      if (next[slot]?.name && isBiSMatch(wornName, next[slot].name)) {
-                        const detectedTrack = worn[slot + "_track"] || null;
-                        next[slot] = { ...next[slot], done: true, ...(detectedTrack ? { track: detectedTrack } : {}) };
-                        matched++;
+                  wornSlots.forEach(slot => {
+                    const wornName = worn[slot];
+                    const targetName = targetData?.[slot]?.name || "";
+                    const isMatch = targetName && isBiSMatch(wornName, targetName);
+                    if (isMatch) matched++;
+                    snapshot[slot] = {
+                      name: wornName,
+                      itemID: worn[slot + "_id"] || "",
+                      ilvl: worn[slot + "_ilvl"] || null,
+                      track: worn[slot + "_track"] || null,
+                      src: "Equipped Snapshot",
+                      done: true,
+                      snapshot: true,
+                      targetName,
+                      targetMode: scanTargetMode,
+                      matched: !!isMatch,
+                    };
+                  });
+                  writeModeData("simc", snapshot);
+                  setData(snapshot);
+                  setBisMode("simc");
+                  try { localStorage.setItem(`bismode-${storageKey}`, "simc"); } catch {}
+                  const scanned = wornSlots.map(slot => ({
+                    slot,
+                    name: worn[slot],
+                    itemID: worn[slot + "_id"] || "",
+                    ilvl: worn[slot + "_ilvl"] || null,
+                    track: worn[slot + "_track"] || null,
+                    targetName: targetData?.[slot]?.name || "",
+                    matched: !!(targetData?.[slot]?.name && isBiSMatch(worn[slot], targetData[slot].name)),
+                  }));
+                  const summary = { ...meta, targetMode: scanTargetMode, matched, scanned, savedAt: new Date().toISOString() };
+                  setSimcSummary(summary);
+                  try { localStorage.setItem(`simc-summary-${storageKey}`, JSON.stringify(summary)); } catch {}
+                  const vaultItems = parseSimCVaultItems(simcStr);
+                  const vaultHits = [];
+                  vaultItems.forEach(vi => {
+                    Object.entries(targetData || {}).forEach(([slot, slotData]) => {
+                      if (slotData?.name && isBiSMatch(vi.name, slotData.name)) {
+                        vaultHits.push({ slot: SLOT_LABELS[slot] || slot, name: vi.name, ilvl: vi.ilvl, track: vi.track });
                       }
                     });
-                    try { localStorage.setItem(modeStorageKey(bisMode), JSON.stringify(next)); } catch {}
-                    return next;
-                  });
-                  const vaultHits = [];
-                  setData(current => {
-                    vaultItems.forEach(vi => {
-                      Object.entries(current).forEach(([slot, slotData]) => {
-                        if (slotData?.name && isBiSMatch(vi.name, slotData.name) && !slotData.done) {
-                          vaultHits.push({ slot: SLOT_LABELS[slot] || slot, name: vi.name, ilvl: vi.ilvl, track: vi.track });
-                        }
-                      });
-                    });
-                    return current;
                   });
                   setVaultMatches(vaultHits);
                   setShowSimC(false);
                   setSimcStr("");
-                  const vaultMsg = vaultHits.length > 0 ? `\n\n🎁 Great Vault: ${vaultHits.length} BiS item${vaultHits.length !== 1 ? "s" : ""} in your vault this week!` : "";
-                  setTimeout(() => alert(`Scan complete! ${matched} BiS item${matched !== 1 ? "s" : ""} found on your character and checked off.${vaultMsg}`), 100);
-                }}>⚔ Scan My Character</button>
+                  const vaultMsg = vaultHits.length > 0 ? `
+
+🎁 Great Vault: ${vaultHits.length} target item${vaultHits.length !== 1 ? "s" : ""} found in your vault this week.` : "";
+                  setTimeout(() => alert(`Snapshot saved! ${wornSlots.length} equipped item${wornSlots.length !== 1 ? "s" : ""} saved. ${matched} matched your selected target list.${vaultMsg}`), 100);
+                }}>⚔ Save Equipped Snapshot</button>
                 <button onClick={() => { setShowSimC(false); setSimcStr(""); }} style={{ fontFamily:"Cinzel,serif", fontSize:".72rem", letterSpacing:".06em", padding:".35rem .8rem", background:"transparent", border:"1px solid var(--bdr2)", color:"var(--parch-dk)", cursor:"pointer" }}>Cancel</button>
               </div>
               <div style={{ fontSize:".73rem", color:"var(--parch-dk)", marginTop:".6rem", lineHeight:1.6 }}>
@@ -2192,7 +2370,6 @@ function Tracker({ cls, spec, charName, initialMode = "", onBack }) {
                 </span>
               </div>
             </>
-          )}
         </div>
       )}
 
@@ -2217,8 +2394,8 @@ function Tracker({ cls, spec, charName, initialMode = "", onBack }) {
       <div className="gear-grid">
         {LEFT_SLOTS.map((ls, i) => (
           <div key={ls.id} style={{ display:"contents" }}>
-            <Slot label={ls.name} id={ls.id} data={data} onChange={upSlot} targetTrack={targetTrack} bisMode={bisMode} />
-            {RIGHT_SLOTS[i] && <Slot label={RIGHT_SLOTS[i].name} id={RIGHT_SLOTS[i].id} data={data} onChange={upSlot} targetTrack={targetTrack} bisMode={bisMode} />}
+            <Slot label={ls.name} id={ls.id} data={data} onChange={upSlot} targetTrack={targetTrack} bisMode={bisMode} equipped={equippedData[ls.id]} />
+            {RIGHT_SLOTS[i] && <Slot label={RIGHT_SLOTS[i].name} id={RIGHT_SLOTS[i].id} data={data} onChange={upSlot} targetTrack={targetTrack} bisMode={bisMode} equipped={equippedData[RIGHT_SLOTS[i].id]} />}
           </div>
         ))}
       </div>
@@ -2232,15 +2409,15 @@ function Tracker({ cls, spec, charName, initialMode = "", onBack }) {
         </div>
       )}
       <div className="gear-grid">
-        {(can2h && (!can1h || wMode === "2h")) && <Slot label="2H Weapon" id="weapon2h" data={data} onChange={upSlot} targetTrack={targetTrack} bisMode={bisMode} />}
-        {(can1h && (!can2h || wMode === "1h")) && <Slot label="Main Hand" id="mainhand" data={data} onChange={upSlot} targetTrack={targetTrack} bisMode={bisMode} />}
-        {(can1h && (!can2h || wMode === "1h")) && <Slot label="Off Hand" id="offhand" data={data} onChange={upSlot} targetTrack={targetTrack} bisMode={bisMode} />}
+        {(can2h && (!can1h || wMode === "2h")) && <Slot label="2H Weapon" id="weapon2h" data={data} onChange={upSlot} targetTrack={targetTrack} bisMode={bisMode} equipped={equippedData.weapon2h} />}
+        {(can1h && (!can2h || wMode === "1h")) && <Slot label="Main Hand" id="mainhand" data={data} onChange={upSlot} targetTrack={targetTrack} bisMode={bisMode} equipped={equippedData.mainhand} />}
+        {(can1h && (!can2h || wMode === "1h")) && <Slot label="Off Hand" id="offhand" data={data} onChange={upSlot} targetTrack={targetTrack} bisMode={bisMode} equipped={equippedData.offhand} />}
       </div>
 
       <div className="sub-sh">Trinkets</div>
       <div className="gear-grid">
-        <Slot label="Trinket 1" id="trinket1" data={data} onChange={upSlot} targetTrack={targetTrack} bisMode={bisMode} />
-        <Slot label="Trinket 2" id="trinket2" data={data} onChange={upSlot} targetTrack={targetTrack} bisMode={bisMode} />
+        <Slot label="Trinket 1" id="trinket1" data={data} onChange={upSlot} targetTrack={targetTrack} bisMode={bisMode} equipped={equippedData.trinket1} />
+        <Slot label="Trinket 2" id="trinket2" data={data} onChange={upSlot} targetTrack={targetTrack} bisMode={bisMode} equipped={equippedData.trinket2} />
       </div>
 
       {sugs && (
@@ -2291,7 +2468,7 @@ function Tracker({ cls, spec, charName, initialMode = "", onBack }) {
           } else {
             alert("Could not save this list in your browser.");
           }
-        }}>{bisMode === 'custom' ? 'Save Manual' : bisMode === 'community' ? 'Save Suggested BiS' : 'Save Scan'}</button>
+        }}>{bisMode === 'custom' ? 'Save Manual' : bisMode === 'community' ? 'Save Suggested BiS' : 'Save Snapshot'}</button>
         <button className="tbtn sec" onClick={() => {
           const manualData = bisMode === "custom" ? (data || {}) : readModeData("custom");
           const manualErrors = getManualAddonImportErrors(manualData);
@@ -2492,7 +2669,7 @@ function splitSaveLabel(charName) {
   return { base, mode };
 }
 function modeNice(m) {
-  return ({ community:"Wowhead", custom:"Manual", simc:"Character Scan", scan:"Scan" }[m] || m);
+  return ({ community:"Wowhead", custom:"Manual", simc:"Equipped Snapshot", scan:"Snapshot" }[m] || m);
 }
 
 const SAVE_REGISTRY_KEY = "wbt-save-registry-v3";
@@ -3193,7 +3370,7 @@ function Home({ onSelectClass, onLoadCharacter }) {
             lead:"Best for planning across characters, printing, and group coordination.",
             bullets:[
               "Track every spec in one browser view",
-              "Use Wowhead BiS, Manual Builder, or Character Scan comparison",
+              "Use Wowhead BiS, Manual Builder, or Equipped Snapshot comparison",
               "Print clean farm lists and tracker sheets",
               "Share Group Planner links without needing the addon"
             ],
