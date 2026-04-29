@@ -1,2 +1,3 @@
-# itemName|sourceType|sourceLabel|sourceId
-# Thunderfury, Blessed Blade of the Windseeker|Other|API smoke test|test
+# itemName|sourceType|sourceLabel|sourceId|bossName|raidName|dungeonName
+# Legacy catch-all file. Prefer exact item IDs whenever possible.
+# Thunderfury, Blessed Blade of the Windseeker|Other|API smoke test|test||||

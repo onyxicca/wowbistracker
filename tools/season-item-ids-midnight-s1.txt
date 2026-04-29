@@ -1,2 +1,3 @@
-# itemId|sourceType|sourceLabel|sourceId
-19019|Other|API smoke test|test
+# itemId|sourceType|sourceLabel|sourceId|bossName|raidName|dungeonName
+# Legacy catch-all file. Prefer tools/sources/*.txt for new rows.
+# 19019|Other|API smoke test|test||||
