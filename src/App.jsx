@@ -1257,6 +1257,13 @@ body{font-family:'Crimson Pro',Georgia,serif;font-size:1.05rem;background:var(--
 .item-pool-filter.active{background:rgba(201,146,42,.16);border-color:rgba(201,146,42,.65);color:var(--gold)}
 .source-summary{grid-column:1 / span 2;font-family:'Crimson Pro',serif;color:var(--parch-dk);font-style:italic;font-size:.82rem;padding:.2rem .65rem .35rem;border-top:1px solid var(--bdr);background:rgba(0,0,0,.08)}
 .source-summary strong{font-family:'Cinzel',serif;color:var(--gold-lt);font-size:.62rem;letter-spacing:.07em;text-transform:uppercase;margin-right:.25rem;font-style:normal}
+.selected-item-card{grid-column:1 / span 2;border:1px solid rgba(201,146,42,.22);background:rgba(0,0,0,.18);padding:.55rem .65rem;margin:.25rem 0 .35rem}
+.selected-item-title{font-family:'Cinzel',serif;font-size:.88rem;letter-spacing:.035em;color:var(--parch);font-weight:700;line-height:1.25}
+.selected-item-meta{display:flex;flex-wrap:wrap;gap:.35rem .65rem;align-items:center;margin-top:.35rem;font-family:'Crimson Pro',serif;font-size:.78rem;color:var(--parch-dk);font-style:italic}
+.selected-item-meta strong{font-family:'Cinzel',serif;font-size:.58rem;letter-spacing:.08em;color:var(--gold-lt);text-transform:uppercase;font-style:normal;margin-right:.12rem}
+.detail-toggle{font-family:'Cinzel',serif;font-size:.55rem;letter-spacing:.06em;text-transform:uppercase;color:var(--gold-lt);border:1px solid rgba(201,146,42,.35);background:rgba(201,146,42,.07);padding:.18rem .45rem;cursor:pointer;margin-left:auto}
+.detail-toggle:hover{background:rgba(201,146,42,.15);border-color:rgba(201,146,42,.6)}
+.manual-detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:.35rem;margin-bottom:.25rem}
 .print-only{display:none}
 .sf-src{font-size:.85rem;color:var(--parch-dk);border-top:1px solid var(--bdr);font-style:italic}
 .sf-src:focus{background:rgba(201,146,42,.03)}
@@ -1357,6 +1364,10 @@ input::placeholder{color:rgba(240,222,180,.22);font-style:italic}
   .sf-name, .sf-src, .rank-inputs input { color: #000 !important; font-weight:700 !important; opacity:1 !important; }
   .rank-inputs select, .rank-inputs datalist { display:none !important; }
   .sf-src { font-style: normal !important; }
+  .selected-item-card { border: none !important; background: transparent !important; padding: .18rem .26rem !important; margin: 0 !important; }
+  .selected-item-title { font-size: .6rem !important; color: #000 !important; font-weight: 700 !important; white-space: nowrap !important; }
+  .selected-item-meta { font-size: .55rem !important; color: #000 !important; margin-top: .08rem !important; gap: .3rem !important; }
+  .selected-item-meta strong { color: #000 !important; font-size: .5rem !important; }
   .tbtn.sec { background:#fff !important; color:#000 !important; border:2px solid #000 !important; }
 }
 `;
@@ -1503,14 +1514,14 @@ const RAID_DROP_SOURCE_OPTIONS = [
 function getSpecificSourceOptions(sourceType) {
   if (sourceType === 'Raid') return RAID_DROP_SOURCE_OPTIONS;
   if (sourceType === 'Dungeon') return CURRENT_SEASON_DUNGEONS;
-  if (sourceType === 'Crafting') return ['Crafting', 'Crafted'];
+  if (sourceType === 'Crafting') return [];
   if (sourceType === 'Other') return OTHER_SOURCE_OPTIONS;
   return [];
 }
 function sourceDetailPlaceholder(sourceType) {
   if (sourceType === 'Raid') return 'Boss / raid source';
   if (sourceType === 'Dungeon') return 'Dungeon';
-  if (sourceType === 'Crafting') return 'Crafting source';
+  if (sourceType === 'Crafting') return 'No detail needed';
   if (sourceType === 'Other') return 'Special source';
   return 'Specific source';
 }
@@ -1539,13 +1550,24 @@ function inferSourceType(src) {
 function inferSourceDetail(src, type) {
   const raw = String(src || '').trim();
   const s = raw.toLowerCase();
-  const pool = type === 'Raid' ? CURRENT_SEASON_RAIDS : type === 'Dungeon' ? CURRENT_SEASON_DUNGEONS : type === 'Crafting' ? ['Crafted'] : OTHER_SOURCE_OPTIONS;
+  const pool = type === 'Raid' ? CURRENT_SEASON_RAIDS : type === 'Dungeon' ? CURRENT_SEASON_DUNGEONS : type === 'Crafting' ? [] : OTHER_SOURCE_OPTIONS;
   return pool.find(v => s.includes(v.toLowerCase())) || raw;
 }
 function buildSourceLabel(type, detail) {
   if (!type && !detail) return '';
+  if (type === 'Crafting') return 'Crafting';
   if ((type === 'Raid' || type === 'Dungeon') && detail) return detail;
   return detail || type || '';
+}
+
+function sourceDisplayText(type, detail, src) {
+  const t = type || inferSourceType(src);
+  const d = detail || inferSourceDetail(src, t);
+  if (t === 'Crafting') return 'Crafting';
+  if (t === 'Raid') return d ? `Raid drop · ${d}` : 'Raid drop';
+  if (t === 'Dungeon') return d ? `Dungeon / M+ · ${d}` : 'Dungeon / M+';
+  if (t === 'Other') return d ? `Special / world · ${d}` : 'Special / world';
+  return d || src || t || '';
 }
 
 function sourceTypeFromBucket(bucket) {
@@ -1976,11 +1998,61 @@ function seasonItemOptionLabel(item) {
   return `${item.itemName} · ID ${item.itemId}${source}`;
 }
 
+function normalizeItemKey(value) {
+  return String(value || "").toLowerCase().replace(/[^a-z0-9]/g, "");
+}
+
+function itemIdFromText(value) {
+  return String(value || "").match(/(?:item=|\b)(\d{4,})(?:\b|[\/?#&]|$)/i)?.[1] || "";
+}
+
+function itemNameFromWowheadUrl(value) {
+  const raw = String(value || "").trim();
+  const slug = raw.match(/wowhead\.com\/item=\d+\/([^?#\s]+)/i)?.[1] || "";
+  if (!slug) return "";
+  return slug.replace(/-/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+}
+
+function sourceScoreForPoolItem(item, sourceText = "") {
+  const needle = String(sourceText || "").toLowerCase();
+  if (!needle) return 0;
+  const hay = `${item?.sourceType || ""} ${item?.sourceLabel || ""} ${item?.sourceId || ""} ${item?.bossName || ""} ${item?.raidName || ""} ${item?.dungeonName || ""}`.toLowerCase();
+  if (hay && needle && (hay.includes(needle) || needle.includes(hay))) return 4;
+  if (itemSourceBucket(item) === itemSourceBucket({ sourceType: inferSourceType(sourceText), sourceLabel: sourceText })) return 2;
+  return 0;
+}
+
+function findSeasonItemByName(name, sourceText = "", slotId = "", charClassName = "", charSpecName = "") {
+  const key = normalizeItemKey(name);
+  if (!key) return null;
+  const scoped = slotId ? seasonItemOptionsForSlot(slotId, charClassName, charSpecName, true, "all") : SEASON_ITEM_POOL;
+  const candidates = (scoped.length ? scoped : SEASON_ITEM_POOL).filter(item => normalizeItemKey(item.itemName) === key);
+  if (!candidates.length) return null;
+  return candidates.sort((a, b) => sourceScoreForPoolItem(b, sourceText) - sourceScoreForPoolItem(a, sourceText))[0];
+}
+
+function applySeasonItemFields(base = {}, item, fallbackSource = "") {
+  if (!item) return base;
+  const sourceLabel = item.sourceLabel && item.sourceLabel !== "Unknown" ? item.sourceLabel : (fallbackSource || "");
+  const bucket = itemSourceBucket(item);
+  const sourceType = item.sourceType && item.sourceType !== "Unknown" ? item.sourceType : sourceTypeFromBucket(bucket) || inferSourceType(sourceLabel);
+  const sourceDetail = sourceType === "Crafting" ? "" : (sourceLabel || inferSourceDetail(sourceLabel, sourceType));
+  return {
+    ...base,
+    name: item.itemName || base.name || "",
+    src: buildSourceLabel(sourceType, sourceDetail) || base.src || fallbackSource || "",
+    itemId: String(item.itemId || base.itemId || ""),
+    sourceType,
+    sourceDetail,
+    itemSearch: seasonItemOptionLabel(item),
+  };
+}
+
 function findSeasonItem(value, slotId, charClassName, charSpecName, broad = false, sourceFilter = "all") {
   const raw = String(value || "").trim();
   if (!raw) return null;
   const lower = raw.toLowerCase();
-  const id = raw.match(/(?:^|\b)(\d{4,})(?:\b|$)/)?.[1] || "";
+  const id = itemIdFromText(raw);
   const preferred = seasonItemOptionsForSlot(slotId, charClassName, charSpecName, broad, sourceFilter);
   const search = list => list.find(item => {
     const itemId = String(item.itemId || "");
@@ -1991,7 +2063,7 @@ function findSeasonItem(value, slotId, charClassName, charSpecName, broad = fals
   return search(preferred) || search(SEASON_ITEM_POOL);
 }
 
-function ItemPoolPicker({ id, idx, value, onPick, onSearch, charClassName, charSpecName }) {
+function ItemPoolPicker({ id, idx, value, onPick, onSearch, onUnknownItem, charClassName, charSpecName }) {
   const [broad, setBroad] = useState(false);
   const [sourceFilter, setSourceFilter] = useState("all");
   const listId = `item-pool-${id}-${idx}`;
@@ -2001,12 +2073,13 @@ function ItemPoolPicker({ id, idx, value, onPick, onSearch, charClassName, charS
     <div className="item-pool-picker no-print">
       <input
         list={listId}
-        placeholder={SEASON_ITEM_POOL.length ? `Search ${slotLabel} items` : "Season item pool is empty"}
+        placeholder={SEASON_ITEM_POOL.length ? `Search ${slotLabel} items, item ID, or Wowhead URL` : "Season item pool is empty"}
         value={value || ""}
         onChange={e => {
           const next = e.target.value;
           const item = findSeasonItem(next, id, charClassName, charSpecName, broad, sourceFilter);
           if (item) onPick(item);
+          else if (onUnknownItem && itemIdFromText(next)) onUnknownItem(next);
           else onSearch(next);
         }}
       />
@@ -2109,12 +2182,12 @@ function Slot({ label, id, data, onChange, targetTrack, bisMode, equipped, charC
       const sourceLabel = item.sourceLabel && item.sourceLabel !== "Unknown" ? item.sourceLabel : "";
       const bucket = itemSourceBucket(item);
       const sourceType = item.sourceType && item.sourceType !== "Unknown" ? item.sourceType : sourceTypeFromBucket(bucket) || inferSourceType(sourceLabel);
-      const sourceDetail = sourceLabel || inferSourceDetail(sourceLabel, sourceType);
+      const sourceDetail = sourceType === "Crafting" ? "" : (sourceLabel || inferSourceDetail(sourceLabel, sourceType));
       patchRank(idx, {
         itemSearch: seasonItemOptionLabel(item),
         name: item.itemName || "",
         itemId: String(item.itemId || ""),
-        src: sourceLabel,
+        src: buildSourceLabel(sourceType, sourceDetail),
         sourceType,
         sourceDetail
       });
@@ -2158,48 +2231,61 @@ function Slot({ label, id, data, onChange, targetTrack, bisMode, equipped, charC
               )}
             </div>
             <div className="rank-inputs">
-              <ItemPoolPicker id={id} idx={idx} value={r.itemSearch || ""} onPick={item => applySeasonItem(idx, item)} onSearch={value => upRank(idx, "itemSearch", value)} charClassName={charClassName} charSpecName={charSpecName} />
-              <input className="sf-name" placeholder="" value={r.name || ""} onChange={e => upRank(idx, "name", e.target.value)} style={{ marginBottom:".2rem" }} />
-              <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:".35rem", marginBottom:".25rem" }}>
-                {r.name && (r.sourceType || r.sourceDetail || r.src) && (
-                  <div className="source-summary no-print">
-                    <strong>{sourceSummaryKind(r.sourceType || inferSourceType(r.src))}</strong>{(r.sourceDetail || r.src) ? ` · ${r.sourceDetail || r.src}` : ""}
+              <ItemPoolPicker id={id} idx={idx} value={r.itemSearch || ""} onPick={item => applySeasonItem(idx, item)} onSearch={value => upRank(idx, "itemSearch", value)} onUnknownItem={value => { const itemId = itemIdFromText(value); const nameFromUrl = itemNameFromWowheadUrl(value); patchRank(idx, { itemSearch: value, itemId: itemId || r.itemId || "", name: r.name || nameFromUrl || "" }); }} charClassName={charClassName} charSpecName={charSpecName} />
+              {r.name && (
+                <div className="selected-item-card">
+                  <div className="selected-item-title"><ItemNameLink itemId={r.itemId} name={r.name} /></div>
+                  <div className="selected-item-meta">
+                    {(r.sourceType || r.sourceDetail || r.src) && <span><strong>Source</strong>{sourceDisplayText(r.sourceType, r.sourceDetail, r.src)}</span>}
+                    {r.itemId && <span><strong>Item ID</strong>{r.itemId}</span>}
+                    {r.itemSearch && <span className="no-print"><strong>From</strong>Item pool</span>}
+                    <button type="button" className="detail-toggle no-print" onClick={() => upRank(idx, "editDetails", !r.editDetails)}>{r.editDetails ? "Hide details" : "Edit details"}</button>
                   </div>
-                )}
-                <select className="sf-src" value={r.sourceType || inferSourceType(r.src)} onChange={e => {
-                  const t = e.target.value;
-                  const detail = inferSourceDetail(r.src, t);
-                  upRank(idx, "sourceType", t);
-                  upRank(idx, "sourceDetail", detail);
-                  upRank(idx, "src", buildSourceLabel(t, detail));
-                }}>
-                  {SOURCE_TYPE_OPTIONS.map(opt => <option key={opt} value={opt}>{opt || 'Source Type'}</option>)}
+                </div>
+              )}
+              {(!r.name || r.editDetails) && (
+                <>
+                  <input className="sf-name" placeholder="Item name" value={r.name || ""} onChange={e => upRank(idx, "name", e.target.value)} style={{ marginBottom:".2rem" }} />
+                  <div className="manual-detail-grid">
+                    <select className="sf-src" value={r.sourceType || inferSourceType(r.src)} onChange={e => {
+                      const t = e.target.value;
+                      const detail = t === "Crafting" ? "" : inferSourceDetail(r.src, t);
+                      upRank(idx, "sourceType", t);
+                      upRank(idx, "sourceDetail", detail);
+                      upRank(idx, "src", buildSourceLabel(t, detail));
+                    }}>
+                      {SOURCE_TYPE_OPTIONS.map(opt => <option key={opt} value={opt}>{opt || 'Source Type'}</option>)}
+                    </select>
+                    {(r.sourceType || inferSourceType(r.src)) !== "Crafting" && (
+                      <select className="sf-src" value={r.sourceDetail || inferSourceDetail(r.src, r.sourceType || inferSourceType(r.src))} onChange={e => {
+                        const detail = e.target.value;
+                        const t = r.sourceType || inferSourceType(r.src);
+                        upRank(idx, "sourceDetail", detail);
+                        upRank(idx, "src", buildSourceLabel(t, detail));
+                      }}>
+                        <option value="">{sourceDetailPlaceholder(r.sourceType || inferSourceType(r.src))}</option>
+                        {sourceDetailOptionsFor((r.sourceType || inferSourceType(r.src)), (r.sourceDetail || inferSourceDetail(r.src, r.sourceType || inferSourceType(r.src)))).map(opt => <option key={opt} value={opt}>{opt}</option>)}
+                      </select>
+                    )}
+                    {(r.sourceType || inferSourceType(r.src)) !== "Crafting" && (
+                      <input className="sf-src" style={{ gridColumn:"1 / span 2" }} list={`src-list-${id}-${idx}`} placeholder="Source label" value={r.src || ""} onChange={e => { const v = e.target.value; upRank(idx, "src", v); upRank(idx, "sourceType", inferSourceType(v)); upRank(idx, "sourceDetail", inferSourceDetail(v, inferSourceType(v))); }} />
+                    )}
+                    <input className="sf-src no-print" style={{ gridColumn:"1 / span 2" }} inputMode="numeric" placeholder="Item ID required for addon import" value={r.itemId || ""} onChange={e => upRank(idx, "itemId", e.target.value.replace(/[^0-9]/g, ""))} />
+                    <datalist id={`src-list-${id}-${idx}`}>
+                      {RAID_DROP_SOURCE_OPTIONS.map(v => <option key={v} value={v} />)}
+                      {CURRENT_SEASON_DUNGEONS.map(v => <option key={v} value={`Dungeon • ${v}`} />)}
+                      {OTHER_SOURCE_OPTIONS.map(v => <option key={v} value={v} />)}
+                    </datalist>
+                  </div>
+                </>
+              )}
+              {idx === 0 ? (
+                <div className="sf-src no-print" style={{ opacity:.9, display:"flex", alignItems:"center", minHeight:"2.1rem" }}>Counts as BiS</div>
+              ) : (
+                <select className="sf-src no-print" value={r.status || DEFAULT_MANUAL_STATUS[idx] || "alt"} onChange={e => upRank(idx, "status", e.target.value)}>
+                  {manualStatusOptionsForRank(idx).map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
                 </select>
-                <select className="sf-src" value={r.sourceDetail || inferSourceDetail(r.src, r.sourceType || inferSourceType(r.src))} onChange={e => {
-                  const detail = e.target.value;
-                  const t = r.sourceType || inferSourceType(r.src);
-                  upRank(idx, "sourceDetail", detail);
-                  upRank(idx, "src", buildSourceLabel(t, detail));
-                }}>
-                  <option value="">{sourceDetailPlaceholder(r.sourceType || inferSourceType(r.src))}</option>
-                  {sourceDetailOptionsFor((r.sourceType || inferSourceType(r.src)), (r.sourceDetail || inferSourceDetail(r.src, r.sourceType || inferSourceType(r.src)))).map(opt => <option key={opt} value={opt}>{opt}</option>)}
-                </select>
-                <input className="sf-src" style={{ gridColumn:"1 / span 2" }} list={`src-list-${id}-${idx}`} placeholder="" value={r.src || ""} onChange={e => { const v = e.target.value; upRank(idx, "src", v); upRank(idx, "sourceType", inferSourceType(v)); upRank(idx, "sourceDetail", inferSourceDetail(v, inferSourceType(v))); }} />
-                <input className="sf-src no-print" style={{ gridColumn:"1 / span 2" }} inputMode="numeric" placeholder="Item ID required for addon import" value={r.itemId || ""} onChange={e => upRank(idx, "itemId", e.target.value.replace(/[^0-9]/g, ""))} />
-                {r.itemId && <div className="no-print" style={{ gridColumn:"1 / span 2", marginTop:"-.15rem" }}><ItemPreviewLink itemId={r.itemId} name={r.name} /></div>}
-                {idx === 0 ? (
-                  <div className="sf-src no-print" style={{ gridColumn:"1 / span 2", opacity:.9, display:"flex", alignItems:"center", minHeight:"2.1rem" }}>Counts as BiS</div>
-                ) : (
-                  <select className="sf-src no-print" style={{ gridColumn:"1 / span 2" }} value={r.status || DEFAULT_MANUAL_STATUS[idx] || "alt"} onChange={e => upRank(idx, "status", e.target.value)}>
-                    {manualStatusOptionsForRank(idx).map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
-                  </select>
-                )}
-                <datalist id={`src-list-${id}-${idx}`}>
-                  {RAID_DROP_SOURCE_OPTIONS.map(v => <option key={v} value={v} />)}
-                  {CURRENT_SEASON_DUNGEONS.map(v => <option key={v} value={`Dungeon • ${v}`} />)}
-                  {OTHER_SOURCE_OPTIONS.map(v => <option key={v} value={v} />)}
-                </datalist>
-              </div>
+              )}
             </div>
           </div>
         ))}
@@ -2226,7 +2312,12 @@ function Slot({ label, id, data, onChange, targetTrack, bisMode, equipped, charC
       <div className="slot-entry">
         <div className="slot-fields">
           <input className="sf-name" placeholder="Item name..." value={d.name || ""} onChange={e => up("name", e.target.value)} />
-          {(d.itemID || d.itemId) && <ItemPreviewLink itemId={d.itemID || d.itemId} name={d.name} />}
+          {(d.itemID || d.itemId) && d.name && (
+            <div className="selected-item-card no-print" style={{ margin: "0", padding: ".45rem .55rem" }}>
+              <div className="selected-item-title" style={{ fontSize: ".85rem" }}><ItemNameLink itemId={d.itemID || d.itemId} name={d.name} /></div>
+              <div className="selected-item-meta"><span><strong>Item ID</strong>{d.itemID || d.itemId}</span>{d.src ? <span><strong>Source</strong>{d.src}</span> : null}</div>
+            </div>
+          )}
           <input className="sf-src" placeholder="Source — Raid / Dungeon / Crafted..." value={d.src || ""} onChange={e => up("src", e.target.value)} />
           <EquippedCompareLine target={d} equipped={equipped} bisMode={bisMode} />
           <div className="slot-track-row" style={{ display:"flex", gap:".25rem", padding:".2rem .5rem", borderTop:"1px solid var(--bdr)", background:"rgba(0,0,0,.15)" }}>
@@ -2516,29 +2607,37 @@ function Tracker({ cls, spec, charName, initialMode = "", onBack }) {
     setLoading(false);
   };
 
+  const enrichSuggestedSlot = (mapped, v) => {
+    const name = v?.name || "";
+    const src = v?.source || "";
+    const matched = findSeasonItemByName(name, src, mapped, cls.name, spec.name);
+    const base = { name, src, done: false };
+    return matched ? applySeasonItemFields(base, matched, src) : base;
+  };
+
   const applyAll = () => {
     if (!sugs?.slots) return;
     const nd = {};
     Object.entries(sugs.slots).forEach(([k, v]) => {
       const mapped = mapKey(k, sugs.slots);
-      const name = v?.name || "";
-      const src = v?.source || "";
+      const enriched = enrichSuggestedSlot(mapped, v);
       if (bisMode === "custom") {
-        const sourceType = inferSourceType(src);
-        const sourceDetail = inferSourceDetail(src, sourceType);
+        const sourceType = enriched.sourceType || inferSourceType(enriched.src);
+        const sourceDetail = enriched.sourceDetail || inferSourceDetail(enriched.src, sourceType);
         nd[mapped] = {
-          name,
-          src,
+          name: enriched.name || "",
+          src: enriched.src || "",
+          itemId: enriched.itemId || "",
           done: false,
           activeRank: 0,
           ranks: [
-            { name, src, have: false, sourceType, sourceDetail },
+            { name: enriched.name || "", src: enriched.src || "", itemId: enriched.itemId || "", itemSearch: enriched.itemSearch || "", have: false, sourceType, sourceDetail },
             { name: "", src: "", have: false, sourceType: "", sourceDetail: "" },
             { name: "", src: "", have: false, sourceType: "", sourceDetail: "" },
           ],
         };
       } else {
-        nd[mapped] = { name, src, done: false };
+        nd[mapped] = enriched;
       }
     });
     setData(nd);
@@ -2549,7 +2648,8 @@ function Tracker({ cls, spec, charName, initialMode = "", onBack }) {
   const applyOne = (k, v) => {
     const mapped = mapKey(k, sugs?.slots || {});
     setData(p => {
-      const next = { ...p, [mapped]: { name: v.name, src: v.source, done: false } };
+      const enriched = enrichSuggestedSlot(mapped, v);
+      const next = { ...p, [mapped]: enriched };
       return next;
     });
   };

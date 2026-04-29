@@ -1,7 +1,184 @@
 {
   "seasonId": "midnight-s1",
-  "generatedAt": "2026-04-29T05:23:39.710Z",
+  "generatedAt": "2026-04-29T08:28:20.155Z",
   "records": [
+    {
+      "itemId": 250045,
+      "itemName": "Abyssal Immolator's Dreadrobe",
+      "slot": "ROBE",
+      "inventoryType": "Chest",
+      "sourceType": "Raid",
+      "sourceId": "tier-set-raid-catalyst-vault",
+      "sourceLabel": "Tier Set — Raid | Catalyst | Vault",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Armor",
+      "itemSubclass": "Cloth",
+      "quality": "Epic",
+      "primaryStats": [
+        "intellect"
+      ],
+      "statNames": [
+        "Intellect",
+        "Stamina",
+        "Haste",
+        "Mastery"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_chest_cloth_raidwarlockmidnight_d_01.jpg"
+    },
+    {
+      "itemId": 250043,
+      "itemName": "Abyssal Immolator's Grasps",
+      "slot": "HAND",
+      "inventoryType": "Hands",
+      "sourceType": "Raid",
+      "sourceId": "tier-set-raid-catalyst-vault",
+      "sourceLabel": "Tier Set — Raid | Catalyst | Vault",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Armor",
+      "itemSubclass": "Cloth",
+      "quality": "Epic",
+      "primaryStats": [
+        "intellect"
+      ],
+      "statNames": [
+        "Intellect",
+        "Stamina",
+        "Critical Strike",
+        "Haste"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_glove_cloth_raidwarlockmidnight_d_01.jpg"
+    },
+    {
+      "itemId": 250041,
+      "itemName": "Abyssal Immolator's Pillars",
+      "slot": "LEGS",
+      "inventoryType": "Legs",
+      "sourceType": "Raid",
+      "sourceId": "tier-set-raid-catalyst-vault",
+      "sourceLabel": "Tier Set — Raid | Catalyst | Vault",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Armor",
+      "itemSubclass": "Cloth",
+      "quality": "Epic",
+      "primaryStats": [
+        "intellect"
+      ],
+      "statNames": [
+        "Intellect",
+        "Stamina",
+        "Critical Strike",
+        "Haste"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_pant_cloth_raidwarlockmidnight_d_01.jpg"
+    },
+    {
+      "itemId": 250042,
+      "itemName": "Abyssal Immolator's Smoldering Flames",
+      "slot": "HEAD",
+      "inventoryType": "Head",
+      "sourceType": "Raid",
+      "sourceId": "tier-set-raid-catalyst-vault",
+      "sourceLabel": "Tier Set — Raid | Catalyst | Vault",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Armor",
+      "itemSubclass": "Cloth",
+      "quality": "Epic",
+      "primaryStats": [
+        "intellect"
+      ],
+      "statNames": [
+        "Intellect",
+        "Stamina",
+        "Critical Strike",
+        "Mastery"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_helm_cloth_raidwarlockmidnight_d_01.jpg"
+    },
+    {
+      "itemId": 239656,
+      "itemName": "Adherent's Silken Shroud",
+      "slot": "CLOAK",
+      "inventoryType": "Back",
+      "sourceType": "Crafting",
+      "sourceId": "crafting-misc",
+      "sourceLabel": "Crafting / Misc",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Armor",
+      "itemSubclass": "Cloth",
+      "quality": "Epic",
+      "primaryStats": [
+        "strength",
+        "agility",
+        "intellect"
+      ],
+      "statNames": [
+        "Intellect",
+        "Agility",
+        "Strength",
+        "Stamina",
+        "Haste",
+        "Mastery"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_cape_cloth_questbloodelf_b_01.jpg"
+    },
+    {
+      "itemId": 249296,
+      "itemName": "Alah'endal, the Dawnsong",
+      "slot": "TWOHWEAPON",
+      "inventoryType": "Two-Hand",
+      "sourceType": "Unknown",
+      "sourceId": "midnight-falls",
+      "sourceLabel": "Midnight Falls",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Weapon",
+      "itemSubclass": "Axe",
+      "quality": "Epic",
+      "primaryStats": [
+        "strength"
+      ],
+      "statNames": [
+        "Strength",
+        "Stamina",
+        "Haste"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_axe_2h_raidmidnight_d_01.jpg"
+    },
+    {
+      "itemId": 193701,
+      "itemName": "Algeth'ar Puzzle Box",
+      "slot": "TRINKET",
+      "inventoryType": "Trinket",
+      "sourceType": "Unknown",
+      "sourceId": "algeth-ar-academy",
+      "sourceLabel": "Algeth'ar Academy",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Armor",
+      "itemSubclass": "Miscellaneous",
+      "quality": "Rare",
+      "primaryStats": [
+        "strength",
+        "agility"
+      ],
+      "statNames": [
+        "Agility",
+        "Strength"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_misc_enggizmos_18.jpg"
+    },
     {
       "itemId": 245770,
       "itemName": "Aln'hara Cane",
@@ -26,6 +203,56 @@
         "Mastery"
       ],
       "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_staff_2h_dungeonharronir_c_02.jpg"
+    },
+    {
+      "itemId": 245769,
+      "itemName": "Aln'hara Lantern",
+      "slot": "HOLDABLE",
+      "inventoryType": "Held In Off-hand",
+      "sourceType": "Crafting",
+      "sourceId": "crafting",
+      "sourceLabel": "Crafting",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Armor",
+      "itemSubclass": "Miscellaneous",
+      "quality": "Epic",
+      "primaryStats": [
+        "intellect"
+      ],
+      "statNames": [
+        "Intellect",
+        "Stamina",
+        "Haste",
+        "Mastery"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_offhand_1h_dungeonharronir_c_01.jpg"
+    },
+    {
+      "itemId": 249278,
+      "itemName": "Alnscorned Spire",
+      "slot": "TWOHWEAPON",
+      "inventoryType": "Two-Hand",
+      "sourceType": "Unknown",
+      "sourceId": "chimaerus",
+      "sourceLabel": "Chimaerus",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Weapon",
+      "itemSubclass": "Staff",
+      "quality": "Epic",
+      "primaryStats": [
+        "agility"
+      ],
+      "statNames": [
+        "Agility",
+        "Stamina",
+        "Haste",
+        "Versatility"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_staff_2h_raidmidnight_d_01.jpg"
     },
     {
       "itemId": 251079,
@@ -59,9 +286,9 @@
       "itemName": "Amulet of the Abyssal Hymn",
       "slot": "NECK",
       "inventoryType": "Neck",
-      "sourceType": "Unknown",
-      "sourceId": "midnight-falls",
-      "sourceLabel": "Midnight Falls",
+      "sourceType": "Raid",
+      "sourceId": "midnight-falls-raid",
+      "sourceLabel": "Midnight Falls (Raid)",
       "bossName": null,
       "raidName": null,
       "dungeonName": null,
@@ -75,6 +302,31 @@
         "Mastery"
       ],
       "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_12_jewelry_devouringhost_necklace_bronze2.jpg"
+    },
+    {
+      "itemId": 260423,
+      "itemName": "Arator's Swift Remembrance",
+      "slot": "WEAPON",
+      "inventoryType": "One-Hand",
+      "sourceType": "Unknown",
+      "sourceId": "maisara-caverns-crown-of-the-cosmos",
+      "sourceLabel": "Maisara Caverns / Crown of the Cosmos",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Weapon",
+      "itemSubclass": "Sword",
+      "quality": "Epic",
+      "primaryStats": [
+        "agility"
+      ],
+      "statNames": [
+        "Agility",
+        "Stamina",
+        "Critical Strike",
+        "Haste"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_sword_1h_raidmidnight_d_01.jpg"
     },
     {
       "itemId": 250025,
@@ -150,13 +402,90 @@
       "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_bracer_19.jpg"
     },
     {
+      "itemId": 239661,
+      "itemName": "Arcanoweave Cloak",
+      "slot": "CLOAK",
+      "inventoryType": "Back",
+      "sourceType": "Crafting",
+      "sourceId": "crafting",
+      "sourceLabel": "Crafting",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Armor",
+      "itemSubclass": "Cloth",
+      "quality": "Epic",
+      "primaryStats": [
+        "intellect"
+      ],
+      "statNames": [
+        "Intellect",
+        "Stamina",
+        "Versatility",
+        "Mastery"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_cape_cloth_questbloodelf_b_01.jpg"
+    },
+    {
+      "itemId": 239664,
+      "itemName": "Arcanoweave Cord",
+      "slot": "WAIST",
+      "inventoryType": "Waist",
+      "sourceType": "Crafting",
+      "sourceId": "crafting-misc",
+      "sourceLabel": "Crafting / Misc",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Armor",
+      "itemSubclass": "Cloth",
+      "quality": "Epic",
+      "primaryStats": [
+        "intellect"
+      ],
+      "statNames": [
+        "Intellect",
+        "Stamina",
+        "Critical Strike",
+        "Haste"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_belt_cloth_questbloodelf_b_01.jpg"
+    },
+    {
+      "itemId": 250013,
+      "itemName": "Aurastones of Ra-den's Chosen",
+      "slot": "SHOULDER",
+      "inventoryType": "Shoulder",
+      "sourceType": "Raid",
+      "sourceId": "catalyst-raid-vault",
+      "sourceLabel": "Catalyst | Raid | Vault",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Armor",
+      "itemSubclass": "Leather",
+      "quality": "Epic",
+      "primaryStats": [
+        "agility",
+        "intellect"
+      ],
+      "statNames": [
+        "Intellect",
+        "Agility",
+        "Stamina",
+        "Haste",
+        "Mastery"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_shoulder_leather_raidmonkmidnight_d_01.jpg"
+    },
+    {
       "itemId": 193722,
       "itemName": "Azure Belt of Competition",
       "slot": "WAIST",
       "inventoryType": "Waist",
       "sourceType": "Unknown",
-      "sourceId": "algeth",
-      "sourceLabel": "Algeth",
+      "sourceId": "algeth-ar-academy",
+      "sourceLabel": "Algeth'ar Academy",
       "bossName": null,
       "raidName": null,
       "dungeonName": null,
@@ -221,6 +550,33 @@
       "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_jewelry_necklace_22.jpg"
     },
     {
+      "itemId": 250018,
+      "itemName": "Battle Garb of Ra-den's Chosen",
+      "slot": "CHEST",
+      "inventoryType": "Chest",
+      "sourceType": "Raid",
+      "sourceId": "catalyst-raid-vault",
+      "sourceLabel": "Catalyst | Raid | Vault",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Armor",
+      "itemSubclass": "Leather",
+      "quality": "Epic",
+      "primaryStats": [
+        "agility",
+        "intellect"
+      ],
+      "statNames": [
+        "Intellect",
+        "Agility",
+        "Stamina",
+        "Critical Strike",
+        "Haste"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_chest_leather_raidmonkmidnight_d_01.jpg"
+    },
+    {
       "itemId": 249995,
       "itemName": "Beacons of the Black Talon",
       "slot": "SHOULDER",
@@ -246,6 +602,106 @@
         "Mastery"
       ],
       "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_shoulder_mail_raidevokermidnight_d_01.jpg"
+    },
+    {
+      "itemId": 249277,
+      "itemName": "Bellamy's Final Judgement",
+      "slot": "TWOHWEAPON",
+      "inventoryType": "Two-Hand",
+      "sourceType": "Unknown",
+      "sourceId": "lightblinded-vanguard-fallen-king-salhadaar",
+      "sourceLabel": "Lightblinded Vanguard / Fallen-King Salhadaar",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Weapon",
+      "itemSubclass": "Mace",
+      "quality": "Epic",
+      "primaryStats": [
+        "strength"
+      ],
+      "statNames": [
+        "Strength",
+        "Stamina",
+        "Critical Strike",
+        "Mastery"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_mace_2h_raidmidnight_d_01.jpg"
+    },
+    {
+      "itemId": 249277,
+      "itemName": "Bellamy's Final Judgement",
+      "slot": "TWOHWEAPON",
+      "inventoryType": "Two-Hand",
+      "sourceType": "Unknown",
+      "sourceId": "lightblinded-vanguard-fallen-king-salhadaar",
+      "sourceLabel": "Lightblinded Vanguard / Fallen-King Salhadaar",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Weapon",
+      "itemSubclass": "Mace",
+      "quality": "Epic",
+      "primaryStats": [
+        "strength"
+      ],
+      "statNames": [
+        "Strength",
+        "Stamina",
+        "Critical Strike",
+        "Mastery"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_mace_2h_raidmidnight_d_01.jpg"
+    },
+    {
+      "itemId": 249283,
+      "itemName": "Belo'melorn, the Shattered Talon",
+      "slot": "WEAPON",
+      "inventoryType": "One-Hand",
+      "sourceType": "Raid",
+      "sourceId": "belo-ren-raid",
+      "sourceLabel": "Belo'ren (Raid)",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Weapon",
+      "itemSubclass": "Dagger",
+      "quality": "Epic",
+      "primaryStats": [
+        "intellect"
+      ],
+      "statNames": [
+        "Intellect",
+        "Stamina",
+        "Haste",
+        "Mastery"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_knife_1h_raidmidnight_d_02.jpg"
+    },
+    {
+      "itemId": 249284,
+      "itemName": "Belo'ren's Swift Talon",
+      "slot": "WEAPON",
+      "inventoryType": "One-Hand",
+      "sourceType": "Unknown",
+      "sourceId": "windrunner-spire-belo-ren",
+      "sourceLabel": "Windrunner Spire / Belo'ren",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Weapon",
+      "itemSubclass": "Dagger",
+      "quality": "Epic",
+      "primaryStats": [
+        "agility"
+      ],
+      "statNames": [
+        "Agility",
+        "Stamina",
+        "Critical Strike",
+        "Mastery"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_knife_1h_raidmidnight_d_01.jpg"
     },
     {
       "itemId": 49808,
@@ -275,6 +731,28 @@
       "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_belt_70.jpg"
     },
     {
+      "itemId": 251115,
+      "itemName": "Bifurcation Band",
+      "slot": "FINGER",
+      "inventoryType": "Finger",
+      "sourceType": "Unknown",
+      "sourceId": "magister-s-terrace",
+      "sourceLabel": "Magister's Terrace",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Armor",
+      "itemSubclass": "Miscellaneous",
+      "quality": "Rare",
+      "primaryStats": [],
+      "statNames": [
+        "Stamina",
+        "Haste",
+        "Mastery"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_12_trinket_devouring_host_currency2_void.jpg"
+    },
+    {
       "itemId": 250005,
       "itemName": "Blade Holsters of the Grim Jest",
       "slot": "LEGS",
@@ -300,6 +778,206 @@
         "Versatility"
       ],
       "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_pant_leather_raidroguemidnight_d_01.jpg"
+    },
+    {
+      "itemId": 249281,
+      "itemName": "Blade of the Final Twilight",
+      "slot": "WEAPON",
+      "inventoryType": "One-Hand",
+      "sourceType": "Unknown",
+      "sourceId": "lightblinded-vanguard-fallen-king-salhadaar",
+      "sourceLabel": "Lightblinded Vanguard / Fallen-King Salhadaar",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Weapon",
+      "itemSubclass": "Sword",
+      "quality": "Epic",
+      "primaryStats": [
+        "strength"
+      ],
+      "statNames": [
+        "Strength",
+        "Stamina",
+        "Critical Strike",
+        "Mastery"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_sword_1h_raidmidnight_d_01.jpg"
+    },
+    {
+      "itemId": 250050,
+      "itemName": "Blind Oath's Leggings",
+      "slot": "LEGS",
+      "inventoryType": "Legs",
+      "sourceType": "Raid",
+      "sourceId": "raid-catalyst-vault",
+      "sourceLabel": "Raid | Catalyst | Vault",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Armor",
+      "itemSubclass": "Cloth",
+      "quality": "Epic",
+      "primaryStats": [
+        "intellect"
+      ],
+      "statNames": [
+        "Intellect",
+        "Stamina",
+        "Haste",
+        "Mastery"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_pant_cloth_raidpriestmidnight_d_01.jpg"
+    },
+    {
+      "itemId": 250054,
+      "itemName": "Blind Oath's Raiment",
+      "slot": "ROBE",
+      "inventoryType": "Chest",
+      "sourceType": "Raid",
+      "sourceId": "raid-catalyst-vault",
+      "sourceLabel": "Raid | Catalyst | Vault",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Armor",
+      "itemSubclass": "Cloth",
+      "quality": "Epic",
+      "primaryStats": [
+        "intellect"
+      ],
+      "statNames": [
+        "Intellect",
+        "Stamina",
+        "Haste",
+        "Mastery"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_robe_cloth_raidpriestmidnight_d_01.jpg"
+    },
+    {
+      "itemId": 250049,
+      "itemName": "Blind Oath's Seraphguards",
+      "slot": "SHOULDER",
+      "inventoryType": "Shoulder",
+      "sourceType": "Raid",
+      "sourceId": "raid-catalyst-vault",
+      "sourceLabel": "Raid | Catalyst | Vault",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Armor",
+      "itemSubclass": "Cloth",
+      "quality": "Epic",
+      "primaryStats": [
+        "intellect"
+      ],
+      "statNames": [
+        "Intellect",
+        "Stamina",
+        "Critical Strike",
+        "Mastery"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_shoulder_cloth_raidpriestmidnight_d_01.jpg"
+    },
+    {
+      "itemId": 250052,
+      "itemName": "Blind Oath's Touch",
+      "slot": "HAND",
+      "inventoryType": "Hands",
+      "sourceType": "Raid",
+      "sourceId": "raid-catalyst-vault",
+      "sourceLabel": "Raid | Catalyst | Vault",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Armor",
+      "itemSubclass": "Cloth",
+      "quality": "Epic",
+      "primaryStats": [
+        "intellect"
+      ],
+      "statNames": [
+        "Intellect",
+        "Stamina",
+        "Haste",
+        "Versatility"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_glove_cloth_raidpriestmidnight_d_01.jpg"
+    },
+    {
+      "itemId": 250051,
+      "itemName": "Blind Oath's Winged Crest",
+      "slot": "HEAD",
+      "inventoryType": "Head",
+      "sourceType": "Raid",
+      "sourceId": "raid-catalyst-vault",
+      "sourceLabel": "Raid | Catalyst | Vault",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Armor",
+      "itemSubclass": "Cloth",
+      "quality": "Epic",
+      "primaryStats": [
+        "intellect"
+      ],
+      "statNames": [
+        "Intellect",
+        "Stamina",
+        "Critical Strike",
+        "Haste"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_helm_cloth_raidpriestmidnight_d_01.jpg"
+    },
+    {
+      "itemId": 250047,
+      "itemName": "Blind Oath's Wraps",
+      "slot": "WRIST",
+      "inventoryType": "Wrist",
+      "sourceType": "Raid",
+      "sourceId": "raid-catalyst-vault",
+      "sourceLabel": "Raid | Catalyst | Vault",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Armor",
+      "itemSubclass": "Cloth",
+      "quality": "Epic",
+      "primaryStats": [
+        "intellect"
+      ],
+      "statNames": [
+        "Intellect",
+        "Stamina",
+        "Critical Strike",
+        "Mastery"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_bracer_cloth_raidpriestmidnight_d_01.jpg"
+    },
+    {
+      "itemId": 237846,
+      "itemName": "Blood Knight's Warblade",
+      "slot": "TWOHWEAPON",
+      "inventoryType": "Two-Hand",
+      "sourceType": "Crafting",
+      "sourceId": "crafted",
+      "sourceLabel": "Crafted",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Weapon",
+      "itemSubclass": "Sword",
+      "quality": "Epic",
+      "primaryStats": [
+        "strength"
+      ],
+      "statNames": [
+        "Strength",
+        "Stamina",
+        "Critical Strike",
+        "Haste"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_sword_2h_questbloodelf_b_01.jpg"
     },
     {
       "itemId": 237845,
@@ -360,9 +1038,9 @@
       "itemName": "Bond of Light",
       "slot": "FINGER",
       "inventoryType": "Finger",
-      "sourceType": "Unknown",
-      "sourceId": "lightblinded-vanguard",
-      "sourceLabel": "Lightblinded Vanguard",
+      "sourceType": "Raid",
+      "sourceId": "lightblinded-vanguard-raid",
+      "sourceLabel": "Lightblinded Vanguard (Raid)",
       "bossName": null,
       "raidName": null,
       "dungeonName": null,
@@ -456,6 +1134,33 @@
       "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_staff_2h_raidmidnight_d_02.jpg"
     },
     {
+      "itemId": 249382,
+      "itemName": "Canopy Walker's Footwraps",
+      "slot": "FEET",
+      "inventoryType": "Feet",
+      "sourceType": "Unknown",
+      "sourceId": "crown-of-the-cosmos",
+      "sourceLabel": "Crown of the Cosmos",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Armor",
+      "itemSubclass": "Leather",
+      "quality": "Epic",
+      "primaryStats": [
+        "agility",
+        "intellect"
+      ],
+      "statNames": [
+        "Intellect",
+        "Agility",
+        "Stamina",
+        "Critical Strike",
+        "Mastery"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_boot_leather_raiddruidmidnight_d_01.jpg"
+    },
+    {
       "itemId": 249976,
       "itemName": "Ceinture of the Primal Core",
       "slot": "WAIST",
@@ -535,6 +1240,83 @@
       "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_bracer_23a.jpg"
     },
     {
+      "itemId": 249287,
+      "itemName": "Clutchmates' Caress",
+      "slot": "WEAPON",
+      "inventoryType": "One-Hand",
+      "sourceType": "Unknown",
+      "sourceId": "vaelgor-ezzorak",
+      "sourceLabel": "Vaelgor & Ezzorak",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Weapon",
+      "itemSubclass": "Mace",
+      "quality": "Epic",
+      "primaryStats": [
+        "agility"
+      ],
+      "statNames": [
+        "Agility",
+        "Stamina",
+        "Haste",
+        "Mastery"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_mace_1h_raidmidnight_d_01.jpg"
+    },
+    {
+      "itemId": 251090,
+      "itemName": "Commander's Faded Breeches",
+      "slot": "LEGS",
+      "inventoryType": "Legs",
+      "sourceType": "Unknown",
+      "sourceId": "windrunner-spire",
+      "sourceLabel": "Windrunner Spire",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Armor",
+      "itemSubclass": "Cloth",
+      "quality": "Rare",
+      "primaryStats": [
+        "intellect"
+      ],
+      "statNames": [
+        "Intellect",
+        "Stamina",
+        "Versatility",
+        "Mastery"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_pant_cloth_dungeonharronir_c_01.jpg"
+    },
+    {
+      "itemId": 251209,
+      "itemName": "Corewarden Cuffs",
+      "slot": "WRIST",
+      "inventoryType": "Wrist",
+      "sourceType": "Unknown",
+      "sourceId": "nexus-point-xenas",
+      "sourceLabel": "Nexus Point Xenas",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Armor",
+      "itemSubclass": "Mail",
+      "quality": "Rare",
+      "primaryStats": [
+        "agility",
+        "intellect"
+      ],
+      "statNames": [
+        "Intellect",
+        "Agility",
+        "Stamina",
+        "Versatility",
+        "Mastery"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_bracer_mail_dungeonharronir_c_01.jpg"
+    },
+    {
       "itemId": 264507,
       "itemName": "Crucible of Erratic Energies",
       "slot": "TRINKET",
@@ -593,8 +1375,8 @@
       "slot": "FEET",
       "inventoryType": "Feet",
       "sourceType": "Unknown",
-      "sourceId": "belo",
-      "sourceLabel": "Belo",
+      "sourceId": "belo-ren",
+      "sourceLabel": "Belo'ren",
       "bossName": null,
       "raidName": null,
       "dungeonName": null,
@@ -613,6 +1395,251 @@
         "Haste"
       ],
       "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_boot_mail_raidhuntermidnight_d_01.jpg"
+    },
+    {
+      "itemId": 251174,
+      "itemName": "Deceiver's Rotbow",
+      "slot": "RANGED",
+      "inventoryType": "Ranged",
+      "sourceType": "Unknown",
+      "sourceId": "maisara-caverns",
+      "sourceLabel": "Maisara Caverns",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Weapon",
+      "itemSubclass": "Bow",
+      "quality": "Rare",
+      "primaryStats": [
+        "agility"
+      ],
+      "statNames": [
+        "Agility",
+        "Stamina",
+        "Haste",
+        "Mastery"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_bow_1h_amani_c_01.jpg"
+    },
+    {
+      "itemId": 260312,
+      "itemName": "Defiant Defender's Drape",
+      "slot": "CLOAK",
+      "inventoryType": "Back",
+      "sourceType": "Unknown",
+      "sourceId": "magister-s-terrace",
+      "sourceLabel": "Magister's Terrace",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Armor",
+      "itemSubclass": "Cloth",
+      "quality": "Rare",
+      "primaryStats": [
+        "strength",
+        "agility",
+        "intellect"
+      ],
+      "statNames": [
+        "Intellect",
+        "Agility",
+        "Strength",
+        "Stamina",
+        "Critical Strike",
+        "Haste"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_cape_plate_dungeonharronir_c_01.jpg"
+    },
+    {
+      "itemId": 250036,
+      "itemName": "Devouring Reaver's Engine",
+      "slot": "CHEST",
+      "inventoryType": "Chest",
+      "sourceType": "Raid",
+      "sourceId": "tier-set-raid-catalyst-vault",
+      "sourceLabel": "Tier Set — Raid | Catalyst | Vault",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Armor",
+      "itemSubclass": "Leather",
+      "quality": "Epic",
+      "primaryStats": [
+        "agility",
+        "intellect"
+      ],
+      "statNames": [
+        "Intellect",
+        "Agility",
+        "Stamina",
+        "Critical Strike",
+        "Mastery"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_chest_leather_raiddemonhuntermidnight_d_01.jpg"
+    },
+    {
+      "itemId": 250034,
+      "itemName": "Devouring Reaver's Essence Grips",
+      "slot": "HAND",
+      "inventoryType": "Hands",
+      "sourceType": "Raid",
+      "sourceId": "tier-set-raid-catalyst-vault",
+      "sourceLabel": "Tier Set — Raid | Catalyst | Vault",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Armor",
+      "itemSubclass": "Leather",
+      "quality": "Epic",
+      "primaryStats": [
+        "agility",
+        "intellect"
+      ],
+      "statNames": [
+        "Intellect",
+        "Agility",
+        "Stamina",
+        "Critical Strike",
+        "Haste"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_glove_leather_raiddemonhuntermidnight_d_01.jpg"
+    },
+    {
+      "itemId": 250031,
+      "itemName": "Devouring Reaver's Exhaustplates",
+      "slot": "SHOULDER",
+      "inventoryType": "Shoulder",
+      "sourceType": "Raid",
+      "sourceId": "tier-set-raid-catalyst-vault",
+      "sourceLabel": "Tier Set — Raid | Catalyst | Vault",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Armor",
+      "itemSubclass": "Leather",
+      "quality": "Epic",
+      "primaryStats": [
+        "agility",
+        "intellect"
+      ],
+      "statNames": [
+        "Intellect",
+        "Agility",
+        "Stamina",
+        "Critical Strike",
+        "Mastery"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_shoulder_leather_raiddemonhuntermidnight_d_01.jpg"
+    },
+    {
+      "itemId": 250033,
+      "itemName": "Devouring Reaver's Intake",
+      "slot": "HEAD",
+      "inventoryType": "Head",
+      "sourceType": "Raid",
+      "sourceId": "tier-set-lightblinded-vanguard",
+      "sourceLabel": "Tier Set — Lightblinded Vanguard",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Armor",
+      "itemSubclass": "Leather",
+      "quality": "Epic",
+      "primaryStats": [
+        "agility",
+        "intellect"
+      ],
+      "statNames": [
+        "Intellect",
+        "Agility",
+        "Stamina",
+        "Haste",
+        "Mastery"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_helm_leather_raiddemonhuntermidnight_d_01.jpg"
+    },
+    {
+      "itemId": 250032,
+      "itemName": "Devouring Reaver's Pistons",
+      "slot": "LEGS",
+      "inventoryType": "Legs",
+      "sourceType": "Raid",
+      "sourceId": "tier-set-raid-catalyst-vault",
+      "sourceLabel": "Tier Set — Raid | Catalyst | Vault",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Armor",
+      "itemSubclass": "Leather",
+      "quality": "Epic",
+      "primaryStats": [
+        "agility",
+        "intellect"
+      ],
+      "statNames": [
+        "Intellect",
+        "Agility",
+        "Stamina",
+        "Haste",
+        "Versatility"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_pant_leather_raiddemonhuntermidnight_d_01.jpg"
+    },
+    {
+      "itemId": 250035,
+      "itemName": "Devouring Reaver's Soul Flatteners",
+      "slot": "FEET",
+      "inventoryType": "Feet",
+      "sourceType": "Raid",
+      "sourceId": "tier-set-raid-catalyst-vault",
+      "sourceLabel": "Tier Set — Raid | Catalyst | Vault",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Armor",
+      "itemSubclass": "Leather",
+      "quality": "Epic",
+      "primaryStats": [
+        "agility",
+        "intellect"
+      ],
+      "statNames": [
+        "Intellect",
+        "Agility",
+        "Stamina",
+        "Critical Strike",
+        "Mastery"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_boot_leather_raiddemonhuntermidnight_d_01.jpg"
+    },
+    {
+      "itemId": 249370,
+      "itemName": "Draconic Nullcape",
+      "slot": "CLOAK",
+      "inventoryType": "Back",
+      "sourceType": "Raid",
+      "sourceId": "vaelgor-ezzorak-raid",
+      "sourceLabel": "Vaelgor & Ezzorak (Raid)",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Armor",
+      "itemSubclass": "Cloth",
+      "quality": "Epic",
+      "primaryStats": [
+        "strength",
+        "agility",
+        "intellect"
+      ],
+      "statNames": [
+        "Intellect",
+        "Agility",
+        "Strength",
+        "Stamina",
+        "Haste",
+        "Mastery"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_cape_plate_raidpaladinmidnight_d_01.jpg"
     },
     {
       "itemId": 251207,
@@ -719,6 +1746,57 @@
       "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_boot_leather_dungeonharronir_c_01.jpg"
     },
     {
+      "itemId": 251081,
+      "itemName": "Embergrove Grasps",
+      "slot": "HAND",
+      "inventoryType": "Hands",
+      "sourceType": "Unknown",
+      "sourceId": "windrunner-spire",
+      "sourceLabel": "Windrunner Spire",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Armor",
+      "itemSubclass": "Plate",
+      "quality": "Rare",
+      "primaryStats": [
+        "strength",
+        "intellect"
+      ],
+      "statNames": [
+        "Intellect",
+        "Strength",
+        "Stamina",
+        "Critical Strike",
+        "Haste"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_glove_plate_dungeonharronir_c_01.jpg"
+    },
+    {
+      "itemId": 250144,
+      "itemName": "Emberwing Feather",
+      "slot": "TRINKET",
+      "inventoryType": "Trinket",
+      "sourceType": "Unknown",
+      "sourceId": "windrunner-spire",
+      "sourceLabel": "Windrunner Spire",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Armor",
+      "itemSubclass": "Miscellaneous",
+      "quality": "Rare",
+      "primaryStats": [
+        "agility",
+        "intellect"
+      ],
+      "statNames": [
+        "Intellect",
+        "Agility"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_icon_feather06a.jpg"
+    },
+    {
       "itemId": 249280,
       "itemName": "Emblazoned Sunglaive",
       "slot": "WEAPON",
@@ -773,13 +1851,40 @@
       "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_robe_mail_raidshamanmidnight_d_01.jpg"
     },
     {
+      "itemId": 249998,
+      "itemName": "Enforcer's Grips of the Black Talon",
+      "slot": "HAND",
+      "inventoryType": "Hands",
+      "sourceType": "Raid",
+      "sourceId": "raid-catalyst-vault",
+      "sourceLabel": "Raid | Catalyst | Vault",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Armor",
+      "itemSubclass": "Mail",
+      "quality": "Epic",
+      "primaryStats": [
+        "agility",
+        "intellect"
+      ],
+      "statNames": [
+        "Intellect",
+        "Agility",
+        "Stamina",
+        "Haste",
+        "Versatility"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_glove_mail_raidevokermidnight_d_01.jpg"
+    },
+    {
       "itemId": 249324,
       "itemName": "Eternal Flame Scaleguards",
       "slot": "LEGS",
       "inventoryType": "Legs",
       "sourceType": "Unknown",
-      "sourceId": "belo",
-      "sourceLabel": "Belo",
+      "sourceId": "belo-ren",
+      "sourceLabel": "Belo'ren",
       "bossName": null,
       "raidName": null,
       "dungeonName": null,
@@ -804,9 +1909,9 @@
       "itemName": "Eternal Voidsong Chain",
       "slot": "NECK",
       "inventoryType": "Neck",
-      "sourceType": "Unknown",
-      "sourceId": "crown-of-the-cosmos",
-      "sourceLabel": "Crown of the Cosmos",
+      "sourceType": "Raid",
+      "sourceId": "crown-of-the-cosmos-raid",
+      "sourceLabel": "Crown of the Cosmos (Raid)",
       "bossName": null,
       "raidName": null,
       "dungeonName": null,
@@ -822,13 +1927,65 @@
       "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_12_jewelry_silvermoonelf_necklace_blue1.jpg"
     },
     {
+      "itemId": 251083,
+      "itemName": "Excavating Cudgel",
+      "slot": "WEAPON",
+      "inventoryType": "One-Hand",
+      "sourceType": "Unknown",
+      "sourceId": "windrunner-spire",
+      "sourceLabel": "Windrunner Spire",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Weapon",
+      "itemSubclass": "Mace",
+      "quality": "Rare",
+      "primaryStats": [
+        "intellect"
+      ],
+      "statNames": [
+        "Intellect",
+        "Stamina",
+        "Critical Strike",
+        "Mastery"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_mace_1h_dungeonharronir_c_02.jpg"
+    },
+    {
+      "itemId": 249915,
+      "itemName": "Extinction Guards",
+      "slot": "LEGS",
+      "inventoryType": "Legs",
+      "sourceType": "Unknown",
+      "sourceId": "midnight-falls",
+      "sourceLabel": "Midnight Falls",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Armor",
+      "itemSubclass": "Plate",
+      "quality": "Epic",
+      "primaryStats": [
+        "strength",
+        "intellect"
+      ],
+      "statNames": [
+        "Intellect",
+        "Strength",
+        "Stamina",
+        "Mastery",
+        "Leech"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_plate_raiddeathknightmidnight_d_01_pant.jpg"
+    },
+    {
       "itemId": 249920,
       "itemName": "Eye of Midnight",
       "slot": "FINGER",
       "inventoryType": "Finger",
-      "sourceType": "Unknown",
-      "sourceId": "midnight-falls",
-      "sourceLabel": "Midnight Falls",
+      "sourceType": "Raid",
+      "sourceId": "midnight-falls-raid",
+      "sourceLabel": "Midnight Falls (Raid)",
       "bossName": null,
       "raidName": null,
       "dungeonName": null,
@@ -841,6 +1998,60 @@
         "Haste"
       ],
       "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_12_jewelry_devouringhost_ring_bronze.jpg"
+    },
+    {
+      "itemId": 249331,
+      "itemName": "Ezzorak's Gloombind",
+      "slot": "WAIST",
+      "inventoryType": "Waist",
+      "sourceType": "Unknown",
+      "sourceId": "vaelgor-ezzorak",
+      "sourceLabel": "Vaelgor & Ezzorak",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Armor",
+      "itemSubclass": "Plate",
+      "quality": "Epic",
+      "primaryStats": [
+        "strength",
+        "intellect"
+      ],
+      "statNames": [
+        "Intellect",
+        "Strength",
+        "Stamina",
+        "Haste",
+        "Mastery"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_belt_plate_raidwarriormidnight_d_01.jpg"
+    },
+    {
+      "itemId": 249304,
+      "itemName": "Fallen King's Cuffs",
+      "slot": "WRIST",
+      "inventoryType": "Wrist",
+      "sourceType": "Unknown",
+      "sourceId": "fallen-king-salhadaar",
+      "sourceLabel": "Fallen-King Salhadaar",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Armor",
+      "itemSubclass": "Mail",
+      "quality": "Epic",
+      "primaryStats": [
+        "agility",
+        "intellect"
+      ],
+      "statNames": [
+        "Intellect",
+        "Agility",
+        "Stamina",
+        "Critical Strike",
+        "Mastery"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_bracer_mail_raidshamanmidnight_d_01.jpg"
     },
     {
       "itemId": 250009,
@@ -870,6 +2081,195 @@
       "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_chest_leather_raidroguemidnight_d_01.jpg"
     },
     {
+      "itemId": 237850,
+      "itemName": "Farstrider's Chopper",
+      "slot": "WEAPON",
+      "inventoryType": "One-Hand",
+      "sourceType": "Unknown",
+      "sourceId": "blacksmithing",
+      "sourceLabel": "Blacksmithing",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Weapon",
+      "itemSubclass": "Axe",
+      "quality": "Epic",
+      "primaryStats": [
+        "strength",
+        "agility"
+      ],
+      "statNames": [
+        "Agility",
+        "Strength",
+        "Stamina",
+        "Critical Strike",
+        "Mastery"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_axe_1h_questbloodelf_b_01.jpg"
+    },
+    {
+      "itemId": 237837,
+      "itemName": "Farstrider's Mercy",
+      "slot": "WEAPON",
+      "inventoryType": "One-Hand",
+      "sourceType": "Crafting",
+      "sourceId": "crafting",
+      "sourceLabel": "Crafting",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Weapon",
+      "itemSubclass": "Dagger",
+      "quality": "Epic",
+      "primaryStats": [
+        "agility"
+      ],
+      "statNames": [
+        "Agility",
+        "Stamina",
+        "Critical Strike",
+        "Mastery"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_knife_1h_questbloodelf_b_02.jpg"
+    },
+    {
+      "itemId": 244584,
+      "itemName": "Farstrider's Plated Bracers",
+      "slot": "WRIST",
+      "inventoryType": "Wrist",
+      "sourceType": "Crafting",
+      "sourceId": "crafting",
+      "sourceLabel": "Crafting",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Armor",
+      "itemSubclass": "Mail",
+      "quality": "Epic",
+      "primaryStats": [
+        "agility",
+        "intellect"
+      ],
+      "statNames": [
+        "Intellect",
+        "Agility",
+        "Stamina",
+        "Haste",
+        "Mastery"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_bracer_mail_questbloodelf_b_01.jpg"
+    },
+    {
+      "itemId": 244577,
+      "itemName": "Farstrider's Razor Talons",
+      "slot": "FEET",
+      "inventoryType": "Feet",
+      "sourceType": "Crafting",
+      "sourceId": "crafting",
+      "sourceLabel": "Crafting",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Armor",
+      "itemSubclass": "Mail",
+      "quality": "Epic",
+      "primaryStats": [
+        "agility",
+        "intellect"
+      ],
+      "statNames": [
+        "Intellect",
+        "Agility",
+        "Stamina",
+        "Haste",
+        "Mastery"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_boot_mail_questbloodelf_b_01.jpg"
+    },
+    {
+      "itemId": 250015,
+      "itemName": "Fearsome Visage of Ra-den's Chosen",
+      "slot": "HEAD",
+      "inventoryType": "Head",
+      "sourceType": "Raid",
+      "sourceId": "catalyst-raid-vault",
+      "sourceLabel": "Catalyst | Raid | Vault",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Armor",
+      "itemSubclass": "Leather",
+      "quality": "Epic",
+      "primaryStats": [
+        "agility",
+        "intellect"
+      ],
+      "statNames": [
+        "Intellect",
+        "Agility",
+        "Stamina",
+        "Critical Strike",
+        "Haste"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_helm_leather_raidmonkmidnight_d_01.jpg"
+    },
+    {
+      "itemId": 49806,
+      "itemName": "Flayer's Black Belt",
+      "slot": "WAIST",
+      "inventoryType": "Waist",
+      "sourceType": "Unknown",
+      "sourceId": "pit-of-saron",
+      "sourceLabel": "Pit of Saron",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Armor",
+      "itemSubclass": "Leather",
+      "quality": "Epic",
+      "primaryStats": [
+        "agility",
+        "intellect"
+      ],
+      "statNames": [
+        "Intellect",
+        "Agility",
+        "Stamina",
+        "Critical Strike",
+        "Haste"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_belt_65.jpg"
+    },
+    {
+      "itemId": 251206,
+      "itemName": "Fluxweave Cloak",
+      "slot": "CLOAK",
+      "inventoryType": "Back",
+      "sourceType": "Unknown",
+      "sourceId": "nexus-point-xenas",
+      "sourceLabel": "Nexus Point Xenas",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Armor",
+      "itemSubclass": "Cloth",
+      "quality": "Rare",
+      "primaryStats": [
+        "strength",
+        "agility",
+        "intellect"
+      ],
+      "statNames": [
+        "Intellect",
+        "Agility",
+        "Strength",
+        "Stamina",
+        "Versatility",
+        "Mastery"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_cape_cloth_dungeonharronir_c_01.jpg"
+    },
+    {
       "itemId": 151317,
       "itemName": "Footpads of Seeping Dread",
       "slot": "FEET",
@@ -895,6 +2295,33 @@
         "Mastery"
       ],
       "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_boot_leather_legiondungeon_c_03.jpg"
+    },
+    {
+      "itemId": 193714,
+      "itemName": "Frenzyroot Cuffs",
+      "slot": "WRIST",
+      "inventoryType": "Wrist",
+      "sourceType": "Unknown",
+      "sourceId": "algeth-ar-academy",
+      "sourceLabel": "Algeth'ar Academy",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Armor",
+      "itemSubclass": "Leather",
+      "quality": "Rare",
+      "primaryStats": [
+        "agility",
+        "intellect"
+      ],
+      "statNames": [
+        "Intellect",
+        "Agility",
+        "Stamina",
+        "Haste",
+        "Mastery"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_leather_dragondungeon_c_01_bracer.jpg"
     },
     {
       "itemId": 250000,
@@ -924,13 +2351,38 @@
       "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_chest_mail_raidevokermidnight_d_01.jpg"
     },
     {
+      "itemId": 49802,
+      "itemName": "Garfrost's Two-Ton Hammer",
+      "slot": "TWOHWEAPON",
+      "inventoryType": "Two-Hand",
+      "sourceType": "Unknown",
+      "sourceId": "pit-of-saron",
+      "sourceLabel": "Pit of Saron",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Weapon",
+      "itemSubclass": "Mace",
+      "quality": "Epic",
+      "primaryStats": [
+        "strength"
+      ],
+      "statNames": [
+        "Strength",
+        "Stamina",
+        "Critical Strike",
+        "Haste"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_mace_83.jpg"
+    },
+    {
       "itemId": 249343,
       "itemName": "Gaze of the Alnseer",
       "slot": "TRINKET",
       "inventoryType": "Trinket",
-      "sourceType": "Unknown",
-      "sourceId": "chimaerus",
-      "sourceLabel": "Chimaerus",
+      "sourceType": "Raid",
+      "sourceId": "chimaerus-raid",
+      "sourceLabel": "Chimaerus (Raid)",
       "bossName": null,
       "raidName": null,
       "dungeonName": null,
@@ -949,8 +2401,8 @@
       "slot": "HAND",
       "inventoryType": "Hands",
       "sourceType": "Unknown",
-      "sourceId": "magister",
-      "sourceLabel": "Magister",
+      "sourceId": "magister-s-terrace",
+      "sourceLabel": "Magister's Terrace",
       "bossName": null,
       "raidName": null,
       "dungeonName": null,
@@ -1056,9 +2508,9 @@
       "itemName": "Grimoire of the Eternal Light",
       "slot": "HOLDABLE",
       "inventoryType": "Held In Off-hand",
-      "sourceType": "Unknown",
-      "sourceId": "vorasius",
-      "sourceLabel": "Vorasius",
+      "sourceType": "Raid",
+      "sourceId": "vorasius-raid",
+      "sourceLabel": "Vorasius (Raid)",
       "bossName": null,
       "raidName": null,
       "dungeonName": null,
@@ -1182,6 +2634,162 @@
       "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_helm_mail_raidevokermidnight_d_01.jpg"
     },
     {
+      "itemId": 49824,
+      "itemName": "Horns of the Spurned Val'kyr",
+      "slot": "HEAD",
+      "inventoryType": "Head",
+      "sourceType": "Unknown",
+      "sourceId": "pit-of-saron",
+      "sourceLabel": "Pit of Saron",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Armor",
+      "itemSubclass": "Mail",
+      "quality": "Epic",
+      "primaryStats": [
+        "agility",
+        "intellect"
+      ],
+      "statNames": [
+        "Intellect",
+        "Agility",
+        "Stamina",
+        "Critical Strike",
+        "Haste"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_helmet_157.jpg"
+    },
+    {
+      "itemId": 249925,
+      "itemName": "Hungering Victory",
+      "slot": "WEAPON",
+      "inventoryType": "One-Hand",
+      "sourceType": "Unknown",
+      "sourceId": "vorasius",
+      "sourceLabel": "Vorasius",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Weapon",
+      "itemSubclass": "Dagger",
+      "quality": "Epic",
+      "primaryStats": [
+        "agility"
+      ],
+      "statNames": [
+        "Agility",
+        "Stamina",
+        "Versatility",
+        "Mastery"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_knife_1h_raidmidnight_d_02.jpg"
+    },
+    {
+      "itemId": 249335,
+      "itemName": "Imperator's Banner",
+      "slot": "CLOAK",
+      "inventoryType": "Back",
+      "sourceType": "Raid",
+      "sourceId": "imperator-averzian-raid",
+      "sourceLabel": "Imperator Averzian (Raid)",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Armor",
+      "itemSubclass": "Cloth",
+      "quality": "Epic",
+      "primaryStats": [
+        "strength",
+        "agility",
+        "intellect"
+      ],
+      "statNames": [
+        "Intellect",
+        "Agility",
+        "Strength",
+        "Stamina",
+        "Critical Strike",
+        "Versatility"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_plate_raiddeathknightmidnight_d_01_cape.jpg"
+    },
+    {
+      "itemId": 249302,
+      "itemName": "Inescapable Reach",
+      "slot": "TWOHWEAPON",
+      "inventoryType": "Two-Hand",
+      "sourceType": "Unknown",
+      "sourceId": "vorasius",
+      "sourceLabel": "Vorasius",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Weapon",
+      "itemSubclass": "Polearm",
+      "quality": "Epic",
+      "primaryStats": [
+        "agility"
+      ],
+      "statNames": [
+        "Agility",
+        "Stamina",
+        "Critical Strike",
+        "Mastery"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_polearm_2h_raidmidnight_d_01.jpg"
+    },
+    {
+      "itemId": 249302,
+      "itemName": "Inescapable Reach",
+      "slot": "TWOHWEAPON",
+      "inventoryType": "Two-Hand",
+      "sourceType": "Unknown",
+      "sourceId": "vorasius-nexus-point-xenas",
+      "sourceLabel": "Vorasius / Nexus Point Xenas",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Weapon",
+      "itemSubclass": "Polearm",
+      "quality": "Epic",
+      "primaryStats": [
+        "agility"
+      ],
+      "statNames": [
+        "Agility",
+        "Stamina",
+        "Critical Strike",
+        "Mastery"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_polearm_2h_raidmidnight_d_01.jpg"
+    },
+    {
+      "itemId": 49807,
+      "itemName": "Krick's Beetle Stabber",
+      "slot": "WEAPON",
+      "inventoryType": "One-Hand",
+      "sourceType": "Unknown",
+      "sourceId": "pit-of-saron",
+      "sourceLabel": "Pit of Saron",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Weapon",
+      "itemSubclass": "Dagger",
+      "quality": "Epic",
+      "primaryStats": [
+        "agility"
+      ],
+      "statNames": [
+        "Agility",
+        "Stamina",
+        "Critical Strike",
+        "Haste"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_weapon_shortblade_80.jpg"
+    },
+    {
       "itemId": 249978,
       "itemName": "Leggings of the Primal Core",
       "slot": "LEGS",
@@ -1260,7 +2868,34 @@
       "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_12_trinket_raid_voidspire_physdps1_armyoflightbanner.jpg"
     },
     {
-      "itemId": 109796,
+      "itemId": 249326,
+      "itemName": "Light's March Bracers",
+      "slot": "WRIST",
+      "inventoryType": "Wrist",
+      "sourceType": "Unknown",
+      "sourceId": "imperator-averzian",
+      "sourceLabel": "Imperator Averzian",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Armor",
+      "itemSubclass": "Plate",
+      "quality": "Epic",
+      "primaryStats": [
+        "strength",
+        "intellect"
+      ],
+      "statNames": [
+        "Intellect",
+        "Strength",
+        "Stamina",
+        "Haste",
+        "Mastery"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_bracer_plate_raidwarriormidnight_d_01.jpg"
+    },
+    {
+      "itemId": 258584,
       "itemName": "Lightbinder Treads",
       "slot": "FEET",
       "inventoryType": "Feet",
@@ -1285,6 +2920,32 @@
       "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_cloth_draenordungeon_c_01boot.jpg"
     },
     {
+      "itemId": 260408,
+      "itemName": "Lightless Lament",
+      "slot": "WEAPON",
+      "inventoryType": "One-Hand",
+      "sourceType": "Unknown",
+      "sourceId": "midnight-falls",
+      "sourceLabel": "Midnight Falls",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Weapon",
+      "itemSubclass": "Warglaives",
+      "quality": "Epic",
+      "primaryStats": [
+        "agility",
+        "intellect"
+      ],
+      "statNames": [
+        "Intellect",
+        "Agility",
+        "Stamina",
+        "Critical Strike"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_glaive_1h_darknaaru_d_01.jpg"
+    },
+    {
       "itemId": 249808,
       "itemName": "Litany of Lightblind Wrath",
       "slot": "TRINKET",
@@ -1305,6 +2966,28 @@
         "Intellect"
       ],
       "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_12_trinket_raid_voidspire_healer2_litanyoflightblindwrath.jpg"
+    },
+    {
+      "itemId": 251513,
+      "itemName": "Loa Worshiper's Band",
+      "slot": "FINGER",
+      "inventoryType": "Finger",
+      "sourceType": "Crafting",
+      "sourceId": "crafting",
+      "sourceLabel": "Crafting",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Armor",
+      "itemSubclass": "Miscellaneous",
+      "quality": "Epic",
+      "primaryStats": [],
+      "statNames": [
+        "Stamina",
+        "Critical Strike",
+        "Mastery"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_12_profession_jewelcrafting_ring3_silver.jpg"
     },
     {
       "itemId": 249979,
@@ -1334,6 +3017,188 @@
       "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_helm_mail_raidshamanmidnight_d_01.jpg"
     },
     {
+      "itemId": 249809,
+      "itemName": "Locus-Walker's Ribbon",
+      "slot": "TRINKET",
+      "inventoryType": "Trinket",
+      "sourceType": "Raid",
+      "sourceId": "crown-of-the-cosmos-raid",
+      "sourceLabel": "Crown of the Cosmos (Raid)",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Armor",
+      "itemSubclass": "Miscellaneous",
+      "quality": "Epic",
+      "primaryStats": [],
+      "statNames": [
+        "Mastery"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_12_trinket_raid_voidspire_int2_locuswalkerslastribbon.jpg"
+    },
+    {
+      "itemId": 249964,
+      "itemName": "Luminant Verdict's Divine Warplate",
+      "slot": "CHEST",
+      "inventoryType": "Chest",
+      "sourceType": "Raid",
+      "sourceId": "tier-set-raid-catalyst-vault",
+      "sourceLabel": "Tier Set — Raid | Catalyst | Vault",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Armor",
+      "itemSubclass": "Plate",
+      "quality": "Epic",
+      "primaryStats": [
+        "strength",
+        "intellect"
+      ],
+      "statNames": [
+        "Intellect",
+        "Strength",
+        "Stamina",
+        "Haste",
+        "Mastery"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_chest_plate_raidpaladinmidnight_d_01.jpg"
+    },
+    {
+      "itemId": 249962,
+      "itemName": "Luminant Verdict's Gauntlets",
+      "slot": "HAND",
+      "inventoryType": "Hands",
+      "sourceType": "Unknown",
+      "sourceId": "vorasius",
+      "sourceLabel": "Vorasius",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Armor",
+      "itemSubclass": "Plate",
+      "quality": "Epic",
+      "primaryStats": [
+        "strength",
+        "intellect"
+      ],
+      "statNames": [
+        "Intellect",
+        "Strength",
+        "Stamina",
+        "Haste",
+        "Versatility"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_glove_plate_raidpaladinmidnight_d_01.jpg"
+    },
+    {
+      "itemId": 249960,
+      "itemName": "Luminant Verdict's Greaves",
+      "slot": "LEGS",
+      "inventoryType": "Legs",
+      "sourceType": "Raid",
+      "sourceId": "tier-set-raid-catalyst-vault",
+      "sourceLabel": "Tier Set — Raid | Catalyst | Vault",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Armor",
+      "itemSubclass": "Plate",
+      "quality": "Epic",
+      "primaryStats": [
+        "strength",
+        "intellect"
+      ],
+      "statNames": [
+        "Intellect",
+        "Strength",
+        "Stamina",
+        "Critical Strike",
+        "Haste"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_pant_plate_raidpaladinmidnight_d_01.jpg"
+    },
+    {
+      "itemId": 249959,
+      "itemName": "Luminant Verdict's Providence Watch",
+      "slot": "SHOULDER",
+      "inventoryType": "Shoulder",
+      "sourceType": "Raid",
+      "sourceId": "tier-set-raid-catalyst-vault",
+      "sourceLabel": "Tier Set — Raid | Catalyst | Vault",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Armor",
+      "itemSubclass": "Plate",
+      "quality": "Epic",
+      "primaryStats": [
+        "strength",
+        "intellect"
+      ],
+      "statNames": [
+        "Intellect",
+        "Strength",
+        "Stamina",
+        "Critical Strike",
+        "Mastery"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_shoulder_plate_raidpaladinmidnight_d_01.jpg"
+    },
+    {
+      "itemId": 249961,
+      "itemName": "Luminant Verdict's Unwavering Gaze",
+      "slot": "HEAD",
+      "inventoryType": "Head",
+      "sourceType": "Raid",
+      "sourceId": "tier-set-raid-catalyst-vault",
+      "sourceLabel": "Tier Set — Raid | Catalyst | Vault",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Armor",
+      "itemSubclass": "Plate",
+      "quality": "Epic",
+      "primaryStats": [
+        "strength",
+        "intellect"
+      ],
+      "statNames": [
+        "Intellect",
+        "Strength",
+        "Stamina",
+        "Haste",
+        "Mastery"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_helm_plate_raidpaladinmidnight_d_01.jpg"
+    },
+    {
+      "itemId": 251216,
+      "itemName": "Maledict Vest",
+      "slot": "CHEST",
+      "inventoryType": "Chest",
+      "sourceType": "Unknown",
+      "sourceId": "nexus-point-xenas",
+      "sourceLabel": "Nexus Point Xenas",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Armor",
+      "itemSubclass": "Leather",
+      "quality": "Rare",
+      "primaryStats": [
+        "agility",
+        "intellect"
+      ],
+      "statNames": [
+        "Intellect",
+        "Agility",
+        "Stamina",
+        "Haste",
+        "Mastery"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_chest_leather_dungeonharronir_c_01.jpg"
+    },
+    {
       "itemId": 251085,
       "itemName": "Mantle of Dark Devotion",
       "slot": "SHOULDER",
@@ -1357,6 +3222,31 @@
         "Mastery"
       ],
       "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_shoulder_cloth_dungeonharronir_c_01.jpg"
+    },
+    {
+      "itemId": 239648,
+      "itemName": "Martyr's Bindings",
+      "slot": "WRIST",
+      "inventoryType": "Wrist",
+      "sourceType": "Crafting",
+      "sourceId": "crafting",
+      "sourceLabel": "Crafting",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Armor",
+      "itemSubclass": "Cloth",
+      "quality": "Epic",
+      "primaryStats": [
+        "intellect"
+      ],
+      "statNames": [
+        "Intellect",
+        "Stamina",
+        "Critical Strike",
+        "Haste"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_bracer_cloth_questbloodelf_b_01.jpg"
     },
     {
       "itemId": 249913,
@@ -1413,6 +3303,50 @@
       "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_helm_leather_raidroguemidnight_d_01.jpg"
     },
     {
+      "itemId": 240950,
+      "itemName": "Masterwork Sin'dorei Amulet",
+      "slot": "NECK",
+      "inventoryType": "Neck",
+      "sourceType": "Crafting",
+      "sourceId": "jewelcrafting",
+      "sourceLabel": "Jewelcrafting",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Armor",
+      "itemSubclass": "Miscellaneous",
+      "quality": "Epic",
+      "primaryStats": [],
+      "statNames": [
+        "Stamina",
+        "Critical Strike",
+        "Haste"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_12_profession_jewelcrafting_necklace2_gold.jpg"
+    },
+    {
+      "itemId": 240949,
+      "itemName": "Masterwork Sin'dorei Band",
+      "slot": "FINGER",
+      "inventoryType": "Finger",
+      "sourceType": "Crafting",
+      "sourceId": "crafting",
+      "sourceLabel": "Crafting",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Armor",
+      "itemSubclass": "Miscellaneous",
+      "quality": "Epic",
+      "primaryStats": [],
+      "statNames": [
+        "Stamina",
+        "Haste",
+        "Versatility"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_12_profession_jewelcrafting_ring4_gold.jpg"
+    },
+    {
       "itemId": 151309,
       "itemName": "Necklace of the Twisting Void",
       "slot": "NECK",
@@ -1433,6 +3367,195 @@
         "Versatility"
       ],
       "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_7_0raid_necklace_06d.jpg"
+    },
+    {
+      "itemId": 249955,
+      "itemName": "Night Ender's Breastplate",
+      "slot": "CHEST",
+      "inventoryType": "Chest",
+      "sourceType": "Raid",
+      "sourceId": "tier-set-raid-catalyst-vault",
+      "sourceLabel": "Tier Set — Raid | Catalyst | Vault",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Armor",
+      "itemSubclass": "Plate",
+      "quality": "Epic",
+      "primaryStats": [
+        "strength",
+        "intellect"
+      ],
+      "statNames": [
+        "Intellect",
+        "Strength",
+        "Stamina",
+        "Critical Strike",
+        "Haste"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_chest_plate_raidwarriormidnight_d_01.jpg"
+    },
+    {
+      "itemId": 249951,
+      "itemName": "Night Ender's Chausses",
+      "slot": "LEGS",
+      "inventoryType": "Legs",
+      "sourceType": "Raid",
+      "sourceId": "tier-set-raid-catalyst-vault",
+      "sourceLabel": "Tier Set — Raid | Catalyst | Vault",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Armor",
+      "itemSubclass": "Plate",
+      "quality": "Epic",
+      "primaryStats": [
+        "strength",
+        "intellect"
+      ],
+      "statNames": [
+        "Intellect",
+        "Strength",
+        "Stamina",
+        "Critical Strike",
+        "Haste"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_pant_plate_raidwarriormidnight_d_01.jpg"
+    },
+    {
+      "itemId": 249949,
+      "itemName": "Night Ender's Girdle",
+      "slot": "WAIST",
+      "inventoryType": "Waist",
+      "sourceType": "Raid",
+      "sourceId": "tier-set-raid-catalyst-vault",
+      "sourceLabel": "Tier Set — Raid | Catalyst | Vault",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Armor",
+      "itemSubclass": "Plate",
+      "quality": "Epic",
+      "primaryStats": [
+        "strength",
+        "intellect"
+      ],
+      "statNames": [
+        "Intellect",
+        "Strength",
+        "Stamina",
+        "Critical Strike",
+        "Haste"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_belt_plate_raidwarriormidnight_d_01.jpg"
+    },
+    {
+      "itemId": 249954,
+      "itemName": "Night Ender's Greatboots",
+      "slot": "FEET",
+      "inventoryType": "Feet",
+      "sourceType": "Raid",
+      "sourceId": "tier-set-raid-catalyst-vault",
+      "sourceLabel": "Tier Set — Raid | Catalyst | Vault",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Armor",
+      "itemSubclass": "Plate",
+      "quality": "Epic",
+      "primaryStats": [
+        "strength",
+        "intellect"
+      ],
+      "statNames": [
+        "Intellect",
+        "Strength",
+        "Stamina",
+        "Critical Strike",
+        "Haste"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_boot_plate_raidwarriormidnight_d_01.jpg"
+    },
+    {
+      "itemId": 249950,
+      "itemName": "Night Ender's Pauldrons",
+      "slot": "SHOULDER",
+      "inventoryType": "Shoulder",
+      "sourceType": "Raid",
+      "sourceId": "tier-set-raid-catalyst-vault",
+      "sourceLabel": "Tier Set — Raid | Catalyst | Vault",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Armor",
+      "itemSubclass": "Plate",
+      "quality": "Epic",
+      "primaryStats": [
+        "strength",
+        "intellect"
+      ],
+      "statNames": [
+        "Intellect",
+        "Strength",
+        "Stamina",
+        "Haste",
+        "Mastery"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_shoulder_plate_raidwarriormidnight_d_01.jpg"
+    },
+    {
+      "itemId": 249952,
+      "itemName": "Night Ender's Tusks",
+      "slot": "HEAD",
+      "inventoryType": "Head",
+      "sourceType": "Raid",
+      "sourceId": "tier-set-raid-catalyst-vault",
+      "sourceLabel": "Tier Set — Raid | Catalyst | Vault",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Armor",
+      "itemSubclass": "Plate",
+      "quality": "Epic",
+      "primaryStats": [
+        "strength",
+        "intellect"
+      ],
+      "statNames": [
+        "Intellect",
+        "Strength",
+        "Stamina",
+        "Haste",
+        "Mastery"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_helm_plate_raidwarriormidnight_d_01.jpg"
+    },
+    {
+      "itemId": 249914,
+      "itemName": "Oblivion Guise",
+      "slot": "HEAD",
+      "inventoryType": "Head",
+      "sourceType": "Raid",
+      "sourceId": "midnight-falls-raid",
+      "sourceLabel": "Midnight Falls (Raid)",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Armor",
+      "itemSubclass": "Mail",
+      "quality": "Epic",
+      "primaryStats": [
+        "agility",
+        "intellect"
+      ],
+      "statNames": [
+        "Intellect",
+        "Agility",
+        "Stamina",
+        "Critical Strike",
+        "Leech"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_helm_mail_raidshamanmidnight_d_01.jpg"
     },
     {
       "itemId": 251217,
@@ -1477,6 +3600,33 @@
         "Mastery"
       ],
       "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_12_trinket_devouring_host_currency1_silver.jpg"
+    },
+    {
+      "itemId": 249332,
+      "itemName": "Parasite Stompers",
+      "slot": "FEET",
+      "inventoryType": "Feet",
+      "sourceType": "Unknown",
+      "sourceId": "vorasius",
+      "sourceLabel": "Vorasius",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Armor",
+      "itemSubclass": "Plate",
+      "quality": "Epic",
+      "primaryStats": [
+        "strength",
+        "intellect"
+      ],
+      "statNames": [
+        "Intellect",
+        "Strength",
+        "Stamina",
+        "Haste",
+        "Mastery"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_boot_plate_raidpaladinmidnight_d_01.jpg"
     },
     {
       "itemId": 151323,
@@ -1538,8 +3688,8 @@
       "slot": "FINGER",
       "inventoryType": "Finger",
       "sourceType": "Unknown",
-      "sourceId": "algeth",
-      "sourceLabel": "Algeth",
+      "sourceId": "algeth-ar-academy",
+      "sourceLabel": "Algeth'ar Academy",
       "bossName": null,
       "raidName": null,
       "dungeonName": null,
@@ -1553,6 +3703,114 @@
         "Mastery"
       ],
       "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_10_dungeonjewelry_explorer_ring_1_color1.jpg"
+    },
+    {
+      "itemId": 249987,
+      "itemName": "Primal Sentry's Legguards",
+      "slot": "LEGS",
+      "inventoryType": "Legs",
+      "sourceType": "Raid",
+      "sourceId": "tier-set-raid-catalyst-vault",
+      "sourceLabel": "Tier Set — Raid | Catalyst | Vault",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Armor",
+      "itemSubclass": "Mail",
+      "quality": "Epic",
+      "primaryStats": [
+        "agility",
+        "intellect"
+      ],
+      "statNames": [
+        "Intellect",
+        "Agility",
+        "Stamina",
+        "Critical Strike",
+        "Mastery"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_pant_mail_raidhuntermidnight_d_01.jpg"
+    },
+    {
+      "itemId": 249988,
+      "itemName": "Primal Sentry's Maw",
+      "slot": "HEAD",
+      "inventoryType": "Head",
+      "sourceType": "Raid",
+      "sourceId": "tier-set-raid-catalyst-vault",
+      "sourceLabel": "Tier Set — Raid | Catalyst | Vault",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Armor",
+      "itemSubclass": "Mail",
+      "quality": "Epic",
+      "primaryStats": [
+        "agility",
+        "intellect"
+      ],
+      "statNames": [
+        "Intellect",
+        "Agility",
+        "Stamina",
+        "Critical Strike",
+        "Haste"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_helm_mail_raidhuntermidnight_d_01.jpg"
+    },
+    {
+      "itemId": 249991,
+      "itemName": "Primal Sentry's Scaleplate",
+      "slot": "CHEST",
+      "inventoryType": "Chest",
+      "sourceType": "Raid",
+      "sourceId": "tier-set-raid-catalyst-vault",
+      "sourceLabel": "Tier Set — Raid | Catalyst | Vault",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Armor",
+      "itemSubclass": "Mail",
+      "quality": "Epic",
+      "primaryStats": [
+        "agility",
+        "intellect"
+      ],
+      "statNames": [
+        "Intellect",
+        "Agility",
+        "Stamina",
+        "Critical Strike",
+        "Haste"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_chest_mail_raidhuntermidnight_d_01.jpg"
+    },
+    {
+      "itemId": 249989,
+      "itemName": "Primal Sentry's Talonguards",
+      "slot": "HAND",
+      "inventoryType": "Hands",
+      "sourceType": "Raid",
+      "sourceId": "tier-set-raid-catalyst-vault",
+      "sourceLabel": "Tier Set — Raid | Catalyst | Vault",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Armor",
+      "itemSubclass": "Mail",
+      "quality": "Epic",
+      "primaryStats": [
+        "agility",
+        "intellect"
+      ],
+      "statNames": [
+        "Intellect",
+        "Agility",
+        "Stamina",
+        "Critical Strike",
+        "Mastery"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_glove_mail_raidhuntermidnight_d_01.jpg"
     },
     {
       "itemId": 49812,
@@ -1575,6 +3833,55 @@
         "Haste"
       ],
       "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_jewelry_ring_42.jpg"
+    },
+    {
+      "itemId": 249806,
+      "itemName": "Radiant Plume",
+      "slot": "TRINKET",
+      "inventoryType": "Trinket",
+      "sourceType": "Unknown",
+      "sourceId": "belo-ren",
+      "sourceLabel": "Belo'ren",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Armor",
+      "itemSubclass": "Miscellaneous",
+      "quality": "Epic",
+      "primaryStats": [
+        "strength",
+        "agility"
+      ],
+      "statNames": [
+        "Agility",
+        "Strength"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_12_dualityphoenix_holy_feather.jpg"
+    },
+    {
+      "itemId": 249288,
+      "itemName": "Ranger-Captain's Lethal Recurve",
+      "slot": "RANGED",
+      "inventoryType": "Ranged",
+      "sourceType": "Unknown",
+      "sourceId": "crown-of-the-cosmos",
+      "sourceLabel": "Crown of the Cosmos",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Weapon",
+      "itemSubclass": "Bow",
+      "quality": "Epic",
+      "primaryStats": [
+        "agility"
+      ],
+      "statNames": [
+        "Agility",
+        "Stamina",
+        "Critical Strike",
+        "Haste"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_bow_1h_raidmidnight_d_01.jpg"
     },
     {
       "itemId": 251202,
@@ -1604,13 +3911,175 @@
       "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_12al_armyoflight_defense_shield01.jpg"
     },
     {
+      "itemId": 249971,
+      "itemName": "Relentless Rider's Bonegrasps",
+      "slot": "HAND",
+      "inventoryType": "Hands",
+      "sourceType": "Raid",
+      "sourceId": "tier-set-raid-catalyst-vault",
+      "sourceLabel": "Tier Set — Raid | Catalyst | Vault",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Armor",
+      "itemSubclass": "Plate",
+      "quality": "Epic",
+      "primaryStats": [
+        "strength",
+        "intellect"
+      ],
+      "statNames": [
+        "Intellect",
+        "Strength",
+        "Stamina",
+        "Haste",
+        "Mastery"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_plate_raiddeathknightmidnight_d_01_glove.jpg"
+    },
+    {
+      "itemId": 249967,
+      "itemName": "Relentless Rider's Chain",
+      "slot": "WAIST",
+      "inventoryType": "Waist",
+      "sourceType": "Raid",
+      "sourceId": "tier-set-raid-catalyst-vault",
+      "sourceLabel": "Tier Set — Raid | Catalyst | Vault",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Armor",
+      "itemSubclass": "Plate",
+      "quality": "Epic",
+      "primaryStats": [
+        "strength",
+        "intellect"
+      ],
+      "statNames": [
+        "Intellect",
+        "Strength",
+        "Stamina",
+        "Critical Strike",
+        "Mastery"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_plate_raiddeathknightmidnight_d_01_belt.jpg"
+    },
+    {
+      "itemId": 249970,
+      "itemName": "Relentless Rider's Crown",
+      "slot": "HEAD",
+      "inventoryType": "Head",
+      "sourceType": "Raid",
+      "sourceId": "tier-set-raid-catalyst-vault",
+      "sourceLabel": "Tier Set — Raid | Catalyst | Vault",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Armor",
+      "itemSubclass": "Plate",
+      "quality": "Epic",
+      "primaryStats": [
+        "strength",
+        "intellect"
+      ],
+      "statNames": [
+        "Intellect",
+        "Strength",
+        "Stamina",
+        "Haste",
+        "Mastery"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_plate_raiddeathknightmidnight_d_01_helm.jpg"
+    },
+    {
+      "itemId": 249973,
+      "itemName": "Relentless Rider's Cuirass",
+      "slot": "ROBE",
+      "inventoryType": "Chest",
+      "sourceType": "Raid",
+      "sourceId": "tier-set-raid-catalyst-vault",
+      "sourceLabel": "Tier Set — Raid | Catalyst | Vault",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Armor",
+      "itemSubclass": "Plate",
+      "quality": "Epic",
+      "primaryStats": [
+        "strength",
+        "intellect"
+      ],
+      "statNames": [
+        "Intellect",
+        "Strength",
+        "Stamina",
+        "Critical Strike",
+        "Haste"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_plate_raiddeathknightmidnight_d_01_chest.jpg"
+    },
+    {
+      "itemId": 249968,
+      "itemName": "Relentless Rider's Dreadthorns",
+      "slot": "SHOULDER",
+      "inventoryType": "Shoulder",
+      "sourceType": "Raid",
+      "sourceId": "tier-set-raid-catalyst-vault",
+      "sourceLabel": "Tier Set — Raid | Catalyst | Vault",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Armor",
+      "itemSubclass": "Plate",
+      "quality": "Epic",
+      "primaryStats": [
+        "strength",
+        "intellect"
+      ],
+      "statNames": [
+        "Intellect",
+        "Strength",
+        "Stamina",
+        "Haste",
+        "Versatility"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_plate_raiddeathknightmidnight_d_01_shoulder.jpg"
+    },
+    {
+      "itemId": 249969,
+      "itemName": "Relentless Rider's Legguards",
+      "slot": "LEGS",
+      "inventoryType": "Legs",
+      "sourceType": "Raid",
+      "sourceId": "tier-set-raid-catalyst-vault",
+      "sourceLabel": "Tier Set — Raid | Catalyst | Vault",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Armor",
+      "itemSubclass": "Plate",
+      "quality": "Epic",
+      "primaryStats": [
+        "strength",
+        "intellect"
+      ],
+      "statNames": [
+        "Intellect",
+        "Strength",
+        "Stamina",
+        "Critical Strike",
+        "Mastery"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_plate_raiddeathknightmidnight_d_01_pant.jpg"
+    },
+    {
       "itemId": 249337,
       "itemName": "Ribbon of Coiled Malice",
       "slot": "NECK",
       "inventoryType": "Neck",
-      "sourceType": "Unknown",
-      "sourceId": "fallen-king-salhadaar",
-      "sourceLabel": "Fallen-King Salhadaar",
+      "sourceType": "Raid",
+      "sourceId": "fallen-king-salhadaar-raid",
+      "sourceLabel": "Fallen-King Salhadaar (Raid)",
       "bossName": null,
       "raidName": null,
       "dungeonName": null,
@@ -1659,9 +4128,9 @@
       "itemName": "Robes of Endless Oblivion",
       "slot": "ROBE",
       "inventoryType": "Chest",
-      "sourceType": "Unknown",
-      "sourceId": "midnight-falls",
-      "sourceLabel": "Midnight Falls",
+      "sourceType": "Raid",
+      "sourceId": "midnight-falls-raid",
+      "sourceLabel": "Midnight Falls (Raid)",
       "bossName": null,
       "raidName": null,
       "dungeonName": null,
@@ -1678,6 +4147,56 @@
         "Leech"
       ],
       "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_chest_cloth_raidwarlockmidnight_d_01.jpg"
+    },
+    {
+      "itemId": 251077,
+      "itemName": "Roostwarden's Bough",
+      "slot": "TWOHWEAPON",
+      "inventoryType": "Two-Hand",
+      "sourceType": "Unknown",
+      "sourceId": "windrunner-spire-belo-ren",
+      "sourceLabel": "Windrunner Spire / Belo'ren",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Weapon",
+      "itemSubclass": "Staff",
+      "quality": "Rare",
+      "primaryStats": [
+        "agility"
+      ],
+      "statNames": [
+        "Agility",
+        "Stamina",
+        "Critical Strike",
+        "Mastery"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_staff_2h_dungeonharronir_c_01.jpg"
+    },
+    {
+      "itemId": 251077,
+      "itemName": "Roostwarden's Bough",
+      "slot": "TWOHWEAPON",
+      "inventoryType": "Two-Hand",
+      "sourceType": "Unknown",
+      "sourceId": "windrunner-spire-belo-ren",
+      "sourceLabel": "Windrunner Spire / Belo'ren",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Weapon",
+      "itemSubclass": "Staff",
+      "quality": "Rare",
+      "primaryStats": [
+        "agility"
+      ],
+      "statNames": [
+        "Agility",
+        "Stamina",
+        "Critical Strike",
+        "Mastery"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_staff_2h_dungeonharronir_c_01.jpg"
     },
     {
       "itemId": 249320,
@@ -1732,6 +4251,33 @@
         "Haste"
       ],
       "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_belt_69.jpg"
+    },
+    {
+      "itemId": 249374,
+      "itemName": "Scorn-Scarred Shul'ka's Belt",
+      "slot": "WAIST",
+      "inventoryType": "Waist",
+      "sourceType": "Raid",
+      "sourceId": "chimaerus-raid",
+      "sourceLabel": "Chimaerus (Raid)",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Armor",
+      "itemSubclass": "Leather",
+      "quality": "Epic",
+      "primaryStats": [
+        "agility",
+        "intellect"
+      ],
+      "statNames": [
+        "Intellect",
+        "Agility",
+        "Stamina",
+        "Critical Strike",
+        "Haste"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_belt_leather_raidmonkmidnight_d_01.jpg"
     },
     {
       "itemId": 249371,
@@ -1920,9 +4466,9 @@
       "itemName": "Signet of the Starved Beast",
       "slot": "FINGER",
       "inventoryType": "Finger",
-      "sourceType": "Unknown",
-      "sourceId": "vorasius",
-      "sourceLabel": "Vorasius",
+      "sourceType": "Raid",
+      "sourceId": "vorasius-raid",
+      "sourceLabel": "Vorasius (Raid)",
       "bossName": null,
       "raidName": null,
       "dungeonName": null,
@@ -1936,6 +4482,188 @@
         "Versatility"
       ],
       "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_12_jewelry_devouringhost_ring_silver2.jpg"
+    },
+    {
+      "itemId": 244576,
+      "itemName": "Silvermoon Agent's Deflectors",
+      "slot": "WRIST",
+      "inventoryType": "Wrist",
+      "sourceType": "Crafting",
+      "sourceId": "crafting-misc",
+      "sourceLabel": "Crafting / Misc",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Armor",
+      "itemSubclass": "Leather",
+      "quality": "Epic",
+      "primaryStats": [
+        "agility",
+        "intellect"
+      ],
+      "statNames": [
+        "Intellect",
+        "Agility",
+        "Stamina",
+        "Critical Strike",
+        "Haste"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_bracer_leather_questbloodelf_b_01.jpg"
+    },
+    {
+      "itemId": 244575,
+      "itemName": "Silvermoon Agent's Handwraps",
+      "slot": "HAND",
+      "inventoryType": "Hands",
+      "sourceType": "Crafting",
+      "sourceId": "crafting-misc",
+      "sourceLabel": "Crafting / Misc",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Armor",
+      "itemSubclass": "Leather",
+      "quality": "Epic",
+      "primaryStats": [
+        "agility",
+        "intellect"
+      ],
+      "statNames": [
+        "Intellect",
+        "Agility",
+        "Stamina",
+        "Critical Strike",
+        "Versatility"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_glove_leather_questbloodelf_b_01.jpg"
+    },
+    {
+      "itemId": 244569,
+      "itemName": "Silvermoon Agent's Sneakers",
+      "slot": "FEET",
+      "inventoryType": "Feet",
+      "sourceType": "Crafting",
+      "sourceId": "crafting",
+      "sourceLabel": "Crafting",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Armor",
+      "itemSubclass": "Leather",
+      "quality": "Epic",
+      "primaryStats": [
+        "agility",
+        "intellect"
+      ],
+      "statNames": [
+        "Intellect",
+        "Agility",
+        "Stamina",
+        "Haste",
+        "Mastery"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_boot_leather_questbloodelf_b_01.jpg"
+    },
+    {
+      "itemId": 244573,
+      "itemName": "Silvermoon Agent's Utility Belt",
+      "slot": "WAIST",
+      "inventoryType": "Waist",
+      "sourceType": "Crafting",
+      "sourceId": "crafting",
+      "sourceLabel": "Crafting",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Armor",
+      "itemSubclass": "Leather",
+      "quality": "Epic",
+      "primaryStats": [
+        "agility",
+        "intellect"
+      ],
+      "statNames": [
+        "Intellect",
+        "Agility",
+        "Stamina",
+        "Haste",
+        "Mastery"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_belt_leather_questbloodelf_b_01.jpg"
+    },
+    {
+      "itemId": 244573,
+      "itemName": "Silvermoon Agent's Utility Belt",
+      "slot": "WAIST",
+      "inventoryType": "Waist",
+      "sourceType": "Crafting",
+      "sourceId": "crafting",
+      "sourceLabel": "Crafting",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Armor",
+      "itemSubclass": "Leather",
+      "quality": "Epic",
+      "primaryStats": [
+        "agility",
+        "intellect"
+      ],
+      "statNames": [
+        "Intellect",
+        "Agility",
+        "Stamina",
+        "Haste",
+        "Mastery"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_belt_leather_questbloodelf_b_01.jpg"
+    },
+    {
+      "itemId": 249919,
+      "itemName": "Sin'dorei Band of Hope",
+      "slot": "FINGER",
+      "inventoryType": "Finger",
+      "sourceType": "Raid",
+      "sourceId": "belo-ren-raid",
+      "sourceLabel": "Belo'ren (Raid)",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Armor",
+      "itemSubclass": "Miscellaneous",
+      "quality": "Epic",
+      "primaryStats": [],
+      "statNames": [
+        "Stamina",
+        "Critical Strike",
+        "Mastery"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_12_jewelry_silvermoonelf_ring_red1.jpg"
+    },
+    {
+      "itemId": 258218,
+      "itemName": "Skybreaker's Blade",
+      "slot": "WEAPON",
+      "inventoryType": "One-Hand",
+      "sourceType": "Unknown",
+      "sourceId": "skyreach",
+      "sourceLabel": "Skyreach",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Weapon",
+      "itemSubclass": "Sword",
+      "quality": "Rare",
+      "primaryStats": [
+        "intellect"
+      ],
+      "statNames": [
+        "Intellect",
+        "Stamina",
+        "Critical Strike",
+        "Mastery"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_sword_1h_short_c_03.jpg"
     },
     {
       "itemId": 250007,
@@ -1990,6 +4718,33 @@
       "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_boot_cloth_raidwarlockmidnight_d_01.jpg"
     },
     {
+      "itemId": 251082,
+      "itemName": "Snapvine Cinch",
+      "slot": "WAIST",
+      "inventoryType": "Waist",
+      "sourceType": "Unknown",
+      "sourceId": "windrunner-spire",
+      "sourceLabel": "Windrunner Spire",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Armor",
+      "itemSubclass": "Leather",
+      "quality": "Rare",
+      "primaryStats": [
+        "agility",
+        "intellect"
+      ],
+      "statNames": [
+        "Intellect",
+        "Agility",
+        "Stamina",
+        "Critical Strike",
+        "Mastery"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_belt_leather_dungeonharronir_c_01.jpg"
+    },
+    {
       "itemId": 251175,
       "itemName": "Soulblight Cleaver",
       "slot": "WEAPON",
@@ -2015,13 +4770,141 @@
       "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_axe_1h_amani_b_01.jpg"
     },
     {
+      "itemId": 250223,
+      "itemName": "Soulcatcher's Charm",
+      "slot": "TRINKET",
+      "inventoryType": "Trinket",
+      "sourceType": "Unknown",
+      "sourceId": "maisara-caverns",
+      "sourceLabel": "Maisara Caverns",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Armor",
+      "itemSubclass": "Miscellaneous",
+      "quality": "Rare",
+      "primaryStats": [
+        "intellect"
+      ],
+      "statNames": [
+        "Intellect"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_jewelry_necklace_32.jpg"
+    },
+    {
+      "itemId": 193710,
+      "itemName": "Spellboon Saber",
+      "slot": "WEAPON",
+      "inventoryType": "One-Hand",
+      "sourceType": "Unknown",
+      "sourceId": "algeth-ar-academy",
+      "sourceLabel": "Algeth'ar Academy",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Weapon",
+      "itemSubclass": "Sword",
+      "quality": "Rare",
+      "primaryStats": [
+        "intellect"
+      ],
+      "statNames": [
+        "Intellect",
+        "Stamina",
+        "Haste",
+        "Mastery"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_sword_1h_dragon_c_01.jpg"
+    },
+    {
+      "itemId": 237834,
+      "itemName": "Spellbreaker's Bracers",
+      "slot": "WRIST",
+      "inventoryType": "Wrist",
+      "sourceType": "Crafting",
+      "sourceId": "crafting",
+      "sourceLabel": "Crafting",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Armor",
+      "itemSubclass": "Plate",
+      "quality": "Epic",
+      "primaryStats": [
+        "strength",
+        "intellect"
+      ],
+      "statNames": [
+        "Intellect",
+        "Strength",
+        "Stamina",
+        "Versatility",
+        "Mastery"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_plate_questbloodelf_b_01_bracer.jpg"
+    },
+    {
+      "itemId": 237840,
+      "itemName": "Spellbreaker's Warglaive",
+      "slot": "WEAPON",
+      "inventoryType": "One-Hand",
+      "sourceType": "Crafting",
+      "sourceId": "crafting",
+      "sourceLabel": "Crafting",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Weapon",
+      "itemSubclass": "Warglaives",
+      "quality": "Epic",
+      "primaryStats": [
+        "agility",
+        "intellect"
+      ],
+      "statNames": [
+        "Intellect",
+        "Agility",
+        "Stamina",
+        "Haste",
+        "Versatility"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_glaive_1h_questbloodelf_b_01.jpg"
+    },
+    {
+      "itemId": 237840,
+      "itemName": "Spellbreaker's Warglaive",
+      "slot": "WEAPON",
+      "inventoryType": "One-Hand",
+      "sourceType": "Crafting",
+      "sourceId": "crafting",
+      "sourceLabel": "Crafting",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Weapon",
+      "itemSubclass": "Warglaives",
+      "quality": "Epic",
+      "primaryStats": [
+        "agility",
+        "intellect"
+      ],
+      "statNames": [
+        "Intellect",
+        "Agility",
+        "Stamina",
+        "Haste",
+        "Versatility"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_glaive_1h_questbloodelf_b_01.jpg"
+    },
+    {
       "itemId": 251109,
       "itemName": "Spellsnap Shadowmask",
       "slot": "HEAD",
       "inventoryType": "Head",
       "sourceType": "Unknown",
-      "sourceId": "magister",
-      "sourceLabel": "Magister",
+      "sourceId": "magister-s-terrace",
+      "sourceLabel": "Magister's Terrace",
       "bossName": null,
       "raidName": null,
       "dungeonName": null,
@@ -2069,6 +4952,87 @@
       "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_boot_mail_raidevokermidnight_d_01.jpg"
     },
     {
+      "itemId": 250017,
+      "itemName": "Storm Crashers of Ra-den's Chosen",
+      "slot": "FEET",
+      "inventoryType": "Feet",
+      "sourceType": "Raid",
+      "sourceId": "tier-set-raid-catalyst-vault",
+      "sourceLabel": "Tier Set — Raid | Catalyst | Vault",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Armor",
+      "itemSubclass": "Leather",
+      "quality": "Epic",
+      "primaryStats": [
+        "agility",
+        "intellect"
+      ],
+      "statNames": [
+        "Intellect",
+        "Agility",
+        "Stamina",
+        "Critical Strike",
+        "Haste"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_boot_leather_raidmonkmidnight_d_01.jpg"
+    },
+    {
+      "itemId": 250011,
+      "itemName": "Strikeguards of Ra-den's Chosen",
+      "slot": "WRIST",
+      "inventoryType": "Wrist",
+      "sourceType": "Raid",
+      "sourceId": "tier-set-raid-catalyst-vault",
+      "sourceLabel": "Tier Set — Raid | Catalyst | Vault",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Armor",
+      "itemSubclass": "Leather",
+      "quality": "Epic",
+      "primaryStats": [
+        "agility",
+        "intellect"
+      ],
+      "statNames": [
+        "Intellect",
+        "Agility",
+        "Stamina",
+        "Critical Strike",
+        "Versatility"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_bracer_leather_raidmonkmidnight_d_01.jpg"
+    },
+    {
+      "itemId": 250014,
+      "itemName": "Swiftsweepers of Ra-den's Chosen",
+      "slot": "LEGS",
+      "inventoryType": "Legs",
+      "sourceType": "Raid",
+      "sourceId": "raid-catalyst-vault",
+      "sourceLabel": "Raid | Catalyst | Vault",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Armor",
+      "itemSubclass": "Leather",
+      "quality": "Epic",
+      "primaryStats": [
+        "agility",
+        "intellect"
+      ],
+      "statNames": [
+        "Intellect",
+        "Agility",
+        "Stamina",
+        "Haste",
+        "Mastery"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_pant_leather_raidmonkmidnight_d_01.jpg"
+    },
+    {
       "itemId": 249977,
       "itemName": "Tempests of the Primal Core",
       "slot": "SHOULDER",
@@ -2101,8 +5065,8 @@
       "slot": "SHIELD",
       "inventoryType": "Off Hand",
       "sourceType": "Unknown",
-      "sourceId": "belo",
-      "sourceLabel": "Belo",
+      "sourceId": "belo-ren",
+      "sourceLabel": "Belo'ren",
       "bossName": null,
       "raidName": null,
       "dungeonName": null,
@@ -2121,6 +5085,33 @@
         "Versatility"
       ],
       "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_shield_1h_raidmidnight_d_01.jpg"
+    },
+    {
+      "itemId": 250016,
+      "itemName": "Thunderfists of Ra-den's Chosen",
+      "slot": "HAND",
+      "inventoryType": "Hands",
+      "sourceType": "Raid",
+      "sourceId": "catalyst-raid-vault",
+      "sourceLabel": "Catalyst | Raid | Vault",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Armor",
+      "itemSubclass": "Leather",
+      "quality": "Epic",
+      "primaryStats": [
+        "agility",
+        "intellect"
+      ],
+      "statNames": [
+        "Intellect",
+        "Agility",
+        "Stamina",
+        "Critical Strike",
+        "Versatility"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_glove_leather_raidmonkmidnight_d_01.jpg"
     },
     {
       "itemId": 249922,
@@ -2146,6 +5137,108 @@
         "Mastery"
       ],
       "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_offhand_1h_raidmidnight_d_01.jpg"
+    },
+    {
+      "itemId": 249298,
+      "itemName": "Tormentor's Bladed Fists",
+      "slot": "WEAPON",
+      "inventoryType": "One-Hand",
+      "sourceType": "Crafting",
+      "sourceId": "fallen-king-salhadaar-or-spellbreaker-s-warglaive-crafted",
+      "sourceLabel": "Fallen-King Salhadaar (or Spellbreaker's Warglaive Crafted)",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Weapon",
+      "itemSubclass": "Fist Weapon",
+      "quality": "Epic",
+      "primaryStats": [
+        "agility"
+      ],
+      "statNames": [
+        "Agility",
+        "Stamina",
+        "Haste",
+        "Versatility"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_hand_1h_raidmidnight_d_01.jpg"
+    },
+    {
+      "itemId": 251162,
+      "itemName": "Traitor's Talon",
+      "slot": "TWOHWEAPON",
+      "inventoryType": "Two-Hand",
+      "sourceType": "Unknown",
+      "sourceId": "maisara-caverns-crown-of-the-cosmos",
+      "sourceLabel": "Maisara Caverns / Crown of the Cosmos",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Weapon",
+      "itemSubclass": "Polearm",
+      "quality": "Rare",
+      "primaryStats": [
+        "agility"
+      ],
+      "statNames": [
+        "Agility",
+        "Stamina",
+        "Critical Strike",
+        "Haste"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_polearm_2h_dungeonharronir_c_01.jpg"
+    },
+    {
+      "itemId": 251162,
+      "itemName": "Traitor's Talon",
+      "slot": "TWOHWEAPON",
+      "inventoryType": "Two-Hand",
+      "sourceType": "Unknown",
+      "sourceId": "maisara-caverns-crown-of-the-cosmos",
+      "sourceLabel": "Maisara Caverns / Crown of the Cosmos",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Weapon",
+      "itemSubclass": "Polearm",
+      "quality": "Rare",
+      "primaryStats": [
+        "agility"
+      ],
+      "statNames": [
+        "Agility",
+        "Stamina",
+        "Critical Strike",
+        "Haste"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_polearm_2h_dungeonharronir_c_01.jpg"
+    },
+    {
+      "itemId": 263193,
+      "itemName": "Trollhunter's Bands",
+      "slot": "WRIST",
+      "inventoryType": "Wrist",
+      "sourceType": "Unknown",
+      "sourceId": "maisara-caverns",
+      "sourceLabel": "Maisara Caverns",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Armor",
+      "itemSubclass": "Plate",
+      "quality": "Rare",
+      "primaryStats": [
+        "strength",
+        "intellect"
+      ],
+      "statNames": [
+        "Intellect",
+        "Strength",
+        "Stamina",
+        "Haste",
+        "Mastery"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_bracer_plate_dungeonharronir_c_01.jpg"
     },
     {
       "itemId": 250027,
@@ -2175,6 +5268,31 @@
       "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_chest_leather_raiddruidmidnight_d_01.jpg"
     },
     {
+      "itemId": 249295,
+      "itemName": "Turalyon's False Echo",
+      "slot": "WEAPON",
+      "inventoryType": "One-Hand",
+      "sourceType": "Unknown",
+      "sourceId": "crown-of-the-cosmos",
+      "sourceLabel": "Crown of the Cosmos",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Weapon",
+      "itemSubclass": "Mace",
+      "quality": "Epic",
+      "primaryStats": [
+        "strength"
+      ],
+      "statNames": [
+        "Strength",
+        "Stamina",
+        "Critical Strike",
+        "Haste"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_mace_1h_raidmidnight_d_01.jpg"
+    },
+    {
       "itemId": 249314,
       "itemName": "Twisted Twilight Sash",
       "slot": "WAIST",
@@ -2202,6 +5320,24 @@
       "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_belt_leather_raiddemonhuntermidnight_d_01.jpg"
     },
     {
+      "itemId": 178790,
+      "itemName": "Umbral Plume",
+      "slot": "NON_EQUIP",
+      "inventoryType": "Non-equippable",
+      "sourceType": "Unknown",
+      "sourceId": "belo-ren",
+      "sourceLabel": "Belo'ren",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Quest",
+      "itemSubclass": "Quest",
+      "quality": "Common",
+      "primaryStats": [],
+      "statNames": [],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_icon_feather01d.jpg"
+    },
+    {
       "itemId": 258514,
       "itemName": "Umbral Spire of Zuraal",
       "slot": "TWOHWEAPON",
@@ -2225,6 +5361,82 @@
         "Mastery"
       ],
       "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_staff_2h_oribosdungeon_c_01.jpg"
+    },
+    {
+      "itemId": 249325,
+      "itemName": "Untethered Berserker's Grips",
+      "slot": "HAND",
+      "inventoryType": "Hands",
+      "sourceType": "Unknown",
+      "sourceId": "crown-of-the-cosmos",
+      "sourceLabel": "Crown of the Cosmos",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Armor",
+      "itemSubclass": "Mail",
+      "quality": "Epic",
+      "primaryStats": [
+        "agility",
+        "intellect"
+      ],
+      "statNames": [
+        "Intellect",
+        "Agility",
+        "Stamina",
+        "Critical Strike",
+        "Mastery"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_glove_mail_raidhuntermidnight_d_01.jpg"
+    },
+    {
+      "itemId": 249321,
+      "itemName": "Vaelgor's Fearsome Grasp",
+      "slot": "HAND",
+      "inventoryType": "Hands",
+      "sourceType": "Unknown",
+      "sourceId": "vaelgor-ezzorak",
+      "sourceLabel": "Vaelgor & Ezzorak",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Armor",
+      "itemSubclass": "Leather",
+      "quality": "Epic",
+      "primaryStats": [
+        "agility",
+        "intellect"
+      ],
+      "statNames": [
+        "Intellect",
+        "Agility",
+        "Stamina",
+        "Critical Strike",
+        "Mastery"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_glove_leather_raiddruidmidnight_d_01.jpg"
+    },
+    {
+      "itemId": 249346,
+      "itemName": "Vaelgor's Final Stare",
+      "slot": "TRINKET",
+      "inventoryType": "Trinket",
+      "sourceType": "Raid",
+      "sourceId": "vaelgor-ezzorak-raid",
+      "sourceLabel": "Vaelgor & Ezzorak (Raid)",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Armor",
+      "itemSubclass": "Miscellaneous",
+      "quality": "Epic",
+      "primaryStats": [
+        "intellect"
+      ],
+      "statNames": [
+        "Intellect"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_12_trinket_raid_voidspire_int1_voiddragoneye.jpg"
     },
     {
       "itemId": 250004,
@@ -2252,6 +5464,60 @@
         "Mastery"
       ],
       "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_shoulder_leather_raidroguemidnight_d_01.jpg"
+    },
+    {
+      "itemId": 151313,
+      "itemName": "Vest of the Void's Embrace",
+      "slot": "CHEST",
+      "inventoryType": "Chest",
+      "sourceType": "Unknown",
+      "sourceId": "seat-of-the-triumvirate",
+      "sourceLabel": "Seat of the Triumvirate",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Armor",
+      "itemSubclass": "Leather",
+      "quality": "Rare",
+      "primaryStats": [
+        "agility",
+        "intellect"
+      ],
+      "statNames": [
+        "Intellect",
+        "Agility",
+        "Stamina",
+        "Critical Strike",
+        "Versatility"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_chest_leather_legiondungeon_c_03.jpg"
+    },
+    {
+      "itemId": 110034,
+      "itemName": "Viryx's Indomitable Bulwark",
+      "slot": "SHIELD",
+      "inventoryType": "Off Hand",
+      "sourceType": "Unknown",
+      "sourceId": "skyreach",
+      "sourceLabel": "Skyreach",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Armor",
+      "itemSubclass": "Shield",
+      "quality": "Rare",
+      "primaryStats": [
+        "strength",
+        "intellect"
+      ],
+      "statNames": [
+        "Intellect",
+        "Strength",
+        "Stamina",
+        "Critical Strike",
+        "Mastery"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_shield_draenordungeon_c_03.jpg"
     },
     {
       "itemId": 249334,
@@ -2285,9 +5551,9 @@
       "itemName": "Void-Skinned Bracers",
       "slot": "WRIST",
       "inventoryType": "Wrist",
-      "sourceType": "Unknown",
-      "sourceId": "vorasius",
-      "sourceLabel": "Vorasius",
+      "sourceType": "Raid",
+      "sourceId": "vorasius-raid",
+      "sourceLabel": "Vorasius (Raid)",
       "bossName": null,
       "raidName": null,
       "dungeonName": null,
@@ -2306,6 +5572,156 @@
         "Haste"
       ],
       "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_bracer_leather_raidroguemidnight_d_01.jpg"
+    },
+    {
+      "itemId": 250059,
+      "itemName": "Voidbreaker's Britches",
+      "slot": "LEGS",
+      "inventoryType": "Legs",
+      "sourceType": "Raid",
+      "sourceId": "tier-set-raid-catalyst-vault",
+      "sourceLabel": "Tier Set — Raid | Catalyst | Vault",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Armor",
+      "itemSubclass": "Cloth",
+      "quality": "Epic",
+      "primaryStats": [
+        "intellect"
+      ],
+      "statNames": [
+        "Intellect",
+        "Stamina",
+        "Critical Strike",
+        "Haste"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_pant_cloth_raidmagemidnight_d_01.jpg"
+    },
+    {
+      "itemId": 250061,
+      "itemName": "Voidbreaker's Gloves",
+      "slot": "HAND",
+      "inventoryType": "Hands",
+      "sourceType": "Raid",
+      "sourceId": "tier-set-raid-catalyst-vault",
+      "sourceLabel": "Tier Set — Raid | Catalyst | Vault",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Armor",
+      "itemSubclass": "Cloth",
+      "quality": "Epic",
+      "primaryStats": [
+        "intellect"
+      ],
+      "statNames": [
+        "Intellect",
+        "Stamina",
+        "Haste",
+        "Mastery"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_glove_cloth_raidmagemidnight_d_01.jpg"
+    },
+    {
+      "itemId": 250058,
+      "itemName": "Voidbreaker's Leyline Nexi",
+      "slot": "SHOULDER",
+      "inventoryType": "Shoulder",
+      "sourceType": "Raid",
+      "sourceId": "tier-set-raid-catalyst-vault",
+      "sourceLabel": "Tier Set — Raid | Catalyst | Vault",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Armor",
+      "itemSubclass": "Cloth",
+      "quality": "Epic",
+      "primaryStats": [
+        "intellect"
+      ],
+      "statNames": [
+        "Intellect",
+        "Stamina",
+        "Haste",
+        "Versatility"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_shoulder_cloth_raidmagemidnight_d_01.jpg"
+    },
+    {
+      "itemId": 250063,
+      "itemName": "Voidbreaker's Robe",
+      "slot": "ROBE",
+      "inventoryType": "Chest",
+      "sourceType": "Raid",
+      "sourceId": "tier-set-raid-catalyst-vault",
+      "sourceLabel": "Tier Set — Raid | Catalyst | Vault",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Armor",
+      "itemSubclass": "Cloth",
+      "quality": "Epic",
+      "primaryStats": [
+        "intellect"
+      ],
+      "statNames": [
+        "Intellect",
+        "Stamina",
+        "Critical Strike",
+        "Haste"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_chest_cloth_raidmagemidnight_d_01.jpg"
+    },
+    {
+      "itemId": 250057,
+      "itemName": "Voidbreaker's Sage Cord",
+      "slot": "WAIST",
+      "inventoryType": "Waist",
+      "sourceType": "Raid",
+      "sourceId": "the-catalyst",
+      "sourceLabel": "The Catalyst",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Armor",
+      "itemSubclass": "Cloth",
+      "quality": "Epic",
+      "primaryStats": [
+        "intellect"
+      ],
+      "statNames": [
+        "Intellect",
+        "Stamina",
+        "Critical Strike",
+        "Haste"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_belt_cloth_raidmagemidnight_d_01.jpg"
+    },
+    {
+      "itemId": 250060,
+      "itemName": "Voidbreaker's Veil",
+      "slot": "HEAD",
+      "inventoryType": "Head",
+      "sourceType": "Raid",
+      "sourceId": "tier-set-raid-catalyst-vault",
+      "sourceLabel": "Tier Set — Raid | Catalyst | Vault",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Armor",
+      "itemSubclass": "Cloth",
+      "quality": "Epic",
+      "primaryStats": [
+        "intellect"
+      ],
+      "statNames": [
+        "Intellect",
+        "Stamina",
+        "Haste",
+        "Mastery"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_helm_cloth_raidmagemidnight_d_01.jpg"
     },
     {
       "itemId": 151332,
@@ -2333,6 +5749,33 @@
         "Versatility"
       ],
       "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_glove_plate_legiondungeon_c_03.jpg"
+    },
+    {
+      "itemId": 151336,
+      "itemName": "Voidlashed Hood",
+      "slot": "HEAD",
+      "inventoryType": "Head",
+      "sourceType": "Unknown",
+      "sourceId": "seat-of-the-triumvirate",
+      "sourceLabel": "Seat of the Triumvirate",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Armor",
+      "itemSubclass": "Leather",
+      "quality": "Rare",
+      "primaryStats": [
+        "agility",
+        "intellect"
+      ],
+      "statNames": [
+        "Intellect",
+        "Agility",
+        "Stamina",
+        "Critical Strike",
+        "Haste"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_helm_leather_legiondungeon_c_03.jpg"
     },
     {
       "itemId": 249315,
@@ -2392,8 +5835,8 @@
       "slot": "SHIELD",
       "inventoryType": "Off Hand",
       "sourceType": "Unknown",
-      "sourceId": "magister",
-      "sourceLabel": "Magister",
+      "sourceId": "magister-s-terrace",
+      "sourceLabel": "Magister's Terrace",
       "bossName": null,
       "raidName": null,
       "dungeonName": null,
@@ -2439,13 +5882,40 @@
       "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_mace_1h_raidmidnight_d_02.jpg"
     },
     {
+      "itemId": 251084,
+      "itemName": "Whipcoil Sabatons",
+      "slot": "FEET",
+      "inventoryType": "Feet",
+      "sourceType": "Unknown",
+      "sourceId": "windrunner-spire",
+      "sourceLabel": "Windrunner Spire",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Armor",
+      "itemSubclass": "Mail",
+      "quality": "Rare",
+      "primaryStats": [
+        "agility",
+        "intellect"
+      ],
+      "statNames": [
+        "Intellect",
+        "Agility",
+        "Stamina",
+        "Critical Strike",
+        "Mastery"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_boot_mail_dungeonharronir_c_01.jpg"
+    },
+    {
       "itemId": 249376,
       "itemName": "Whisper-Inscribed Sash",
       "slot": "WAIST",
       "inventoryType": "Waist",
-      "sourceType": "Unknown",
-      "sourceId": "belo",
-      "sourceLabel": "Belo",
+      "sourceType": "Raid",
+      "sourceId": "belo-ren-raid",
+      "sourceLabel": "Belo'ren (Raid)",
       "bossName": null,
       "raidName": null,
       "dungeonName": null,
@@ -2464,13 +5934,96 @@
       "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_belt_cloth_raidmagemidnight_d_01.jpg"
     },
     {
+      "itemId": 250010,
+      "itemName": "Windwrap of Ra-den's Chosen",
+      "slot": "CLOAK",
+      "inventoryType": "Back",
+      "sourceType": "Raid",
+      "sourceId": "the-catalyst",
+      "sourceLabel": "The Catalyst",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Armor",
+      "itemSubclass": "Cloth",
+      "quality": "Epic",
+      "primaryStats": [
+        "strength",
+        "agility",
+        "intellect"
+      ],
+      "statNames": [
+        "Intellect",
+        "Agility",
+        "Strength",
+        "Stamina",
+        "Critical Strike",
+        "Haste"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_cape_leather_raidmonkmidnight_d_01.jpg"
+    },
+    {
+      "itemId": 244611,
+      "itemName": "World Tender's Barkclasp",
+      "slot": "WAIST",
+      "inventoryType": "Waist",
+      "sourceType": "Crafting",
+      "sourceId": "crafting",
+      "sourceLabel": "Crafting",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Armor",
+      "itemSubclass": "Mail",
+      "quality": "Epic",
+      "primaryStats": [
+        "agility",
+        "intellect"
+      ],
+      "statNames": [
+        "Intellect",
+        "Agility",
+        "Stamina",
+        "Haste",
+        "Mastery"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_belt_mail_questbloodelf_b_01.jpg"
+    },
+    {
+      "itemId": 244610,
+      "itemName": "World Tender's Rootslippers",
+      "slot": "FEET",
+      "inventoryType": "Feet",
+      "sourceType": "Crafting",
+      "sourceId": "crafting",
+      "sourceLabel": "Crafting",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Armor",
+      "itemSubclass": "Mail",
+      "quality": "Epic",
+      "primaryStats": [
+        "agility",
+        "intellect"
+      ],
+      "statNames": [
+        "Intellect",
+        "Agility",
+        "Stamina",
+        "Critical Strike",
+        "Versatility"
+      ],
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_boot_mail_questbloodelf_b_01.jpg"
+    },
+    {
       "itemId": 251108,
       "itemName": "Wraps of Watchful Wrath",
       "slot": "WRIST",
       "inventoryType": "Wrist",
       "sourceType": "Unknown",
-      "sourceId": "magister",
-      "sourceLabel": "Magister",
+      "sourceId": "magister-s-terrace",
+      "sourceLabel": "Magister's Terrace",
       "bossName": null,
       "raidName": null,
       "dungeonName": null,

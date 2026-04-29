@@ -224,6 +224,81 @@ async function readNameInput(file) {
   return readRowsFile(file);
 }
 
+const NON_ITEM_NAMES = new Set([
+  "head","neck","shoulders","shoulder","back","chest","wrist","wrists","hands","hand","waist","belt","legs","feet","finger","finger 1","finger 2","trinket","trinket 1","trinket 2","weapon","main hand","off hand","2h weapon",
+  "blood","frost","unholy","havoc","vengeance","devourer","balance","feral","guardian","restoration","devastation","preservation","augmentation","beast mastery","marksmanship","survival","arcane","fire","brewmaster","mistweaver","windwalker","holy","protection","retribution","discipline","shadow","assassination","outlaw","subtlety","elemental","enhancement","affliction","demonology","destruction","arms","fury",
+  "death knight","demon hunter","druid","evoker","hunter","mage","monk","paladin","priest","rogue","shaman","warlock","warrior"
+]);
+
+const CODE_MARKERS = [
+  "classIcon", "roles:", "specs:", "data:image", "function ", "const ", "=>", "patchRank", "onChange", "sourceTypeFromBucket", "itemSourceBucket", "useState", "useMemo", "import ", "export ", "className", "style:", "return ("
+];
+
+function decodeJsString(value) {
+  return String(value || "")
+    .replace(/\\n/g, " ")
+    .replace(/\\r/g, " ")
+    .replace(/\\t/g, " ")
+    .replace(/\\"/g, '"')
+    .replace(/\\'/g, "'")
+    .replace(/\\`/g, "`")
+    .trim();
+}
+
+function hasCodeSmell(value) {
+  return CODE_MARKERS.some(marker => String(value || "").includes(marker));
+}
+
+function isLikelyNonItemName(name) {
+  const normalized = normalizeName(name)
+    .replace(/\([^)]*\)/g, "")
+    .replace(/['’`]/g, "")
+    .replace(/&/g, " and ")
+    .replace(/[^a-z0-9]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+  if (!normalized || normalized.length < 3) return true;
+  if (NON_ITEM_NAMES.has(normalized)) return true;
+  if (hasCodeSmell(name)) return true;
+  if (String(name || "").length > 90) return true;
+  if ((String(name || "").match(/[{}=;]/g) || []).length) return true;
+  if ((String(name || "").match(/:/g) || []).length > 1) return true;
+  return false;
+}
+
+function isCompoundOrQualifier(name) {
+  return /\s\/\s|\s\+\s|\bif dual wield\b|\bif equipped\b|\boption\b/i.test(name);
+}
+
+function stripItemQualifiers(value) {
+  return cleanText(value)
+    .replace(/\s*\((?:2h|1h|main hand|off hand|shield|if dual wield|if equipped|option [^)]+)\)\s*/gi, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function expandItemNameVariants(value) {
+  const original = cleanText(value);
+  if (!original) return [];
+  const expanded = [];
+  const push = (next) => {
+    const clean = stripItemQualifiers(next);
+    if (clean && !expanded.some(v => itemSearchNameKey(v) === itemSearchNameKey(clean))) expanded.push(clean);
+  };
+
+  if (/\s\/\s/.test(original)) {
+    for (const part of original.split(/\s+\/\s+/)) push(part);
+  } else if (/\s\+\s/.test(original)) {
+    push(original.split(/\s+\+\s+/)[0]);
+  } else {
+    push(original);
+  }
+
+  const withoutQualifier = stripItemQualifiers(original);
+  if (withoutQualifier) push(withoutQualifier);
+  return expanded;
+}
+
 async function extractNamesFromApp(file) {
   if (!file || !(await exists(file))) return [];
   const raw = await fs.readFile(path.resolve(ROOT, file), "utf8");
@@ -231,49 +306,69 @@ async function extractNamesFromApp(file) {
   const byName = new Map();
 
   const addRow = (itemName, sourceLabel = "Unknown") => {
-    const name = cleanText(itemName);
-    if (!name) return;
-    if (/^(Raid|Dungeon|Other|Crafting|Unknown|Manual|Equivalent|Alternative|Strong Alternative|Counts as BiS)$/i.test(name)) return;
-    if (/^[A-Z][a-z]+\s+[A-Z][a-z]+$/.test(name) && name.length < 18) return;
-    const label = cleanSourceLabel(sourceLabel);
-    const key = normalizeName(name);
-    const existing = byName.get(key);
-    if (existing && existing.sourceLabel !== "Unknown") return;
-    byName.set(key, {
-      itemName: name,
-      sourceType: inferSourceType(label),
-      sourceLabel: label,
-      sourceId: slugify(label),
-    });
+    const rawName = cleanText(decodeJsString(itemName));
+    if (!rawName || isLikelyNonItemName(rawName)) return;
+    const label = cleanSourceLabel(decodeJsString(sourceLabel));
+    const names = isCompoundOrQualifier(rawName) ? expandItemNameVariants(rawName) : [stripItemQualifiers(rawName)];
+
+    for (const name of names) {
+      if (!name || isLikelyNonItemName(name)) continue;
+      const key = itemSearchNameKey(name);
+      if (!key) continue;
+      const next = {
+        itemName: name,
+        sourceType: inferSourceType(label),
+        sourceLabel: label || "Unknown",
+        sourceId: slugify(label),
+      };
+      const existing = byName.get(key);
+      if (!existing) {
+        byName.set(key, next);
+        continue;
+      }
+      byName.set(key, mergeRows(existing, next));
+    }
   };
 
-  const objectPattern = /\b([a-z0-9_]+)\s*:\s*\{\s*name\s*:\s*["']([^"']{4,100})["']\s*,\s*source\s*:\s*["']([^"']*)["']/gi;
-  let objectMatch;
-  while ((objectMatch = objectPattern.exec(withoutImages))) {
-    addRow(objectMatch[2], objectMatch[3]);
+  const pairPattern = /\bname\s*:\s*(["'`])((?:\\.|(?!\1)[\s\S])*?)\1\s*,\s*source\s*:\s*(["'`])((?:\\.|(?!\3)[\s\S])*?)\3/g;
+  let pairMatch;
+  while ((pairMatch = pairPattern.exec(withoutImages))) {
+    addRow(pairMatch[2], pairMatch[4]);
   }
 
-  const itemNamePattern = /\bitemName\s*:\s*["']([^"']{4,100})["']/g;
+  const itemNamePattern = /\bitemName\s*:\s*(["'`])((?:\\.|(?!\1)[\s\S])*?)\1/g;
   let itemMatch;
   while ((itemMatch = itemNamePattern.exec(withoutImages))) {
-    addRow(itemMatch[1], "Unknown");
+    addRow(itemMatch[2], "Unknown");
   }
 
   return [...byName.values()];
 }
 
-async function searchItemByName(cfg, token, itemName) {
-  const json = await apiGet(cfg, token, "/data/wow/search/item", {
-    "name.en_US": itemName,
-    _pageSize: 10,
-  });
+function itemSearchNameKey(value) {
+  return normalizeName(value)
+    .replace(/['’`]/g, "")
+    .replace(/&/g, " and ")
+    .replace(/[^a-z0-9]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
 
-  const results = Array.isArray(json.results) ? json.results : [];
-  const wanted = normalizeName(itemName);
-  const exact = results.find((entry) => normalizeName(entry?.data?.name?.[cfg.locale] || entry?.data?.name?.en_US || entry?.data?.name) === wanted);
-  const selected = exact || results[0];
-  const id = selected?.data?.id;
-  return Number.isFinite(id) ? Number(id) : null;
+async function searchItemByName(cfg, token, itemName) {
+  const attempts = expandItemNameVariants(itemName);
+  for (const attempt of attempts) {
+    const json = await apiGet(cfg, token, "/data/wow/search/item", {
+      "name.en_US": attempt,
+      _pageSize: 20,
+    });
+
+    const results = Array.isArray(json.results) ? json.results : [];
+    const wanted = itemSearchNameKey(attempt);
+    const exact = results.find((entry) => itemSearchNameKey(entry?.data?.name?.[cfg.locale] || entry?.data?.name?.en_US || entry?.data?.name) === wanted);
+    const id = exact?.data?.id;
+    if (Number.isFinite(id)) return Number(id);
+  }
+  return null;
 }
 
 async function fetchItem(cfg, token, itemId) {

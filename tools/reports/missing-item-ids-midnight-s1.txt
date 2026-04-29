@@ -1,0 +1,69 @@
+Missing item IDs report v5
+Generated: 2026-04-29T08:02:03.896Z
+Pool records: 233
+Exact name/source candidates: 219
+Matched: 219
+High confidence missing: 0
+Possible/low confidence missing: 9
+Ignored likely non-items: 0
+
+HIGH CONFIDENCE MISSING ITEMS
+None
+
+POSSIBLE / LOW CONFIDENCE MISSING ITEMS
+- Bellamy's Final Judgement (2H) / Blade of the Final Twilight (1H)
+  Source type guess: Raid
+  Source text: Lightblinded Vanguard / Fallen-King Salhadaar
+  Suggested source file: tools/sources/season-raid-items-midnight-s1.txt
+  Wowhead search: https://www.wowhead.com/search?q=Bellamy's%20Final%20Judgement%20(2H)%20%2F%20Blade%20of%20the%20Final%20Twilight%20(1H)
+
+- Bloomforged Claw (if dual wield)
+  Source type guess: Crafting
+  Source text: Crafting
+  Suggested source file: tools/sources/season-crafted-items-midnight-s1.txt
+  Wowhead search: https://www.wowhead.com/search?q=Bloomforged%20Claw%20(if%20dual%20wield)
+
+- Farstrider's Mercy (if dual wield)
+  Source type guess: Crafting
+  Source text: Crafting
+  Suggested source file: tools/sources/season-crafted-items-midnight-s1.txt
+  Wowhead search: https://www.wowhead.com/search?q=Farstrider's%20Mercy%20(if%20dual%20wield)
+
+- Inescapable Reach (2H) / Dreadflail Bludgeon (1H)
+  Source type guess: Raid
+  Source text: Vorasius / Nexus Point Xenas
+  Suggested source file: tools/sources/season-raid-items-midnight-s1.txt
+  Wowhead search: https://www.wowhead.com/search?q=Inescapable%20Reach%20(2H)%20%2F%20Dreadflail%20Bludgeon%20(1H)
+
+- Roostwarden's Bough (2H) / Belo'ren's Swift Talon (1H)
+  Source type guess: Raid
+  Source text: Windrunner Spire / Belo'ren
+  Suggested source file: tools/sources/season-raid-items-midnight-s1.txt
+  Wowhead search: https://www.wowhead.com/search?q=Roostwarden's%20Bough%20(2H)%20%2F%20Belo'ren's%20Swift%20Talon%20(1H)
+
+- Silvermoon Agent's Utility Belt + Arcanoweave Lining
+  Source type guess: Crafting
+  Source text: Crafting
+  Suggested source file: tools/sources/season-crafted-items-midnight-s1.txt
+  Wowhead search: https://www.wowhead.com/search?q=Silvermoon%20Agent's%20Utility%20Belt%20%2B%20Arcanoweave%20Lining
+
+- Soulblight Cleaver (if dual wield)
+  Source type guess: Dungeon
+  Source text: Maisara Caverns
+  Suggested source file: tools/sources/season-dungeon-items-midnight-s1.txt
+  Wowhead search: https://www.wowhead.com/search?q=Soulblight%20Cleaver%20(if%20dual%20wield)
+
+- Spellbreaker's Warglaive + Darkmoon Sigil: Hunt
+  Source type guess: Crafting
+  Source text: Crafting
+  Suggested source file: tools/sources/season-crafted-items-midnight-s1.txt
+  Wowhead search: https://www.wowhead.com/search?q=Spellbreaker's%20Warglaive%20%2B%20Darkmoon%20Sigil%3A%20Hunt
+
+- Traitor's Talon (2H) / Arator's Swift Remembrance (1H)
+  Source type guess: Raid
+  Source text: Maisara Caverns / Crown of the Cosmos
+  Suggested source file: tools/sources/season-raid-items-midnight-s1.txt
+  Wowhead search: https://www.wowhead.com/search?q=Traitor's%20Talon%20(2H)%20%2F%20Arator's%20Swift%20Remembrance%20(1H)
+
+IGNORED LIKELY NON-ITEMS
+None
