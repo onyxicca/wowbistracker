@@ -7,6 +7,13 @@ const DEFAULT_IDS = "tools/season-item-ids-midnight-s1.txt";
 const DEFAULT_NAMES = "tools/season-item-names-midnight-s1.txt";
 const DEFAULT_SOURCE_DIR = "tools/sources";
 
+const SOURCE_FILE_DEFAULTS = [
+  { pattern: /raid/i, sourceType: "Raid", sourceLabel: "Raid", sourceId: "raid" },
+  { pattern: /dungeon|mythic|mplus|m\+/i, sourceType: "Dungeon", sourceLabel: "Dungeon / M+", sourceId: "dungeon" },
+  { pattern: /crafted|crafting/i, sourceType: "Crafting", sourceLabel: "Crafting", sourceId: "crafted" },
+  { pattern: /special|world|ritual|delve|renown|pvp/i, sourceType: "Other", sourceLabel: "Special / World", sourceId: "special-world" },
+];
+
 function parseArgs(argv) {
   const args = new Map();
   for (let i = 2; i < argv.length; i += 1) {
@@ -131,30 +138,63 @@ function cleanSourceLabel(value) {
   return src.replace(/\s*\/\s*/g, " / ").replace(/\s+/g, " ");
 }
 
-function parseInputLine(line) {
+function sourceDefaultsForFile(file) {
+  const name = path.basename(String(file || ""));
+  const match = SOURCE_FILE_DEFAULTS.find((entry) => entry.pattern.test(name));
+  return match ? { ...match } : { sourceType: "Unknown", sourceLabel: "Unknown", sourceId: null };
+}
+
+function extractItemId(value) {
+  const text = cleanText(value);
+  if (!text) return null;
+  const plain = text.match(/^\d+$/);
+  if (plain) return Number(plain[0]);
+  const patterns = [
+    /[?&]item=(\d+)/i,
+    /\/item=(\d+)/i,
+    /\/item\/(\d+)/i,
+    /wowhead\.com\/[^\s|]*?(\d{4,})/i,
+  ];
+  for (const pattern of patterns) {
+    const match = text.match(pattern);
+    if (match) return Number(match[1]);
+  }
+  return null;
+}
+
+function stripUrlToName(value) {
+  const text = cleanText(value);
+  if (!/^https?:\/\//i.test(text)) return text;
+  const tail = text.split(/[?#]/)[0].split("/").filter(Boolean).pop() || "";
+  return tail.replace(/^item=\d+-?/, "").replace(/^\d+-?/, "").replace(/-/g, " ").trim();
+}
+
+function parseInputLine(line, defaults = {}) {
   const parts = line.split("|").map((v) => v?.trim() || "");
   const [first, sourceType, sourceLabel, sourceId, bossName, raidName, dungeonName] = parts;
   if (!first) return null;
+  const resolvedSourceLabel = sourceLabel || defaults.sourceLabel || "Unknown";
   const row = {
-    sourceType: sourceType || inferSourceType(sourceLabel),
-    sourceLabel: sourceLabel || "Unknown",
-    sourceId: sourceId || slugify(sourceLabel),
+    sourceType: sourceType || defaults.sourceType || inferSourceType(resolvedSourceLabel),
+    sourceLabel: resolvedSourceLabel,
+    sourceId: sourceId || defaults.sourceId || slugify(resolvedSourceLabel),
     bossName: bossName || null,
     raidName: raidName || null,
     dungeonName: dungeonName || null,
   };
-  if (/^\d+$/.test(first)) return { ...row, itemId: Number(first) };
-  return { ...row, itemName: first };
+  const itemId = extractItemId(first);
+  if (itemId) return { ...row, itemId };
+  return { ...row, itemName: stripUrlToName(first) };
 }
 
-async function readRowsFile(file) {
+async function readRowsFile(file, defaults = null) {
   if (!(await exists(file))) return [];
   const raw = await fs.readFile(path.resolve(ROOT, file), "utf8");
   const rows = [];
   for (const line of raw.split(/\r?\n/)) {
     const trimmed = line.trim();
     if (!trimmed || trimmed.startsWith("#")) continue;
-    const row = parseInputLine(trimmed);
+    const row = parseInputLine(trimmed, defaults || sourceDefaultsForFile(file));
     if (row) rows.push(row);
   }
   return rows;
@@ -169,7 +209,7 @@ async function readSourceDir(sourceDir) {
       .map((entry) => path.join(sourceDir, entry.name))
       .sort();
     const rows = [];
-    for (const file of files) rows.push(...await readRowsFile(file));
+    for (const file of files) rows.push(...await readRowsFile(file, sourceDefaultsForFile(file)));
     return rows;
   } catch {
     return [];
@@ -368,10 +408,10 @@ async function main() {
 
   await ensureTemplate(DEFAULT_IDS, "# itemId|sourceType|sourceLabel|sourceId|bossName|raidName|dungeonName\n# Legacy catch-all file. Prefer tools/sources/*.txt for new rows.\n# 19019|Other|API smoke test|test||||\n");
   await ensureTemplate(DEFAULT_NAMES, "# itemName|sourceType|sourceLabel|sourceId|bossName|raidName|dungeonName\n# Legacy catch-all file. Prefer exact item IDs whenever possible.\n# Thunderfury, Blessed Blade of the Windseeker|Other|API smoke test|test||||\n");
-  await ensureTemplate("tools/sources/season-raid-items-midnight-s1.txt", "# itemId|sourceType|sourceLabel|sourceId|bossName|raidName|dungeonName\n# 249343|Raid|Chimaerus|chimaerus|Chimaerus||\n");
-  await ensureTemplate("tools/sources/season-dungeon-items-midnight-s1.txt", "# itemId|sourceType|sourceLabel|sourceId|bossName|raidName|dungeonName\n# 251178|Dungeon|Maisara Caverns|maisara-caverns|||Maisara Caverns\n");
-  await ensureTemplate("tools/sources/season-crafted-items-midnight-s1.txt", "# itemId|sourceType|sourceLabel|sourceId|bossName|raidName|dungeonName\n# 237845|Crafting|Crafting|crafted||||\n");
-  await ensureTemplate("tools/sources/season-special-items-midnight-s1.txt", "# itemId|sourceType|sourceLabel|sourceId|bossName|raidName|dungeonName\n# 000000|Other|Ritual Sites|ritual-sites||||\n");
+  await ensureTemplate("tools/sources/season-raid-items-midnight-s1.txt", "# Paste Wowhead URLs, item IDs, or full rows. Source defaults to Raid for this file.\n# itemId|sourceType|sourceLabel|sourceId|bossName|raidName|dungeonName\n# https://www.wowhead.com/item=249343/gaze-of-the-alnseer|Raid|Chimaerus|chimaerus|Chimaerus||\n# 249343|Raid|Chimaerus|chimaerus|Chimaerus||\n");
+  await ensureTemplate("tools/sources/season-dungeon-items-midnight-s1.txt", "# Paste Wowhead URLs, item IDs, or full rows. Source defaults to Dungeon for this file.\n# itemId|sourceType|sourceLabel|sourceId|bossName|raidName|dungeonName\n# https://www.wowhead.com/item=251178/example-item|Dungeon|Maisara Caverns|maisara-caverns|||Maisara Caverns\n# 251178|Dungeon|Maisara Caverns|maisara-caverns|||Maisara Caverns\n");
+  await ensureTemplate("tools/sources/season-crafted-items-midnight-s1.txt", "# Paste Wowhead URLs, item IDs, or full rows. Source defaults to Crafting for this file.\n# itemId|sourceType|sourceLabel|sourceId|bossName|raidName|dungeonName\n# https://www.wowhead.com/item=237845/example-crafted-item\n# 237845|Crafting|Crafting|crafted||||\n");
+  await ensureTemplate("tools/sources/season-special-items-midnight-s1.txt", "# Paste Wowhead URLs, item IDs, or full rows. Source defaults to Other / Special for this file.\n# itemId|sourceType|sourceLabel|sourceId|bossName|raidName|dungeonName\n# https://www.wowhead.com/item=000000/example-special-item|Other|Ritual Sites|ritual-sites||||\n# 000000|Other|Ritual Sites|ritual-sites||||\n");
 
   const sourceRows = await readSourceDir(sourceDir);
   const idRows = await readIdInput(idFile);
