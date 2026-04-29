@@ -1230,11 +1230,16 @@ body{font-family:'Crimson Pro',Georgia,serif;font-size:1.05rem;background:var(--
 .rank-badge.r1{color:#e8b84b;border-color:#e8b84b}
 .rank-badge.r2{color:#aaa;border-color:#aaa}
 .rank-badge.r3{color:#a0522d;border-color:#a0522d}
-.rank-set-btn{margin-left:auto;font-family:Cinzel,serif;font-size:.58rem;letter-spacing:.06em;padding:.12rem .45rem;background:rgba(201,146,42,.15);border:1px solid var(--bdr2);color:var(--gold);cursor:pointer;transition:all .12s}
+.rank-actions{margin-left:auto;display:flex;align-items:center;gap:.35rem;flex-wrap:wrap;justify-content:flex-end}\n.rank-set-btn{font-family:Cinzel,serif;font-size:.58rem;letter-spacing:.06em;padding:.12rem .45rem;background:rgba(201,146,42,.15);border:1px solid var(--bdr2);color:var(--gold);cursor:pointer;transition:all .12s}
 .rank-set-btn:hover{background:rgba(201,146,42,.3)}
-.rank-have{display:flex;align-items:center;gap:.3rem;font-family:Cinzel,serif;font-size:.58rem;color:var(--parch-dk);cursor:pointer;padding:.12rem .45rem;border:1px solid var(--bdr2);background:transparent;transition:all .12s;margin-left:.4rem}
+.rank-remove-btn{width:1.45rem;height:1.45rem;display:inline-flex;align-items:center;justify-content:center;border:1px solid rgba(201,146,42,.45);background:rgba(0,0,0,.22);color:var(--gold-lt);font-family:Cinzel,serif;font-size:.82rem;line-height:1;cursor:pointer;transition:all .12s;border-radius:999px}
+.rank-remove-btn:hover{background:rgba(201,146,42,.16);border-color:rgba(201,146,42,.75);color:#fff}
+.rank-have{display:flex;align-items:center;gap:.3rem;font-family:Cinzel,serif;font-size:.58rem;color:var(--parch-dk);cursor:pointer;padding:.12rem .45rem;border:1px solid var(--bdr2);background:transparent;transition:all .12s}
 .rank-have.done{color:#1EFF00;border-color:#1EFF00;background:rgba(30,255,0,.08)}
 .rank-inputs{padding:.25rem .4rem .3rem}
+.manual-alt-actions{display:flex;gap:.45rem;flex-wrap:wrap;margin:.35rem 0 .15rem}
+.manual-alt-btn{font-family:'Cinzel',serif;font-size:.58rem;letter-spacing:.07em;text-transform:uppercase;color:var(--gold-lt);border:1px solid rgba(201,146,42,.35);background:rgba(201,146,42,.07);padding:.25rem .55rem;cursor:pointer;transition:all .12s;border-radius:999px}
+.manual-alt-btn:hover{background:rgba(201,146,42,.15);border-color:rgba(201,146,42,.65)}
 .qe-banner{background:rgba(110,64,201,.1);border:1px solid rgba(110,64,201,.3);padding:.75rem;margin-bottom:.75rem;font-size:.85rem;color:var(--parch-dk);line-height:1.6}
 .slot-wrap{display:flex;flex-direction:column;gap:.2rem}
 .slot-lbl{font-family:'Cinzel',serif;font-size:.66rem;letter-spacing:.14em;color:var(--gold);text-transform:uppercase;padding-left:2px}
@@ -2171,6 +2176,11 @@ function Slot({ label, id, data, onChange, targetTrack, bisMode, equipped, charC
   if (bisMode === "custom") {
     const ranks = d.ranks || [{name:"",src:""},{name:"",src:""},{name:"",src:""}];
     const activeRank = d.activeRank ?? 0;
+    const expandedRanks = Array.isArray(d.expandedRanks) ? d.expandedRanks : [];
+    const rankHasContent = (r) => Boolean((r?.name || "").trim() || String(r?.itemId || "").trim() || (r?.itemSearch || "").trim());
+    const rankVisible = (r, idx) => idx === 0 || rankHasContent(r) || expandedRanks.includes(idx);
+    const visibleRanks = ranks.map((r, idx) => ({ r, idx })).filter(({ r, idx }) => rankVisible(r, idx));
+    const showRank = (idx) => onChange(id, { ...d, expandedRanks: Array.from(new Set([...expandedRanks, idx])) });
     const patchRank = (idx, patch) => {
       const nr = [...ranks];
       nr[idx] = { ...nr[idx], ...patch };
@@ -2200,35 +2210,48 @@ function Slot({ label, id, data, onChange, targetTrack, bisMode, equipped, charC
       nr[idx] = { ...nr[idx], have: !nr[idx]?.have };
       onChange(id, { ...d, ranks: nr });
     };
+    const emptyRank = (idx) => idx === 0 ? { status: "best" } : { status: DEFAULT_MANUAL_STATUS[idx] || "alt" };
     const clearRank = (idx) => {
       const nr = [...ranks];
-      nr[idx] = idx === 0 ? { status: "best" } : { status: DEFAULT_MANUAL_STATUS[idx] || "alt" };
+      nr[idx] = emptyRank(idx);
       const nextActive = idx === activeRank ? 0 : activeRank;
       onChange(id, { ...d, ranks: nr, activeRank: nextActive, name: nr[nextActive]?.name || "", src: nr[nextActive]?.src || "" });
+    };
+    const removeRank = (idx) => {
+      const nr = [...ranks];
+      nr[idx] = emptyRank(idx);
+      const nextActive = idx === activeRank ? 0 : activeRank;
+      const nextExpanded = expandedRanks.filter(rankIdx => rankIdx !== idx);
+      onChange(id, { ...d, ranks: nr, activeRank: nextActive, expandedRanks: nextExpanded, name: nr[nextActive]?.name || "", src: nr[nextActive]?.src || "" });
     };
     const RBADGE = ["r1","r2","r3"];
     const RLABEL = ranks.map((r, idx) => manualStatusLabel(r?.status, idx));
     return (
       <div className="slot-wrap">
         <div className="slot-lbl">{label}</div>
-        {ranks.map((r, idx) => (
+        {visibleRanks.map(({ r, idx }) => (
           <div key={idx} className={"rank-block" + (idx === activeRank ? " rank-active" : "")}>
             <div className="rank-label">
               <span className={"rank-badge " + RBADGE[idx]}>{RLABEL[idx]}</span>
-              {idx !== activeRank && r.name && (
-                <button className="rank-set-btn" onClick={() => setActive(idx)}>Set as target</button>
-              )}
-              {idx === activeRank && r.name && (
-                <span className="rank-targeting" style={{ fontSize:".6rem", color:"var(--gold)", marginLeft:"auto", fontFamily:"Cinzel,serif", letterSpacing:".06em" }}>▸ targeting</span>
-              )}
-              {r.name && (
-                <button className="rank-set-btn" onClick={() => clearRank(idx)} title="Clear this rank">Clear</button>
-              )}
-              {r.name && (
-                <button className={"rank-have" + (r.have ? " done" : "")} onClick={() => toggleHave(idx)}>
-                  {r.have ? "✓ have" : "have?"}
-                </button>
-              )}
+              <div className="rank-actions no-print">
+                {idx !== activeRank && r.name && (
+                  <button className="rank-set-btn" onClick={() => setActive(idx)}>Set as target</button>
+                )}
+                {idx === activeRank && r.name && (
+                  <span className="rank-targeting" style={{ fontSize:".6rem", color:"var(--gold)", fontFamily:"Cinzel,serif", letterSpacing:".06em" }}>▸ targeting</span>
+                )}
+                {(r.name || r.itemSearch || r.itemId) && (
+                  <button className="rank-set-btn" onClick={() => clearRank(idx)} title="Clear this option">Clear</button>
+                )}
+                {r.name && (
+                  <button className={"rank-have" + (r.have ? " done" : "")} onClick={() => toggleHave(idx)}>
+                    {r.have ? "✓ have" : "have?"}
+                  </button>
+                )}
+                {idx > 0 && (
+                  <button type="button" className="rank-remove-btn" onClick={() => removeRank(idx)} title="Remove this optional row" aria-label="Remove this optional row">×</button>
+                )}
+              </div>
             </div>
             <div className="rank-inputs">
               <ItemPoolPicker id={id} idx={idx} value={r.itemSearch || ""} onPick={item => applySeasonItem(idx, item)} onSearch={value => upRank(idx, "itemSearch", value)} onUnknownItem={value => { const itemId = itemIdFromText(value); const nameFromUrl = itemNameFromWowheadUrl(value); patchRank(idx, { itemSearch: value, itemId: itemId || r.itemId || "", name: r.name || nameFromUrl || "" }); }} charClassName={charClassName} charSpecName={charSpecName} />
@@ -2289,6 +2312,16 @@ function Slot({ label, id, data, onChange, targetTrack, bisMode, equipped, charC
             </div>
           </div>
         ))}
+        {bisMode === "custom" && (
+          <div className="manual-alt-actions no-print">
+            {!rankVisible(ranks[1] || {}, 1) && (
+              <button type="button" className="manual-alt-btn" onClick={() => showRank(1)}>+ Add second option</button>
+            )}
+            {rankVisible(ranks[1] || {}, 1) && !rankVisible(ranks[2] || {}, 2) && (
+              <button type="button" className="manual-alt-btn" onClick={() => showRank(2)}>+ Add third option</button>
+            )}
+          </div>
+        )}
         <EquippedCompareLine target={d} equipped={equipped} bisMode={bisMode} />
         {d.name && (
           <div className="custom-track-row" style={{ display:"flex", gap:".25rem", padding:".2rem .4rem", background:"rgba(0,0,0,.15)", border:"1px solid var(--bdr)", borderTop:"none" }}>
