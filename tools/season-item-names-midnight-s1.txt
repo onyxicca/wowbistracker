@@ -1,0 +1,2 @@
+# itemName|sourceType|sourceLabel|sourceId
+# Thunderfury, Blessed Blade of the Windseeker|Other|API smoke test|test

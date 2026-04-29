@@ -1,0 +1,23 @@
+{
+  "seasonId": "midnight-s1",
+  "generatedAt": "2026-04-29T00:32:02.491Z",
+  "records": [
+    {
+      "itemId": 19019,
+      "itemName": "Thunderfury, Blessed Blade of the Windseeker",
+      "slot": "WEAPON",
+      "inventoryType": "One-Hand",
+      "sourceType": "Other",
+      "sourceId": "test",
+      "sourceLabel": "API smoke test",
+      "bossName": null,
+      "raidName": null,
+      "dungeonName": null,
+      "itemClass": "Weapon",
+      "itemSubclass": "Sword",
+      "quality": "Legendary",
+      "icon": "https://render.worldofwarcraft.com/us/icons/56/inv_sword_39.jpg"
+    }
+  ],
+  "failed": []
+}
