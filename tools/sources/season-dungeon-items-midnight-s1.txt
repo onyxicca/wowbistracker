@@ -1,0 +1,3 @@
+# itemId|sourceType|sourceLabel|sourceId|bossName|raidName|dungeonName
+# Dungeon / Mythic+ items go here.
+# 251178|Dungeon|Maisara Caverns|maisara-caverns|||Maisara Caverns

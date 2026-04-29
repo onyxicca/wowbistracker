@@ -5,6 +5,7 @@ const ROOT = process.cwd();
 const DEFAULT_OUT = "src/data/season_items_midnight_s1.json";
 const DEFAULT_IDS = "tools/season-item-ids-midnight-s1.txt";
 const DEFAULT_NAMES = "tools/season-item-names-midnight-s1.txt";
+const DEFAULT_SOURCE_DIR = "tools/sources";
 
 function parseArgs(argv) {
   const args = new Map();
@@ -130,42 +131,57 @@ function cleanSourceLabel(value) {
   return src.replace(/\s*\/\s*/g, " / ").replace(/\s+/g, " ");
 }
 
-async function readIdInput(file) {
+function parseInputLine(line) {
+  const parts = line.split("|").map((v) => v?.trim() || "");
+  const [first, sourceType, sourceLabel, sourceId, bossName, raidName, dungeonName] = parts;
+  if (!first) return null;
+  const row = {
+    sourceType: sourceType || inferSourceType(sourceLabel),
+    sourceLabel: sourceLabel || "Unknown",
+    sourceId: sourceId || slugify(sourceLabel),
+    bossName: bossName || null,
+    raidName: raidName || null,
+    dungeonName: dungeonName || null,
+  };
+  if (/^\d+$/.test(first)) return { ...row, itemId: Number(first) };
+  return { ...row, itemName: first };
+}
+
+async function readRowsFile(file) {
   if (!(await exists(file))) return [];
   const raw = await fs.readFile(path.resolve(ROOT, file), "utf8");
   const rows = [];
   for (const line of raw.split(/\r?\n/)) {
     const trimmed = line.trim();
     if (!trimmed || trimmed.startsWith("#")) continue;
-    const [id, sourceType, sourceLabel, sourceId] = trimmed.split("|").map((v) => v?.trim() || "");
-    if (!/^\d+$/.test(id)) continue;
-    rows.push({
-      itemId: Number(id),
-      sourceType: sourceType || "Unknown",
-      sourceLabel: sourceLabel || "Unknown",
-      sourceId: sourceId || null,
-    });
+    const row = parseInputLine(trimmed);
+    if (row) rows.push(row);
   }
   return rows;
 }
 
-async function readNameInput(file) {
-  if (!(await exists(file))) return [];
-  const raw = await fs.readFile(path.resolve(ROOT, file), "utf8");
-  const rows = [];
-  for (const line of raw.split(/\r?\n/)) {
-    const trimmed = line.trim();
-    if (!trimmed || trimmed.startsWith("#")) continue;
-    const [itemName, sourceType, sourceLabel, sourceId] = trimmed.split("|").map((v) => v?.trim() || "");
-    if (!itemName) continue;
-    rows.push({
-      itemName,
-      sourceType: sourceType || "Unknown",
-      sourceLabel: sourceLabel || "Unknown",
-      sourceId: sourceId || null,
-    });
+async function readSourceDir(sourceDir) {
+  const dir = path.resolve(ROOT, sourceDir);
+  try {
+    const entries = await fs.readdir(dir, { withFileTypes: true });
+    const files = entries
+      .filter((entry) => entry.isFile() && entry.name.endsWith(".txt"))
+      .map((entry) => path.join(sourceDir, entry.name))
+      .sort();
+    const rows = [];
+    for (const file of files) rows.push(...await readRowsFile(file));
+    return rows;
+  } catch {
+    return [];
   }
-  return rows;
+}
+
+async function readIdInput(file) {
+  return readRowsFile(file);
+}
+
+async function readNameInput(file) {
+  return readRowsFile(file);
 }
 
 async function extractNamesFromApp(file) {
@@ -296,16 +312,40 @@ function normalizeItem(apiItem, icon, source) {
   };
 }
 
+function rowScore(row) {
+  let score = 0;
+  if (row.itemId) score += 100;
+  if (row.sourceType && row.sourceType !== "Unknown") score += 20;
+  if (row.sourceLabel && row.sourceLabel !== "Unknown") score += 10;
+  if (row.bossName || row.raidName || row.dungeonName) score += 8;
+  return score;
+}
+
+function mergeRows(a, b) {
+  const primary = rowScore(b) > rowScore(a) ? b : a;
+  const fallback = primary === a ? b : a;
+  return {
+    ...fallback,
+    ...primary,
+    itemId: primary.itemId || fallback.itemId || null,
+    itemName: primary.itemName || fallback.itemName || null,
+    sourceType: primary.sourceType && primary.sourceType !== "Unknown" ? primary.sourceType : fallback.sourceType || "Unknown",
+    sourceLabel: primary.sourceLabel && primary.sourceLabel !== "Unknown" ? primary.sourceLabel : fallback.sourceLabel || "Unknown",
+    sourceId: primary.sourceId || fallback.sourceId || null,
+    bossName: primary.bossName || fallback.bossName || null,
+    raidName: primary.raidName || fallback.raidName || null,
+    dungeonName: primary.dungeonName || fallback.dungeonName || null,
+  };
+}
+
 function dedupeRows(rows) {
-  const seen = new Set();
-  const out = [];
+  const map = new Map();
   for (const row of rows) {
     const key = row.itemId ? `id:${row.itemId}` : `name:${normalizeName(row.itemName)}`;
-    if (seen.has(key)) continue;
-    seen.add(key);
-    out.push(row);
+    if (!map.has(key)) map.set(key, row);
+    else map.set(key, mergeRows(map.get(key), row));
   }
-  return out;
+  return [...map.values()];
 }
 
 async function ensureTemplate(file, sample) {
@@ -319,22 +359,29 @@ async function main() {
   const idFile = args.get("ids") || DEFAULT_IDS;
   const nameFile = args.get("names") || DEFAULT_NAMES;
   const outFile = args.get("out") || DEFAULT_OUT;
+  const sourceDir = args.get("source-dir") || DEFAULT_SOURCE_DIR;
   const appFile = args.get("from-app") || null;
 
   await loadEnv();
   const cfg = config();
   const token = await getToken(cfg);
 
-  await ensureTemplate(DEFAULT_IDS, "# itemId|sourceType|sourceLabel|sourceId\n# 19019|Other|API smoke test|test\n");
-  await ensureTemplate(DEFAULT_NAMES, "# itemName|sourceType|sourceLabel|sourceId\n# Thunderfury, Blessed Blade of the Windseeker|Other|API smoke test|test\n");
+  await ensureTemplate(DEFAULT_IDS, "# itemId|sourceType|sourceLabel|sourceId|bossName|raidName|dungeonName\n# Legacy catch-all file. Prefer tools/sources/*.txt for new rows.\n# 19019|Other|API smoke test|test||||\n");
+  await ensureTemplate(DEFAULT_NAMES, "# itemName|sourceType|sourceLabel|sourceId|bossName|raidName|dungeonName\n# Legacy catch-all file. Prefer exact item IDs whenever possible.\n# Thunderfury, Blessed Blade of the Windseeker|Other|API smoke test|test||||\n");
+  await ensureTemplate("tools/sources/season-raid-items-midnight-s1.txt", "# itemId|sourceType|sourceLabel|sourceId|bossName|raidName|dungeonName\n# 249343|Raid|Chimaerus|chimaerus|Chimaerus||\n");
+  await ensureTemplate("tools/sources/season-dungeon-items-midnight-s1.txt", "# itemId|sourceType|sourceLabel|sourceId|bossName|raidName|dungeonName\n# 251178|Dungeon|Maisara Caverns|maisara-caverns|||Maisara Caverns\n");
+  await ensureTemplate("tools/sources/season-crafted-items-midnight-s1.txt", "# itemId|sourceType|sourceLabel|sourceId|bossName|raidName|dungeonName\n# 237845|Crafting|Crafting|crafted||||\n");
+  await ensureTemplate("tools/sources/season-special-items-midnight-s1.txt", "# itemId|sourceType|sourceLabel|sourceId|bossName|raidName|dungeonName\n# 000000|Other|Ritual Sites|ritual-sites||||\n");
 
+  const sourceRows = await readSourceDir(sourceDir);
   const idRows = await readIdInput(idFile);
   const nameRows = await readNameInput(nameFile);
   const appRows = await extractNamesFromApp(appFile);
-  const inputRows = dedupeRows([...idRows, ...nameRows, ...appRows]);
+  const inputRows = dedupeRows([...sourceRows, ...idRows, ...nameRows, ...appRows]);
+  console.log(`Input rows: ${inputRows.length} (${sourceRows.length} source-file, ${idRows.length} legacy-ID, ${nameRows.length} legacy-name, ${appRows.length} app-derived)`);
 
   if (!inputRows.length) {
-    console.log(`No item input found. Add IDs to ${idFile}, names to ${nameFile}, or run with --from-app src/App.jsx`);
+    console.log(`No item input found. Add source files in ${sourceDir}, IDs to ${idFile}, names to ${nameFile}, or run with --from-app src/App.jsx`);
     return;
   }
 

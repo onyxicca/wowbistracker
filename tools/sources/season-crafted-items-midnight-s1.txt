@@ -1,0 +1,3 @@
+# itemId|sourceType|sourceLabel|sourceId|bossName|raidName|dungeonName
+# Crafted gear goes here. This is the best place to force-add crafted items that are not in guide lists.
+# 237845|Crafting|Crafting|crafted||||

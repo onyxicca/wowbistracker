@@ -1,0 +1,3 @@
+# itemId|sourceType|sourceLabel|sourceId|bossName|raidName|dungeonName
+# Raid items go here. Use boss/drop source as sourceLabel when that is what players need to farm.
+# 249343|Raid|Chimaerus|chimaerus|Chimaerus||

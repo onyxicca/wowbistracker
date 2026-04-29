@@ -1,0 +1,3 @@
+# itemId|sourceType|sourceLabel|sourceId|bossName|raidName|dungeonName
+# Special / world / ritual / catch-up items go here.
+# 000000|Other|Ritual Sites|ritual-sites||||
