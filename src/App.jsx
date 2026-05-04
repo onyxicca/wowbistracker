@@ -1240,6 +1240,11 @@ body{font-family:'Crimson Pro',Georgia,serif;font-size:1.05rem;background:var(--
 .manual-alt-actions{display:flex;gap:.45rem;flex-wrap:wrap;margin:.35rem 0 .15rem}
 .manual-alt-btn{font-family:'Cinzel',serif;font-size:.58rem;letter-spacing:.07em;text-transform:uppercase;color:var(--gold-lt);border:1px solid rgba(201,146,42,.35);background:rgba(201,146,42,.07);padding:.25rem .55rem;cursor:pointer;transition:all .12s;border-radius:999px}
 .manual-alt-btn:hover{background:rgba(201,146,42,.15);border-color:rgba(201,146,42,.65)}
+
+.print-template-panel{display:flex;flex-wrap:wrap;gap:.35rem;align-items:center;margin-left:auto}
+.print-template-label{font-family:'Cinzel',serif;font-size:.58rem;letter-spacing:.08em;text-transform:uppercase;color:var(--parch-dk);opacity:.85;margin-right:.1rem}
+.print-template-btn{font-family:'Cinzel',serif;font-size:.62rem;letter-spacing:.06em;text-transform:uppercase;color:var(--gold-lt);border:1px solid rgba(201,146,42,.35);background:rgba(201,146,42,.07);padding:.35rem .65rem;cursor:pointer;transition:all .12s;border-radius:999px}
+.print-template-btn:hover{background:rgba(201,146,42,.15);border-color:rgba(201,146,42,.65)}
 .qe-banner{background:rgba(110,64,201,.1);border:1px solid rgba(110,64,201,.3);padding:.75rem;margin-bottom:.75rem;font-size:.85rem;color:var(--parch-dk);line-height:1.6}
 .slot-wrap{display:flex;flex-direction:column;gap:.2rem}
 .slot-lbl{font-family:'Cinzel',serif;font-size:.66rem;letter-spacing:.14em;color:var(--gold);text-transform:uppercase;padding-left:2px}
@@ -1598,10 +1603,14 @@ const MANUAL_STATUS_OPTIONS_SECONDARY = [
   { value: "alt", label: "Alternative" },
 ];
 const DEFAULT_MANUAL_STATUS = ["best", "strong", "alt"];
-const manualStatusOptionsForRank = (idx = 0) => idx === 0 ? MANUAL_STATUS_OPTIONS_PRIMARY : MANUAL_STATUS_OPTIONS_SECONDARY;
-const manualStatusLabel = (value, idx = 0) => {
+const MANUAL_WEAPON_SLOT_IDS = new Set(["weapon", "weapon2h", "mainhand", "offhand"]);
+const manualStatusOptionsForRank = (idx = 0, allowPrimaryAlternatives = false) => {
+  if (idx === 0 && !allowPrimaryAlternatives) return MANUAL_STATUS_OPTIONS_PRIMARY;
+  return [...MANUAL_STATUS_OPTIONS_PRIMARY, ...MANUAL_STATUS_OPTIONS_SECONDARY];
+};
+const manualStatusLabel = (value, idx = 0, allowPrimaryAlternatives = false) => {
   const v = value || DEFAULT_MANUAL_STATUS[idx] || "alt";
-  const options = idx === 0 ? MANUAL_STATUS_OPTIONS_PRIMARY : [...MANUAL_STATUS_OPTIONS_PRIMARY, ...MANUAL_STATUS_OPTIONS_SECONDARY];
+  const options = manualStatusOptionsForRank(idx, allowPrimaryAlternatives);
   return options.find(opt => opt.value === v)?.label || "Alternative";
 };
 
@@ -1703,10 +1712,19 @@ const CLASS_WEAPON_TERMS = {
 };
 
 const CLASS_TIER_TERMS = {
+  "death knight": ["relentless rider"],
+  "demon hunter": ["devouring reaver", "black talon"],
   druid: ["luminous bloom"],
+  evoker: ["primal core"],
+  hunter: ["primal sentry"],
+  mage: ["voidbreaker"],
+  monk: ["ra-den's chosen", "of ra-den's chosen", "way of ra-den"],
+  paladin: ["luminant verdict"],
+  priest: ["blind oath"],
   rogue: ["grim jest"],
-  shaman: ["primal core"],
-  "demon hunter": ["black talon"],
+  shaman: ["storm crashers", "strikeguards", "swiftsweepers", "thunderfists", "windwrap"],
+  warlock: ["abyssal immolator"],
+  warrior: ["night ender"],
 };
 
 const SPEC_PRIMARY_STAT = {
@@ -1731,6 +1749,14 @@ const WEAPON_FILTER_SLOTS = new Set(["weapon", "weapon2h", "mainhand", "offhand"
 
 function normalizeClassName(value) {
   return String(value || "").trim().toLowerCase();
+}
+
+function titleCase(value) {
+  return String(value || "")
+    .split(/\s+/)
+    .filter(Boolean)
+    .map(part => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(" ");
 }
 
 function classArmorType(value) {
@@ -2000,7 +2026,10 @@ function seasonItemOptionsForSlot(slotId, charClassName, charSpecName, broad = f
 function seasonItemOptionLabel(item) {
   if (!item) return "";
   const source = item.sourceLabel && item.sourceLabel !== "Unknown" ? ` · ${item.sourceLabel}` : "";
-  return `${item.itemName} · ID ${item.itemId}${source}`;
+  const tierOwner = itemTierOwner(item);
+  const tier = tierOwner ? ` · ${titleCase(tierOwner)} tier` : "";
+  const slot = item?.slot ? ` · ${String(item.slot).replace(/_/g, " ")}` : "";
+  return `${item.itemName} · ID ${item.itemId}${source}${tier}${slot}`;
 }
 
 function normalizeItemKey(value) {
@@ -2144,7 +2173,7 @@ function EquippedCompareLine({ target, equipped, bisMode }) {
   );
 }
 
-function Slot({ label, id, data, onChange, targetTrack, bisMode, equipped, charClassName, charSpecName }) {
+function Slot({ label, id, data, onChange, targetTrack, bisMode, equipped, charClassName, charSpecName, printTemplate = "screen" }) {
   const d = data[id] || {};
   const up = (f, v) => onChange(id, { ...d, [f]: v });
   const track = d.track || "";
@@ -2176,10 +2205,16 @@ function Slot({ label, id, data, onChange, targetTrack, bisMode, equipped, charC
   if (bisMode === "custom") {
     const ranks = d.ranks || [{name:"",src:""},{name:"",src:""},{name:"",src:""}];
     const activeRank = d.activeRank ?? 0;
+    const primaryStatusEditable = MANUAL_WEAPON_SLOT_IDS.has(id);
     const expandedRanks = Array.isArray(d.expandedRanks) ? d.expandedRanks : [];
     const rankHasContent = (r) => Boolean((r?.name || "").trim() || String(r?.itemId || "").trim() || (r?.itemSearch || "").trim());
     const rankVisible = (r, idx) => idx === 0 || rankHasContent(r) || expandedRanks.includes(idx);
-    const visibleRanks = ranks.map((r, idx) => ({ r, idx })).filter(({ r, idx }) => rankVisible(r, idx));
+    const isPrintRun = printTemplate && printTemplate !== "screen";
+    const blankTemplateCount = printTemplate === "blank1" ? 1 : printTemplate === "blank2" ? 2 : printTemplate === "blank3" ? 3 : 0;
+    if (isPrintRun && printTemplate === "filled" && !ranks.some(rankHasContent)) return null;
+    const visibleRanks = blankTemplateCount
+      ? Array.from({ length: blankTemplateCount }, (_, idx) => ({ r: { status: idx === 0 ? "best" : (DEFAULT_MANUAL_STATUS[idx] || "alt"), name:"", src:"", itemId:"", itemSearch:"" }, idx }))
+      : ranks.map((r, idx) => ({ r, idx })).filter(({ r, idx }) => isPrintRun && printTemplate === "filled" ? rankHasContent(r) : rankVisible(r, idx));
     const showRank = (idx) => onChange(id, { ...d, expandedRanks: Array.from(new Set([...expandedRanks, idx])) });
     const patchRank = (idx, patch) => {
       const nr = [...ranks];
@@ -2225,7 +2260,7 @@ function Slot({ label, id, data, onChange, targetTrack, bisMode, equipped, charC
       onChange(id, { ...d, ranks: nr, activeRank: nextActive, expandedRanks: nextExpanded, name: nr[nextActive]?.name || "", src: nr[nextActive]?.src || "" });
     };
     const RBADGE = ["r1","r2","r3"];
-    const RLABEL = ranks.map((r, idx) => manualStatusLabel(r?.status, idx));
+    const RLABEL = ranks.map((r, idx) => manualStatusLabel(r?.status, idx, primaryStatusEditable));
     return (
       <div className="slot-wrap">
         <div className="slot-lbl">{label}</div>
@@ -2302,11 +2337,11 @@ function Slot({ label, id, data, onChange, targetTrack, bisMode, equipped, charC
                   </div>
                 </>
               )}
-              {idx === 0 ? (
+              {idx === 0 && !primaryStatusEditable ? (
                 <div className="sf-src no-print" style={{ opacity:.9, display:"flex", alignItems:"center", minHeight:"2.1rem" }}>Counts as BiS</div>
               ) : (
                 <select className="sf-src no-print" value={r.status || DEFAULT_MANUAL_STATUS[idx] || "alt"} onChange={e => upRank(idx, "status", e.target.value)}>
-                  {manualStatusOptionsForRank(idx).map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
+                  {manualStatusOptionsForRank(idx, primaryStatusEditable).map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
                 </select>
               )}
             </div>
@@ -2323,8 +2358,7 @@ function Slot({ label, id, data, onChange, targetTrack, bisMode, equipped, charC
           </div>
         )}
         <EquippedCompareLine target={d} equipped={equipped} bisMode={bisMode} />
-        {d.name && (
-          <div className="custom-track-row" style={{ display:"flex", gap:".25rem", padding:".2rem .4rem", background:"rgba(0,0,0,.15)", border:"1px solid var(--bdr)", borderTop:"none" }}>
+        <div className="custom-track-row" style={{ display:"flex", gap:".25rem", padding:".2rem .4rem", background:"rgba(0,0,0,.15)", border:"1px solid var(--bdr)", borderTop:"none" }}>
             <span style={{ fontFamily:"Cinzel,serif", fontSize:".58rem", color:"var(--parch-dk)", alignSelf:"center", letterSpacing:".06em" }}>TRACK:</span>
             {TRACKS.filter(t => t).map(t => (
               <button key={t} onClick={() => up("track", track === t ? "" : t)} style={{ fontFamily:"Cinzel,serif", fontSize:".58rem", letterSpacing:".05em", padding:".1rem .4rem", background: track === t ? TRACK_COLOR[t] : "transparent", border:`1px solid ${track === t ? TRACK_COLOR[t] : "var(--bdr2)"}`, color: track === t ? "#fff" : "var(--parch-dk)", cursor:"pointer", transition:"all .12s", filter: track === t ? "brightness(0.72)" : "none" }}>{t}</button>
@@ -2333,7 +2367,6 @@ function Slot({ label, id, data, onChange, targetTrack, bisMode, equipped, charC
               {d.done ? (softBisSlot ? "~" : "✓") : ""}
             </div>
           </div>
-        )}
         {track && <div style={{ height:"2px", background: TRACK_COLOR[track], opacity:.7 }} />}
       </div>
     );
@@ -2462,6 +2495,14 @@ function Tracker({ cls, spec, charName, initialMode = "", onBack }) {
   const [vaultMatches, setVaultMatches] = useState([]);
   const [saveState, setSaveState] = useState('saved');
   const [slotView, setSlotView] = useState("all");
+  const [printTemplate, setPrintTemplate] = useState("screen");
+  const runPrintTemplate = (template) => {
+    setPrintTemplate(template);
+    window.setTimeout(() => {
+      window.print();
+      window.setTimeout(() => setPrintTemplate("screen"), 350);
+    }, 80);
+  };
   const sugRef = useRef(null);
   useEffect(() => {
     if (!initialMode) return;
@@ -3090,8 +3131,8 @@ function Tracker({ cls, spec, charName, initialMode = "", onBack }) {
             if (!showLeft && !showRight) return null;
             return (
               <div key={ls.id} style={{ display:"contents" }}>
-                {showLeft ? <Slot label={ls.name} id={ls.id} data={data} onChange={upSlot} targetTrack={targetTrack} bisMode={bisMode} equipped={equippedData[ls.id]} charClassName={cls.name} charSpecName={spec.name} /> : <div />}
-                {showRight ? <Slot label={rs.name} id={rs.id} data={data} onChange={upSlot} targetTrack={targetTrack} bisMode={bisMode} equipped={equippedData[rs.id]} charClassName={cls.name} charSpecName={spec.name} /> : <div />}
+                {showLeft ? <Slot label={ls.name} id={ls.id} data={data} onChange={upSlot} targetTrack={targetTrack} bisMode={bisMode} equipped={equippedData[ls.id]} charClassName={cls.name} charSpecName={spec.name} printTemplate={printTemplate} /> : <div />}
+                {showRight ? <Slot label={rs.name} id={rs.id} data={data} onChange={upSlot} targetTrack={targetTrack} bisMode={bisMode} equipped={equippedData[rs.id]} charClassName={cls.name} charSpecName={spec.name} printTemplate={printTemplate} /> : <div />}
               </div>
             );
           })}
@@ -3100,25 +3141,54 @@ function Tracker({ cls, spec, charName, initialMode = "", onBack }) {
 
       {sectionVisible("weapon2h", "mainhand", "offhand") && <div className="sub-sh">Weapons</div>}
       {sectionVisible("weapon2h", "mainhand", "offhand") && cls.weaponNote && <div style={{ fontSize:".8rem", fontStyle:"italic", color:"var(--gold)", opacity:.8, marginBottom:".5rem" }}>⚠ {cls.weaponNote}</div>}
-      {sectionVisible("weapon2h", "mainhand", "offhand") && can2h && can1h && (
+      {sectionVisible("weapon2h", "mainhand", "offhand") && can2h && can1h && bisMode !== "custom" && (
         <div className="sel-row" style={{ marginBottom:".65rem" }}>
           <button className={"selbtn" + (wMode === "2h" ? " on" : "")} onClick={() => setWMode("2h")}>⚔️ 2-Handed</button>
           <button className={"selbtn" + (wMode === "1h" ? " on" : "")} onClick={() => setWMode("1h")}>🗡️ One-Hander + Off Hand</button>
         </div>
       )}
-      {sectionVisible("weapon2h", "mainhand", "offhand") && (
-        <div className="gear-grid">
-          {(can2h && (!can1h || wMode === "2h") && slotViewMatches("weapon2h")) && <Slot label="2H Weapon" id="weapon2h" data={data} onChange={upSlot} targetTrack={targetTrack} bisMode={bisMode} equipped={equippedData.weapon2h} charClassName={cls.name} charSpecName={spec.name} />}
-          {(can1h && (!can2h || wMode === "1h") && slotViewMatches("mainhand")) && <Slot label="Main Hand" id="mainhand" data={data} onChange={upSlot} targetTrack={targetTrack} bisMode={bisMode} equipped={equippedData.mainhand} charClassName={cls.name} charSpecName={spec.name} />}
-          {(can1h && (!can2h || wMode === "1h") && slotViewMatches("offhand")) && <Slot label="Off Hand" id="offhand" data={data} onChange={upSlot} targetTrack={targetTrack} bisMode={bisMode} equipped={equippedData.offhand} charClassName={cls.name} charSpecName={spec.name} />}
+      {sectionVisible("weapon2h", "mainhand", "offhand") && can2h && can1h && bisMode === "custom" && (
+        <div className="weapon-plan-note no-print" style={{ margin:"-.2rem 0 .65rem", padding:".55rem .7rem", border:"1px solid var(--bdr)", background:"rgba(0,0,0,.18)", color:"var(--parch-dk)", fontSize:".78rem", fontStyle:"italic" }}>
+          Weapon planning shows both setups. Use 2H Weapon for a two-hander, or Main Hand + Off Hand for a paired setup. Fill the setup you want, or fill both when either path is viable.
         </div>
+      )}
+      {sectionVisible("weapon2h", "mainhand", "offhand") && (
+        <>
+          {bisMode === "custom" && can2h && can1h ? (
+            <>
+              {slotViewMatches("weapon2h") && (
+                <>
+                  <div className="sub-sh weapon-set-label">2H Setup</div>
+                  <div className="gear-grid">
+                    <Slot label="2H Weapon" id="weapon2h" data={data} onChange={upSlot} targetTrack={targetTrack} bisMode={bisMode} equipped={equippedData.weapon2h} charClassName={cls.name} charSpecName={spec.name} printTemplate={printTemplate} />
+                  </div>
+                </>
+              )}
+              {(slotViewMatches("mainhand") || slotViewMatches("offhand")) && (
+                <>
+                  <div className="sub-sh weapon-set-label">1H + Off Hand Setup</div>
+                  <div className="gear-grid">
+                    {slotViewMatches("mainhand") && <Slot label="Main Hand" id="mainhand" data={data} onChange={upSlot} targetTrack={targetTrack} bisMode={bisMode} equipped={equippedData.mainhand} charClassName={cls.name} charSpecName={spec.name} printTemplate={printTemplate} />}
+                    {slotViewMatches("offhand") && <Slot label="Off Hand" id="offhand" data={data} onChange={upSlot} targetTrack={targetTrack} bisMode={bisMode} equipped={equippedData.offhand} charClassName={cls.name} charSpecName={spec.name} printTemplate={printTemplate} />}
+                  </div>
+                </>
+              )}
+            </>
+          ) : (
+            <div className="gear-grid">
+              {(can2h && (!can1h || wMode === "2h") && slotViewMatches("weapon2h")) && <Slot label="2H Weapon" id="weapon2h" data={data} onChange={upSlot} targetTrack={targetTrack} bisMode={bisMode} equipped={equippedData.weapon2h} charClassName={cls.name} charSpecName={spec.name} printTemplate={printTemplate} />}
+              {(can1h && (!can2h || wMode === "1h") && slotViewMatches("mainhand")) && <Slot label="Main Hand" id="mainhand" data={data} onChange={upSlot} targetTrack={targetTrack} bisMode={bisMode} equipped={equippedData.mainhand} charClassName={cls.name} charSpecName={spec.name} printTemplate={printTemplate} />}
+              {(can1h && (!can2h || wMode === "1h") && slotViewMatches("offhand")) && <Slot label="Off Hand" id="offhand" data={data} onChange={upSlot} targetTrack={targetTrack} bisMode={bisMode} equipped={equippedData.offhand} charClassName={cls.name} charSpecName={spec.name} printTemplate={printTemplate} />}
+            </div>
+          )}
+        </>
       )}
 
       {sectionVisible("trinket1", "trinket2") && <div className="sub-sh">Trinkets</div>}
       {sectionVisible("trinket1", "trinket2") && (
         <div className="gear-grid">
-          {slotViewMatches("trinket1") && <Slot label="Trinket 1" id="trinket1" data={data} onChange={upSlot} targetTrack={targetTrack} bisMode={bisMode} equipped={equippedData.trinket1} charClassName={cls.name} charSpecName={spec.name} />}
-          {slotViewMatches("trinket2") && <Slot label="Trinket 2" id="trinket2" data={data} onChange={upSlot} targetTrack={targetTrack} bisMode={bisMode} equipped={equippedData.trinket2} charClassName={cls.name} charSpecName={spec.name} />}
+          {slotViewMatches("trinket1") && <Slot label="Trinket 1" id="trinket1" data={data} onChange={upSlot} targetTrack={targetTrack} bisMode={bisMode} equipped={equippedData.trinket1} charClassName={cls.name} charSpecName={spec.name} printTemplate={printTemplate} />}
+          {slotViewMatches("trinket2") && <Slot label="Trinket 2" id="trinket2" data={data} onChange={upSlot} targetTrack={targetTrack} bisMode={bisMode} equipped={equippedData.trinket2} charClassName={cls.name} charSpecName={spec.name} printTemplate={printTemplate} />}
         </div>
       )}
 
@@ -3187,7 +3257,7 @@ function Tracker({ cls, spec, charName, initialMode = "", onBack }) {
           modal.style.cssText = "position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.85);z-index:9999;display:flex;align-items:center;justify-content:center;";
           const inner = document.createElement("div");
           inner.style.cssText = "background:#150f08;border:1px solid #c9922a;padding:1.5rem;max-width:540px;width:90%;font-family:Cinzel,serif;";
-          inner.innerHTML = `<div style="font-size:.75rem;letter-spacing:.15em;color:#c9922a;margin-bottom:.75rem">EXPORT FOR ADDON</div><div style="font-size:.85rem;color:#c8a96a;margin-bottom:.75rem;font-family:Crimson Pro,serif;line-height:1.6;">Copy this code and paste it into the WoW BiS Tracker addon in-game using the Import BiS button. Manual Builder exports require Item IDs so the addon can track exact items. Rank 1 always counts as BiS. Rank 2 and Rank 3 can be marked as Equivalent, Strong Alternative, or Alternative. If Wowhead BiS and Manual Builder are both saved, one import will load both into the addon.</div>`;
+          inner.innerHTML = `<div style="font-size:.75rem;letter-spacing:.15em;color:#c9922a;margin-bottom:.75rem">EXPORT FOR ADDON</div><div style="font-size:.85rem;color:#c8a96a;margin-bottom:.75rem;font-family:Crimson Pro,serif;line-height:1.6;">Copy this code and paste it into the WoW BiS Tracker addon in-game using the Import BiS button. Manual Builder exports require Item IDs so the addon can track exact items. Rank 1 counts as BiS for armor, rings, and trinkets. Weapon Rank 1 can also be marked as Equivalent, Strong Alternative, or Alternative so 2H and 1H setups can coexist cleanly. If Wowhead BiS and Manual Builder are both saved, one import will load both into the addon.</div>`;
           const ta = document.createElement("textarea");
           ta.readOnly = true;
           ta.value = code;
@@ -3228,7 +3298,13 @@ function Tracker({ cls, spec, charName, initialMode = "", onBack }) {
           modal.addEventListener("click", e => { if (e.target === modal) modal.remove(); });
           setTimeout(() => ta.select(), 100);
         }}>🎮 Export for Addon</button>
-        <button className="tbtn sec" onClick={() => window.print()} style={{ borderWidth:'2px', boxShadow:'inset 0 0 0 1px rgba(255,255,255,.04)' }}>🖨 Print / PDF</button>
+        <div className="print-template-panel no-print">
+          <span className="print-template-label">Print</span>
+          <button type="button" className="print-template-btn" onClick={() => runPrintTemplate("filled")}>Filled profile</button>
+          <button type="button" className="print-template-btn" onClick={() => runPrintTemplate("blank1")}>Blank 1</button>
+          <button type="button" className="print-template-btn" onClick={() => runPrintTemplate("blank2")}>Blank 2</button>
+          <button type="button" className="print-template-btn" onClick={() => runPrintTemplate("blank3")}>Blank 3</button>
+        </div>
       </div>
 
     </div>
