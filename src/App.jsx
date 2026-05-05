@@ -1251,6 +1251,9 @@ body{font-family:'Crimson Pro',Georgia,serif;font-size:1.05rem;background:var(--
 .sf-name:focus{background:rgba(201,146,42,.05)}
 .item-preview-link{display:inline-flex;align-items:center;gap:.25rem;width:max-content;margin:.15rem .65rem .4rem;font-family:'Cinzel',serif;font-size:.58rem;letter-spacing:.06em;text-transform:uppercase;color:var(--gold-lt);text-decoration:none;border-bottom:1px solid rgba(201,146,42,.35)}
 .item-preview-link:hover{color:var(--gold);border-bottom-color:var(--gold)}
+.item-name-link{color:#a335ee;text-decoration:none;font-weight:700;text-shadow:0 0 10px rgba(163,53,238,.14)}
+.item-name-link:hover{color:#c77dff;text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:2px}
+.whtt-tooltip a,.wowhead-tooltip a{color:#a335ee!important}
 .item-pool-picker{grid-column:1 / span 2;display:grid;grid-template-columns:1fr auto;gap:.35rem;align-items:center}
 .item-pool-picker input{background:rgba(0,0,0,.16);border:1px solid var(--bdr);border-radius:8px;color:var(--parch);font-family:'Crimson Pro',serif;font-size:.82rem;padding:.38rem .55rem;outline:none}
 .item-pool-picker input:focus{border-color:rgba(201,146,42,.65);box-shadow:0 0 0 1px rgba(201,146,42,.18)}
@@ -2374,7 +2377,7 @@ function Slot({ label, id, data, onChange, targetTrack, bisMode, equipped, charC
   );
 }
 
-function Tracker({ cls, spec, charName, initialMode = "", onBack }) {
+function Tracker({ cls, spec, charName, initialMode = "", onBack, onCharacterRename }) {
   useEffect(() => {
     if (typeof document === "undefined") return;
     if (document.getElementById("wowhead-tooltips")) return;
@@ -2459,6 +2462,18 @@ function Tracker({ cls, spec, charName, initialMode = "", onBack }) {
   const [simcStr, setSimcStr] = useState(() => {
     try { return localStorage.getItem(`simc-${storageKey}`) || ""; } catch { return ""; }
   });
+  const [armoryRegion, setArmoryRegion] = useState(() => {
+    try { return localStorage.getItem(`armory-region-${storageKey}`) || "us"; } catch { return "us"; }
+  });
+  const [armoryRealm, setArmoryRealm] = useState(() => {
+    try { return localStorage.getItem(`armory-realm-${storageKey}`) || ""; } catch { return ""; }
+  });
+  const [armoryName, setArmoryName] = useState(() => {
+    try { return localStorage.getItem(`armory-name-${storageKey}`) || ""; } catch { return ""; }
+  });
+  const [armoryLookup, setArmoryLookup] = useState({ loading:false, error:"" });
+  const [characterDraft, setCharacterDraft] = useState(() => charName && charName !== "default" ? charName : "");
+  const [characterEditMsg, setCharacterEditMsg] = useState("");
   const [vaultMatches, setVaultMatches] = useState([]);
   const [saveState, setSaveState] = useState('saved');
   const [slotView, setSlotView] = useState("all");
@@ -2471,6 +2486,11 @@ function Tracker({ cls, spec, charName, initialMode = "", onBack }) {
     setWMode(next.mainhand || next.offhand ? "1h" : "2h");
     try { localStorage.setItem(`bismode-${storageKey}`, initialMode); } catch {}
   }, [initialMode, storageKey]);
+
+  useEffect(() => {
+    setCharacterDraft(charName && charName !== "default" ? charName : "");
+    setCharacterEditMsg("");
+  }, [charName]);
 
 
   const writeModeData = useCallback((mode, next) => {
@@ -2490,6 +2510,166 @@ function Tracker({ cls, spec, charName, initialMode = "", onBack }) {
     legs:"Legs", feet:"Boots", finger1:"Ring 1", finger2:"Ring 2",
     trinket1:"Trinket 1", trinket2:"Trinket 2",
     weapon:"Weapon", offhand:"Off Hand", mainhand:"Main Hand", weapon2h:"2H Weapon",
+  };
+
+  const apiEquipmentSlot = (item) => {
+    const slot = String(item?.slotType || "").toUpperCase();
+    const inv = String(item?.inventoryType || "").toUpperCase();
+    const map = {
+      HEAD:"head", NECK:"neck", SHOULDER:"shoulders", SHOULDERS:"shoulders", BACK:"back", CLOAK:"back",
+      CHEST:"chest", WRIST:"wrist", HANDS:"hands", WAIST:"waist", LEGS:"legs", FEET:"feet",
+      FINGER_1:"finger1", FINGER1:"finger1", FINGER_2:"finger2", FINGER2:"finger2",
+      TRINKET_1:"trinket1", TRINKET1:"trinket1", TRINKET_2:"trinket2", TRINKET2:"trinket2",
+      OFF_HAND:"offhand", OFFHAND:"offhand", HOLDABLE:"offhand", SHIELD:"offhand",
+    };
+    if (slot === "MAIN_HAND" || slot === "MAINHAND" || slot === "WEAPON") {
+      return inv === "TWOHWEAPON" || inv.includes("TWO") || inv.includes("2H") ? "weapon2h" : "mainhand";
+    }
+    return map[slot] || "";
+  };
+
+  const makeCharacterLabel = (name, realm) => {
+    const cleanName = String(name || "").trim();
+    const cleanRealm = String(realm || "").trim();
+    if (!cleanName && !cleanRealm) return "default";
+    if (!cleanRealm) return cleanName || "default";
+    return `${cleanName || "Character"} — ${cleanRealm}`;
+  };
+
+  const copyCurrentSavesToCharacter = (nextLabel) => {
+    const nextBase = splitSaveLabel(nextLabel || "default").base || "default";
+    const currentBase = splitSaveLabel(charName || "default").base || "default";
+    const nextStorageKey = `bis-${cls.id}-${spec.id}-${nextBase}`;
+    const modes = ["community", "custom", "simc", "scan"];
+    try {
+      modes.forEach(mode => {
+        const raw = localStorage.getItem(`${storageKey}-${mode}`);
+        if (raw) {
+          localStorage.setItem(`${nextStorageKey}-${mode}`, raw);
+          registerCharacterSave(cls.id, spec.id, nextBase, mode);
+        }
+      });
+      const currentMode = localStorage.getItem(`bismode-${storageKey}`) || bisMode;
+      if (currentMode) localStorage.setItem(`bismode-${nextStorageKey}`, currentMode);
+      const summary = localStorage.getItem(`simc-summary-${storageKey}`);
+      if (summary) localStorage.setItem(`simc-summary-${nextStorageKey}`, summary);
+      if (currentBase === "default") {
+        modes.forEach(mode => unregisterCharacterSave(cls.id, spec.id, currentBase, mode));
+      }
+      return nextBase;
+    } catch {
+      return nextBase;
+    }
+  };
+
+  const applyCharacterName = () => {
+    const next = splitSaveLabel(characterDraft || "default").base || "default";
+    if (!next || next === "default") {
+      setCharacterEditMsg("Enter a character name first.");
+      return;
+    }
+    const savedAs = copyCurrentSavesToCharacter(next);
+    setCharacterEditMsg(`Saved as ${savedAs}.`);
+    if (onCharacterRename) onCharacterRename(savedAs, bisMode);
+  };
+
+  const saveEquippedSnapshotRows = (rows, meta = {}) => {
+    const targetData = readModeData(scanTargetMode);
+    const snapshot = {};
+    let matched = 0;
+    rows.forEach(row => {
+      const slot = row.slot;
+      if (!slot) return;
+      const targetName = targetData?.[slot]?.name || "";
+      const isMatch = targetName && isBiSMatch(row.name, targetName);
+      if (isMatch) matched++;
+      snapshot[slot] = {
+        name: row.name || "Unknown",
+        itemID: row.itemID || row.itemId || "",
+        ilvl: row.ilvl || row.itemLevel || null,
+        track: row.track || null,
+        src: row.src || "Character Lookup",
+        done: true,
+        snapshot: true,
+        targetName,
+        targetMode: scanTargetMode,
+        matched: !!isMatch,
+      };
+    });
+    writeModeData("simc", snapshot);
+    setData(snapshot);
+    setBisMode("simc");
+    if (snapshot.mainhand || snapshot.offhand) setWMode("1h");
+    if (snapshot.weapon2h) setWMode("2h");
+    try { localStorage.setItem(`bismode-${storageKey}`, "simc"); } catch {}
+    const scanned = rows.map(row => ({
+      slot: row.slot,
+      name: row.name || "Unknown",
+      itemID: row.itemID || row.itemId || "",
+      ilvl: row.ilvl || row.itemLevel || null,
+      track: row.track || null,
+      targetName: targetData?.[row.slot]?.name || "",
+      matched: !!(targetData?.[row.slot]?.name && isBiSMatch(row.name, targetData[row.slot].name)),
+    }));
+    const summary = { ...meta, targetMode: scanTargetMode, matched, scanned, savedAt: new Date().toISOString() };
+    setSimcSummary(summary);
+    try { localStorage.setItem(`simc-summary-${storageKey}`, JSON.stringify(summary)); } catch {}
+    return { matched, count: rows.length, snapshot, summary };
+  };
+
+  const lookupArmoryCharacter = async () => {
+    const region = armoryRegion.trim().toLowerCase() || "us";
+    const realm = armoryRealm.trim();
+    const name = armoryName.trim();
+    if (!realm || !name) {
+      setArmoryLookup({ loading:false, error:"Enter a realm and character name." });
+      return;
+    }
+    setArmoryLookup({ loading:true, error:"" });
+    try {
+      try {
+        localStorage.setItem(`armory-region-${storageKey}`, region);
+        localStorage.setItem(`armory-realm-${storageKey}`, realm);
+        localStorage.setItem(`armory-name-${storageKey}`, name);
+      } catch {}
+      const qs = new URLSearchParams({ region, realm, name });
+      const response = await fetch(`/api/wow-character?${qs.toString()}`);
+      const payload = await response.json().catch(() => ({}));
+      if (!response.ok || !payload.ok) {
+        const routeMissing = response.ok && !payload.ok && !payload.equippedItems;
+        const message = routeMissing
+          ? "Character lookup route is not running in this local preview. Use Vercel dev for local API testing, or test this after the site is deployed with Blizzard env vars set."
+          : (payload?.error || `Character lookup failed (${response.status}).`);
+        throw new Error(message);
+      }
+      const rows = (payload.equippedItems || []).map(item => ({
+        slot: apiEquipmentSlot(item),
+        name: item.itemName,
+        itemID: item.itemId,
+        ilvl: item.itemLevel,
+        track: null,
+        src: "Character Lookup",
+        inventoryType: item.inventoryType,
+      })).filter(row => row.slot && row.name);
+      if (!rows.length) throw new Error("No equipped items came back from Blizzard for that character.");
+      const result = saveEquippedSnapshotRows(rows, {
+        character: payload.character || name,
+        realm: payload.realm || realm,
+        region,
+        source: "Character Lookup",
+      });
+      const lookupLabel = makeCharacterLabel(payload.character || name, payload.realm || realm);
+      if (lookupLabel && lookupLabel !== "default") {
+        const savedAs = copyCurrentSavesToCharacter(lookupLabel);
+        setCharacterDraft(savedAs);
+        if (onCharacterRename) setTimeout(() => onCharacterRename(savedAs, "simc"), 0);
+      }
+      setArmoryLookup({ loading:false, error:"" });
+      setShowSimC(false);
+      setTimeout(() => alert(`Equipped Snapshot loaded from Blizzard. ${result.count} equipped item${result.count !== 1 ? "s" : ""} saved. ${result.matched} matched your selected target list.`), 100);
+    } catch (error) {
+      setArmoryLookup({ loading:false, error:error?.message || "Character lookup failed." });
+    }
   };
 
   useEffect(() => {
@@ -2764,6 +2944,18 @@ function Tracker({ cls, spec, charName, initialMode = "", onBack }) {
         )}
       </div>
 
+      <div className="no-print" style={{ display:"flex", gap:".5rem", alignItems:"center", flexWrap:"wrap", background:"rgba(255,255,255,.018)", border:"1px solid var(--bdr2)", padding:".65rem .75rem", marginBottom:".9rem" }}>
+        <span style={{ fontFamily:"Cinzel,serif", fontSize:".68rem", letterSpacing:".08em", color:"var(--gold)" }}>Character</span>
+        <input
+          value={characterDraft}
+          onChange={e => { setCharacterDraft(e.target.value); setCharacterEditMsg(""); }}
+          placeholder="Name — Realm"
+          style={{ background:"var(--bg2)", border:"1px solid var(--bdr2)", color:"var(--parch)", padding:".38rem .55rem", fontSize:".78rem", minWidth:"220px" }}
+        />
+        <button className="tbtn sec" onClick={applyCharacterName}>Save name</button>
+        {characterEditMsg ? <span style={{ fontSize:".74rem", color:"var(--parch-dk)" }}>{characterEditMsg}</span> : null}
+      </div>
+
       {filled.length > 0 && (
         <div className="farm-priority-section no-print" style={{ background:"var(--panel)", border:"1px solid var(--bdr)", marginBottom:".75rem" }}>
           <div style={{ display:"flex", alignItems:"center", gap:".75rem", padding:".6rem .75rem", borderBottom: (!snapshotMode && showPriority) ? "1px solid var(--bdr)" : "none" }}>
@@ -2910,7 +3102,27 @@ function Tracker({ cls, spec, charName, initialMode = "", onBack }) {
           <div style={{ fontFamily:"Cinzel,serif", fontSize:".78rem", letterSpacing:".1em", color:"var(--gold)", marginBottom:".5rem" }}>EQUIPPED SNAPSHOT</div>
                       <>
               <div style={{ fontSize:".85rem", color:"var(--parch-dk)", marginBottom:".75rem", lineHeight:1.6 }}>
-                Paste your SimC string below. Equipped Snapshot saves what your character is wearing as its own snapshot, so your core <strong style={{ color:"var(--gold-lt)" }}>Wowhead BiS</strong> and <strong style={{ color:"var(--gold-lt)" }}>Manual Builder</strong> saves stay untouched.
+                Load a character from Blizzard, or paste a SimC string below. Equipped Snapshot saves what your character is wearing as its own snapshot, so your core <strong style={{ color:"var(--gold-lt)" }}>Wowhead BiS</strong> and <strong style={{ color:"var(--gold-lt)" }}>Manual Builder</strong> saves stay untouched.
+              </div>
+              <div style={{ background:"rgba(201,146,42,.08)", border:"1px solid var(--bdr2)", padding:".8rem", marginBottom:".75rem" }}>
+                <div style={{ fontFamily:"Cinzel,serif", fontSize:".68rem", letterSpacing:".08em", color:"var(--gold)", marginBottom:".45rem" }}>LOAD FROM BLIZZARD CHARACTER LOOKUP</div>
+                <div style={{ display:"grid", gridTemplateColumns:"90px minmax(120px, 1fr) minmax(130px, 1fr) auto", gap:".45rem", alignItems:"center" }}>
+                  <select value={armoryRegion} onChange={e => setArmoryRegion(e.target.value)} style={{ background:"var(--bg2)", border:"1px solid var(--bdr2)", color:"var(--parch)", padding:".45rem", fontSize:".78rem" }}>
+                    <option value="us">US</option>
+                    <option value="eu">EU</option>
+                    <option value="kr">KR</option>
+                    <option value="tw">TW</option>
+                  </select>
+                  <input value={armoryRealm} onChange={e => setArmoryRealm(e.target.value)} placeholder="Realm, e.g. Hyjal" style={{ background:"var(--bg2)", border:"1px solid var(--bdr2)", color:"var(--parch)", padding:".45rem", fontSize:".78rem" }} />
+                  <input value={armoryName} onChange={e => setArmoryName(e.target.value)} placeholder="Character name" style={{ background:"var(--bg2)", border:"1px solid var(--bdr2)", color:"var(--parch)", padding:".45rem", fontSize:".78rem" }} />
+                  <button className="tbtn pri" onClick={lookupArmoryCharacter} disabled={armoryLookup.loading} style={{ whiteSpace:"nowrap" }}>
+                    {armoryLookup.loading ? "Loading..." : "Load Equipped Gear"}
+                  </button>
+                </div>
+                {armoryLookup.error ? <div style={{ color:"#ff8fa0", fontSize:".76rem", marginTop:".5rem" }}>{armoryLookup.error}</div> : null}
+                <div style={{ fontSize:".72rem", color:"var(--parch-dk)", marginTop:".5rem", lineHeight:1.5 }}>
+                  Loads equipped gear from Blizzard. Very recent gear swaps may take a little time to appear.
+                </div>
               </div>
               <div style={{ display:"flex", flexWrap:"wrap", gap:".5rem", alignItems:"center", marginBottom:".75rem" }}>
                 <span style={{ fontFamily:"Cinzel,serif", fontSize:".72rem", letterSpacing:".08em", color:"var(--gold)" }}>Compare against:</span>
@@ -3136,7 +3348,7 @@ function Tracker({ cls, spec, charName, initialMode = "", onBack }) {
             </div>
           ) : (
             <>
-              <div className="sug-warn">⚠ Always verify on Wowhead or Icy Veins before progression content.</div>
+              <div className="sug-warn">⚠ Always verify the current guide before progression content. <button type="button" onClick={() => window.open(wowheadBisGuideUrl(cls, spec), "_blank", "noopener,noreferrer")} style={{ marginLeft:".4rem", background:"transparent", border:"1px solid var(--bdr2)", color:"var(--gold-lt)", fontFamily:"Cinzel,serif", fontSize:".62rem", letterSpacing:".06em", padding:".12rem .45rem", cursor:"pointer" }}>Double-check Wowhead</button></div>
               {sugs.crafting_note && (
                 <div className="sug-craft">
                   <span className="sug-craft-lbl">⚒ Crafting Priority</span>
@@ -3240,6 +3452,18 @@ function SpecPage({ cls, onBack, onGo }) {
   const [spec, setSpec] = useState(null);
   const [charName, setCharName] = useState("");
   const [savedChars, setSavedChars] = useState([]);
+  const existingClassCharacters = (() => {
+    try {
+      return Array.from(new Set(
+        getSavedCharacters()
+          .filter(entry => entry?.cls?.id === cls.id)
+          .map(entry => splitSaveLabel(entry.charName).base)
+          .filter(name => name && name !== "default")
+      )).sort((a, b) => a.localeCompare(b));
+    } catch {
+      return [];
+    }
+  })();
 
   useEffect(() => {
     if (!spec) return;
@@ -3277,9 +3501,17 @@ function SpecPage({ cls, onBack, onGo }) {
       <div className="sh">Choose Specialization</div>
       <div className="spec-grid">
         {cls.specs.map(s => (
-          <div key={s.id} className={"sc" + (spec?.id === s.id ? " sel" : "")} onClick={() => { setSpec(s); setCharName(""); }}>
+          <div key={s.id} className={"sc" + (spec?.id === s.id ? " sel" : "")} onClick={() => { setSpec(s); }}>
             <span className="si"><SpecIcon spec={s} size={42} /></span>
             <span className="sn">{s.name}</span>
+            <button
+              type="button"
+              onClick={(event) => { event.stopPropagation(); window.open(wowheadBisGuideUrl(cls, s), "_blank", "noopener,noreferrer"); }}
+              style={{ alignSelf:"flex-start", background:"transparent", border:"1px solid var(--bdr2)", color:"var(--gold-lt)", fontFamily:"Cinzel,serif", fontSize:".58rem", letterSpacing:".06em", padding:".18rem .42rem", cursor:"pointer", marginTop:".15rem" }}
+              title="Open a Wowhead search so you can double-check the current BiS guide"
+            >
+              Double-check guide
+            </button>
             <span className="sr" style={{ background: `${ROLE_COLOR[s.role]}18`, border: `1px solid ${ROLE_COLOR[s.role]}`, color: ROLE_COLOR[s.role] }}>
               {ROLE_ICON[s.role]} {s.role}
             </span>
@@ -3293,7 +3525,7 @@ function SpecPage({ cls, onBack, onGo }) {
           <div className="sh">
             Character Name
             <span style={{ fontFamily:"Crimson Pro,serif", fontStyle:"italic", fontWeight:300, textTransform:"none", letterSpacing:0, opacity:.6, fontSize:".8rem", marginLeft:".4rem" }}>
-              (optional — name your character to track multiple of the same spec)
+              (use the same Character — Realm name to keep multiple specs on one card)
             </span>
           </div>
           <div style={{ display:"flex", gap:".5rem", flexWrap:"wrap", alignItems:"center" }}>
@@ -3303,15 +3535,15 @@ function SpecPage({ cls, onBack, onGo }) {
               placeholder="e.g. Uldra, My Alt, Raider..."
               style={{ fontFamily:"Crimson Pro,serif", fontSize:"1rem", background:"var(--panel)", border:"1px solid var(--bdr2)", color:"var(--parch)", padding:".45rem .75rem", outline:"none", minWidth:"220px", flex:1, maxWidth:"320px" }}
             />
-            {savedChars.length > 0 && savedChars.map(n => (
-              <button key={n} className={"selbtn" + (charName === n ? " on" : "")} onClick={() => setCharName(n)} title={`Load ${n}`}>
+            {existingClassCharacters.length > 0 && existingClassCharacters.map(n => (
+              <button key={`existing-${n}`} className={"selbtn" + (charName === n ? " on" : "")} onClick={() => setCharName(n)} title={`Use ${n} for this spec`}>
                 {n}
               </button>
             ))}
           </div>
-          {savedChars.length > 0 && (
+          {existingClassCharacters.length > 0 && (
             <div style={{ fontSize:".75rem", color:"var(--parch-dk)", marginTop:".4rem", fontStyle:"italic", opacity:.7 }}>
-              Saved characters shown above — click to load, or type a new name to create another tracker.
+              Existing character names shown above keep new specs on the same character card. Character Lookup also saves as Name — Realm automatically.
             </div>
           )}
         </div>
@@ -3372,6 +3604,23 @@ function splitSaveLabel(charName) {
 }
 function modeNice(m) {
   return ({ community:"Wowhead", custom:"Manual", simc:"Equipped Snapshot", scan:"Snapshot" }[m] || m);
+}
+function guideSlug(value) {
+  return String(value || "")
+    .toLowerCase()
+    .replace(/&/g, "and")
+    .replace(/['’]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+function wowheadBisGuideUrl(cls, spec) {
+  const classSlug = guideSlug(cls?.name);
+  const specSlug = guideSlug(spec?.name);
+  if (classSlug && specSlug) {
+    return `https://www.wowhead.com/guide/classes/${classSlug}/${specSlug}/bis-gear`;
+  }
+  const query = `${spec?.name || ""} ${cls?.name || ""} BiS guide`;
+  return `https://www.wowhead.com/search?q=${encodeURIComponent(query.trim())}`;
 }
 
 const SAVE_REGISTRY_KEY = "wbt-save-registry-v3";
@@ -3503,7 +3752,15 @@ function getSavedCharacters() {
     }
   } catch {}
 
-  return Array.from(bestByKey.values()).sort((a, b) => a.charName.localeCompare(b.charName) || a.cls.name.localeCompare(b.cls.name) || a.spec.name.localeCompare(b.spec.name));
+  const entries = Array.from(bestByKey.values());
+  const namedSpecKeys = new Set(
+    entries
+      .filter(e => splitSaveLabel(e.charName).base !== "default")
+      .map(e => `${e.cls.id}||${e.spec.id}`)
+  );
+  return entries
+    .filter(e => splitSaveLabel(e.charName).base !== "default" || !namedSpecKeys.has(`${e.cls.id}||${e.spec.id}`))
+    .sort((a, b) => a.charName.localeCompare(b.charName) || a.cls.name.localeCompare(b.cls.name) || a.spec.name.localeCompare(b.spec.name));
 }
 
 function normalizeSrc(src) {
@@ -3538,6 +3795,8 @@ function decodeFarmList(str) {
     return JSON.parse(json);
   } catch { return null; }
 }
+
+const FARM_PLAN_MODES = ["community", "custom"];
 
 function GroupPlanner() {
   const [members, setMembers] = useState([{ code:"", name:"" }]);
@@ -3587,7 +3846,7 @@ function GroupPlanner() {
     setResult({ players: parsed.map(p => p.name), shared, solo });
   };
 
-  const allSaved = getSavedCharacters();
+  const allSaved = getSavedCharacters().filter(entry => FARM_PLAN_MODES.includes(entry.mode));
   const groupedSaves = (() => {
     const grouped = {};
     allSaved.forEach(entry => {
@@ -3608,7 +3867,7 @@ function GroupPlanner() {
   const activeSpecKey = activeGroup ? (groupSpec[activeGroup.key] || activeSpecBuckets[0]?.spec.id || "") : "";
   const activeSpecBucket = activeGroup ? (activeGroup.specs[activeSpecKey] || activeSpecBuckets[0] || null) : null;
   const activeModeKey = activeGroup && activeSpecBucket ? `${activeGroup.key}||${activeSpecBucket.spec.id}` : "";
-  const activeMode = activeSpecBucket ? (groupMode[activeModeKey] || (activeSpecBucket.saves.community ? "community" : Object.keys(activeSpecBucket.saves)[0])) : "";
+  const activeMode = activeSpecBucket ? (groupMode[activeModeKey] || (activeSpecBucket.saves.community ? "community" : activeSpecBucket.saves.custom ? "custom" : "")) : "";
   const selectedSaved = activeSpecBucket ? activeSpecBucket.saves[activeMode] : null;
   const myCode = selectedSaved ? encodeFarmList(JSON.parse(localStorage.getItem(selectedSaved.key) || "{}")) : "";
 
@@ -3627,7 +3886,7 @@ function GroupPlanner() {
   return (
     <div style={{ background:"var(--panel)", border:"1px solid var(--bdr)", padding:"1rem 1.25rem", marginBottom:".5rem" }}>
       <div style={{ fontSize:".85rem", color:"var(--parch-dk)", marginBottom:"1rem", lineHeight:1.65 }}>
-        Each player exports their farm code from their tracker and pastes it here. The planner finds which dungeons and raids your group should run together to maximize everyone's gear progress.
+        Group Farm Planner uses saved Wowhead BiS or Manual Builder target lists. If you do not see a character here, open that character first, load Suggested BiS or save a Manual Builder plan, then return for the farm code.
       </div>
 
       {groupedSaves.length > 0 && (
@@ -3640,7 +3899,7 @@ function GroupPlanner() {
               const chosenSpec = groupSpec[group.key] || defaultSpec;
               const specBucket = group.specs[chosenSpec] || specBuckets[0];
               const modeKey = `${group.key}||${specBucket?.spec?.id || ""}`;
-              const defaultMode = specBucket?.saves?.community ? "community" : Object.keys(specBucket?.saves || {})[0];
+              const defaultMode = specBucket?.saves?.community ? "community" : specBucket?.saves?.custom ? "custom" : "";
               const active = groupMode[modeKey] || defaultMode;
               const entry = specBucket?.saves?.[active] || specBucket?.saves?.[defaultMode] || null;
               return (
@@ -3655,7 +3914,7 @@ function GroupPlanner() {
                       {specBuckets.map(({ spec }) => <option key={spec.id} value={spec.id}>{spec.name}</option>)}
                     </select>
                     <select value={active} onChange={e => setGroupMode(prev => ({ ...prev, [modeKey]: e.target.value }))} style={{ background:"var(--bg2)", border:"1px solid var(--bdr2)", color:"var(--parch)", padding:".2rem .45rem", fontFamily:"Cinzel,serif", fontSize:".66rem" }}>
-                      {SAVE_MODE_ORDER.filter(mode => specBucket?.saves?.[mode]).map(mode => <option key={mode} value={mode}>{modeNice(mode)}</option>)}
+                      {FARM_PLAN_MODES.filter(mode => specBucket?.saves?.[mode]).map(mode => <option key={mode} value={mode}>{modeNice(mode)}</option>)}
                     </select>
                     <div style={{ fontSize:".72rem", color:"var(--parch)" }}><span style={{ display:"inline-flex", alignItems:"center", gap:".4rem" }}><SpecIcon spec={entry?.spec || specBucket?.spec} size={18} /><span>{entry?.spec?.name || specBucket?.spec?.name}</span></span></div>
                   </div>
@@ -3678,8 +3937,14 @@ function GroupPlanner() {
               <div style={{ fontSize:".7rem", color:"var(--parch-dk)", marginTop:".25rem", fontStyle:"italic", opacity:.7 }}>Click the code to select all, then copy manually or use the button above. Share this code with your group members so they can paste it in Step 2.</div>
             </>
           ) : (
-            <div style={{ fontSize:".8rem", color:"var(--parch-dk)", fontStyle:"italic" }}>Open your tracker → Load BiS Suggestions → click Apply All → then come back here for your farm code.</div>
+            <div style={{ fontSize:".8rem", color:"var(--parch-dk)", fontStyle:"italic" }}>Open a Wowhead BiS or Manual Builder plan, load or fill target items, then come back here for your farm code.</div>
           )}
+        </div>
+      )}
+
+      {groupedSaves.length === 0 && (
+        <div style={{ background:"rgba(201,146,42,.07)", border:"1px solid var(--bdr2)", padding:".75rem .9rem", marginBottom:"1rem", color:"var(--parch-dk)", fontSize:".82rem", lineHeight:1.55 }}>
+          No farm plan saves found yet. Open a character, load Suggested BiS or save a Manual Builder plan, then return here to copy a farm code.
         </div>
       )}
 
@@ -3934,6 +4199,7 @@ function AddonImportBox({ onCharsLoaded }) {
 function Home({ onSelectClass, onLoadCharacter }) {
   const [roleFilter, setRoleFilter] = useState("All");
   const [savedChars, setSavedChars] = useState(() => getSavedCharacters());
+  const [characterSearch, setCharacterSearch] = useState("");
   const [cardMode, setCardMode] = useState({});
   const roles = ["All", "Tank", "Healer", "DPS"];
   const filtered = CLASSES.filter(c => roleFilter === "All" || c.roles.includes(roleFilter));
@@ -4001,11 +4267,29 @@ function Home({ onSelectClass, onLoadCharacter }) {
           if (!groups[base].specs[specKey]) groups[base].specs[specKey] = { cls: entry.cls, spec: entry.spec, saves: {} };
           groups[base].specs[specKey].saves[entry.mode] = entry;
         });
+        const q = characterSearch.trim().toLowerCase();
+        const visibleGroups = Object.values(groups).filter(({ base, specs }) => {
+          if (!q) return true;
+          if (base.toLowerCase().includes(q)) return true;
+          return Object.values(specs).some(({ cls, spec }) => `${cls.name} ${spec.name}`.toLowerCase().includes(q));
+        });
         return (
           <div style={{ marginBottom:"1.5rem" }}>
             <div className="sh">Your Characters</div>
-            <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(340px,1fr))", gap:".75rem" }}>
-              {Object.values(groups).map(({ base, specs }) => (
+            <div style={{ display:"flex", justifyContent:"space-between", gap:".75rem", alignItems:"center", marginBottom:".5rem", flexWrap:"wrap" }}>
+              <div style={{ fontSize:".78rem", color:"var(--parch-dk)", fontStyle:"italic" }}>
+                {visibleGroups.length}/{Object.keys(groups).length} character{Object.keys(groups).length !== 1 ? "s" : ""} shown. Each card can hold multiple specs when they use the same Character — Realm name.
+              </div>
+              <input
+                value={characterSearch}
+                onChange={e => setCharacterSearch(e.target.value)}
+                placeholder="Search characters, class, or spec"
+                style={{ background:"var(--panel)", border:"1px solid var(--bdr2)", color:"var(--parch)", padding:".4rem .6rem", fontSize:".78rem", minWidth:"240px" }}
+              />
+            </div>
+            <div style={{ maxHeight:"520px", overflowY:"auto", paddingRight:".35rem", border:"1px solid var(--bdr2)", background:"rgba(255,255,255,.015)", padding:".75rem" }}>
+              <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(250px,1fr))", gap:".75rem" }}>
+              {visibleGroups.map(({ base, specs }) => (
                 <div key={base} style={{ background:"var(--panel)", border:`1px solid var(--bdr2)`, padding:".85rem 1rem" }}>
                   <div style={{ fontFamily:"Cinzel,serif", fontSize:".92rem", color:"var(--gold-lt)", fontWeight:600, marginBottom:".65rem" }}>{base === "default" ? "Unnamed Character" : base}</div>
                   <div style={{ display:"grid", gap:".65rem" }}>
@@ -4050,6 +4334,7 @@ function Home({ onSelectClass, onLoadCharacter }) {
                   </div>
                 </div>
               ))}
+              </div>
             </div>
           </div>
         );
@@ -4213,7 +4498,7 @@ export default function App() {
           {page === "home"    && <Home onSelectClass={goClass} onLoadCharacter={(cls, spec, cn, mode) => { setCls(cls); goTrack(spec, cn, mode); }} />}
           {page === "spec"    && cls  && <SpecPage cls={cls} onBack={goHome} onGo={goTrack} />}
           {page === "tracker" && cls  && spec && (
-            <Tracker key={`${cls.id}-${spec.id}-${charName}-${openMode || "default"}`} cls={cls} spec={spec} charName={charName} initialMode={openMode} onBack={() => setPage("spec")} />
+            <Tracker key={`${cls.id}-${spec.id}-${charName}-${openMode || "default"}`} cls={cls} spec={spec} charName={charName} initialMode={openMode} onBack={() => setPage("spec")} onCharacterRename={(nextName, mode) => { setCharName(splitSaveLabel(nextName || "default").base || "default"); setOpenMode(mode || ""); }} />
           )}
         </main>
 
