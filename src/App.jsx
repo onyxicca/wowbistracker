@@ -1274,6 +1274,7 @@ body{font-family:'Crimson Pro',Georgia,serif;font-size:1.05rem;background:var(--
 .manual-detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:.35rem;margin-bottom:.25rem}
 .print-only{display:none}
 .sf-src{font-size:.85rem;color:var(--parch-dk);border-top:1px solid var(--bdr);font-style:italic}
+.sf-src option{background:#080704;color:var(--parch)}
 .sf-src:focus{background:rgba(201,146,42,.03)}
 input::placeholder{color:rgba(240,222,180,.22);font-style:italic}
 .slot-chk{width:38px;flex-shrink:0;background:var(--panel);border:1px solid var(--bdr);border-left:none;display:flex;align-items:center;justify-content:center;cursor:pointer;clip-path:polygon(0 0,calc(100% - 11px) 0,100% 50%,calc(100% - 11px) 100%,0 100%);transition:background .15s;font-size:1.05rem;color:transparent;user-select:none}
@@ -2126,10 +2127,11 @@ function EquippedCompareLine({ target, equipped, bisMode }) {
       return r?.name && isBiSMatch(equipped.name, r.name);
     });
   };
-  const match = bisMode === "custom" ? findManualMatch() : null;
-  const directMatch = bisMode !== "custom" && target?.name && isBiSMatch(equipped.name, target.name);
+  const rankedTargetMode = bisMode === "custom" || bisMode === "simmed";
+  const match = rankedTargetMode ? findManualMatch() : null;
+  const directMatch = !rankedTargetMode && target?.name && isBiSMatch(equipped.name, target.name);
   let status = "Different item equipped";
-  if (bisMode === "custom" && match) {
+  if (rankedTargetMode && match) {
     const idx = (target.ranks || []).indexOf(match);
     const statusValue = idx === 0 ? "best" : (match.status || DEFAULT_MANUAL_STATUS[idx] || "alt");
     status = statusValue === "best" ? "Counts as BiS equipped" : statusValue === "equivalent" ? "Equivalent equipped" : statusValue === "strong" ? "Strong Alternative equipped" : "Alternative equipped";
@@ -2176,7 +2178,8 @@ function Slot({ label, id, data, onChange, targetTrack, bisMode, equipped, charC
     );
   }
 
-  if (bisMode === "custom") {
+  if (bisMode === "custom" || bisMode === "simmed") {
+    const simmedMode = bisMode === "simmed";
     const ranks = d.ranks || [{name:"",src:""},{name:"",src:""},{name:"",src:""}];
     const activeRank = d.activeRank ?? 0;
     const expandedRanks = Array.isArray(d.expandedRanks) ? d.expandedRanks : [];
@@ -2228,7 +2231,7 @@ function Slot({ label, id, data, onChange, targetTrack, bisMode, equipped, charC
       onChange(id, { ...d, ranks: nr, activeRank: nextActive, expandedRanks: nextExpanded, name: nr[nextActive]?.name || "", src: nr[nextActive]?.src || "" });
     };
     const RBADGE = ["r1","r2","r3"];
-    const RLABEL = ranks.map((r, idx) => manualStatusLabel(r?.status, idx));
+    const RLABEL = ranks.map((r, idx) => simmedMode ? (idx === 0 ? "Best Simmed" : (r?.simValue ? `${r.simValue} vs best` : `Option ${idx + 1}`)) : manualStatusLabel(r?.status, idx));
     return (
       <div className="slot-wrap">
         <div className="slot-lbl">{label}</div>
@@ -2263,6 +2266,7 @@ function Slot({ label, id, data, onChange, targetTrack, bisMode, equipped, charC
                   <div className="selected-item-title"><ItemNameLink itemId={r.itemId} name={r.name} /></div>
                   <div className="selected-item-meta">
                     {(r.sourceType || r.sourceDetail || r.src) && <span><strong>Source</strong>{sourceDisplayText(r.sourceType, r.sourceDetail, r.src)}</span>}
+                    {simmedMode && r.simValue && <span><strong>Sim</strong>{r.simValue}</span>}
                     {r.itemId && <span><strong>Item ID</strong>{r.itemId}</span>}
                     {r.itemSearch && <span className="no-print"><strong>From</strong>Item pool</span>}
                     <button type="button" className="detail-toggle no-print" onClick={() => upRank(idx, "editDetails", !r.editDetails)}>{r.editDetails ? "Hide details" : "Edit details"}</button>
@@ -2315,7 +2319,6 @@ function Slot({ label, id, data, onChange, targetTrack, bisMode, equipped, charC
             </div>
           </div>
         ))}
-        {bisMode === "custom" && (
           <div className="manual-alt-actions no-print">
             {!rankVisible(ranks[1] || {}, 1) && (
               <button type="button" className="manual-alt-btn" onClick={() => showRank(1)}>+ Add second option</button>
@@ -2324,7 +2327,6 @@ function Slot({ label, id, data, onChange, targetTrack, bisMode, equipped, charC
               <button type="button" className="manual-alt-btn" onClick={() => showRank(2)}>+ Add third option</button>
             )}
           </div>
-        )}
         <EquippedCompareLine target={d} equipped={equipped} bisMode={bisMode} />
         {d.name && (
           <div className="custom-track-row" style={{ display:"flex", gap:".25rem", padding:".2rem .4rem", background:"rgba(0,0,0,.15)", border:"1px solid var(--bdr)", borderTop:"none" }}>
@@ -2390,7 +2392,7 @@ function Tracker({ cls, spec, charName, initialMode = "", onBack, onCharacterRen
 
   const storageKey = `bis-${cls.id}-${spec.id}-${charName || "default"}`;
   const modeStorageKey = (mode) => `${storageKey}-${mode}`;
-  const modeLabel = (mode) => mode === "custom" ? "Manual Builder" : mode === "community" ? "Wowhead BiS" : "Equipped Snapshot";
+  const modeLabel = (mode) => mode === "custom" ? "Manual Builder" : mode === "simmed" ? "Simmed BiS" : mode === "community" ? "Wowhead BiS" : "Equipped Snapshot";
   const isPlaceholderName = (name) => {
     const n = (name || "").trim();
     return !n || /^x+$/i.test(n) || /^unknown$/i.test(n);
@@ -2462,6 +2464,11 @@ function Tracker({ cls, spec, charName, initialMode = "", onBack, onCharacterRen
   const [simcStr, setSimcStr] = useState(() => {
     try { return localStorage.getItem(`simc-${storageKey}`) || ""; } catch { return ""; }
   });
+  const [simmedImportText, setSimmedImportText] = useState(() => {
+    try { return localStorage.getItem(`simmed-import-${storageKey}`) || ""; } catch { return ""; }
+  });
+  const [simmedImportReport, setSimmedImportReport] = useState({ matched: 0, slots: 0, unresolved: [] });
+  const [simmedSlotOverrides, setSimmedSlotOverrides] = useState({});
   const [armoryRegion, setArmoryRegion] = useState(() => {
     try { return localStorage.getItem(`armory-region-${storageKey}`) || "us"; } catch { return "us"; }
   });
@@ -2540,7 +2547,7 @@ function Tracker({ cls, spec, charName, initialMode = "", onBack, onCharacterRen
     const nextBase = splitSaveLabel(nextLabel || "default").base || "default";
     const currentBase = splitSaveLabel(charName || "default").base || "default";
     const nextStorageKey = `bis-${cls.id}-${spec.id}-${nextBase}`;
-    const modes = ["community", "custom", "simc", "scan"];
+    const modes = ["community", "custom", "simmed", "simc", "scan"];
     try {
       modes.forEach(mode => {
         const raw = localStorage.getItem(`${storageKey}-${mode}`);
@@ -2672,6 +2679,335 @@ function Tracker({ cls, spec, charName, initialMode = "", onBack, onCharacterRen
     }
   };
 
+
+  const slotFromSeasonItem = (item, used = {}) => {
+    if (item?.slotHint) return item.slotHint;
+    const token = itemSlotToken(item);
+    const rawSlot = String(item?.slot || item?.inventoryType || "").toLowerCase();
+    const useDual = (slotA, slotB) => (used[slotA] || 0) <= (used[slotB] || 0) ? slotA : slotB;
+    if (token.includes("trinket")) return useDual("trinket1", "trinket2");
+    if (token.includes("finger") || token.includes("ring") || token.includes("band")) return useDual("finger1", "finger2");
+    if (rawSlot.includes("two") || token.includes("two-hand") || token.includes("staff") || token.includes("polearm")) return "weapon2h";
+    if (rawSlot.includes("off") || token.includes("off-hand") || token.includes("off hand") || token.includes("held") || token.includes("shield")) return "offhand";
+    if (String(item?.itemClass || "").toLowerCase().includes("weapon")) return "mainhand";
+    const ordered = ["head","neck","shoulders","back","chest","wrist","hands","waist","legs","feet"];
+    return ordered.find(slot => itemPoolMatchesSlot(item, slot)) || "";
+  };
+
+  const simmedValueFromLine = (line) => {
+    const text = String(line || "");
+    const pct = text.match(/([+-]?\d+(?:\.\d+)?)\s*%/);
+    if (pct) return `${pct[1]}%`;
+    const dps = text.match(/([0-9][0-9,]*(?:\.\d+)?)\s*(?:dps|hps|score|damage|healing)/i);
+    if (dps) return dps[1].replace(/,/g, "") + " value";
+    return "";
+  };
+
+  const simmedItemIdsFromLine = (line) => {
+    const seen = new Set();
+    return [...String(line || "").matchAll(/(?:item=|id=|\b)(\d{5,})(?:\b|[&#/?]|$)/gi)]
+      .map(m => String(m[1]))
+      .filter(Boolean)
+      .filter(id => {
+        if (seen.has(id)) return false;
+        seen.add(id);
+        return true;
+      });
+  };
+
+  const fetchOnlineItemForSim = async (itemId) => {
+    const id = String(itemId || "").trim();
+    if (!id) return null;
+    const response = await fetch(`/api/wow-item?region=us&itemId=${encodeURIComponent(id)}`);
+    const payload = await response.json().catch(() => null);
+    if (!response.ok || !payload?.ok || !payload?.item) return null;
+    return payload.item;
+  };
+
+  const findSeasonItemsInLine = (line) => {
+    const text = String(line || "");
+    const found = [];
+    const seen = new Set();
+    const add = item => {
+      if (!item || seen.has(String(item.itemId || item.itemName))) return;
+      seen.add(String(item.itemId || item.itemName));
+      found.push(item);
+    };
+    const ids = simmedItemIdsFromLine(text);
+    ids.forEach(id => add(SEASON_ITEM_POOL.find(item => String(item.itemId) === String(id))));
+    const normalizedLine = normalizeItemKey(text);
+    if (normalizedLine.length > 3) {
+      SEASON_ITEM_POOL.forEach(item => {
+        const key = normalizeItemKey(item.itemName);
+        if (key && key.length >= 7 && normalizedLine.includes(key)) add(item);
+      });
+    }
+    return found;
+  };
+
+  const summarizeUnmatchedSimLine = (line) => {
+    const text = String(line || "").trim();
+    const idMatch = text.match(/(?:item=|id=|\b)(\d{5,})(?:\b|[&#/?]|$)/i);
+    const slugMatch = text.match(/item=\d+\/([^?#\s]+)/i);
+    const itemId = idMatch ? idMatch[1] : "";
+    const slug = slugMatch ? slugMatch[1].replace(/-/g, " ").replace(/\b\w/g, c => c.toUpperCase()) : "";
+    if (itemId && slug) return `${slug} · ID ${itemId}`;
+    if (itemId) return `Item ID ${itemId}`;
+    return text.slice(0, 140);
+  };
+
+
+
+  const simmedReadableNameFromLine = (line, itemId = "") => {
+    const text = String(line || "").trim();
+    const slugMatch = text.match(/item=\d+\/([^?#\s]+)/i);
+    if (slugMatch) return slugMatch[1].replace(/[-_]+/g, " ").replace(/\s+/g, " ").trim().replace(/\b\w/g, c => c.toUpperCase());
+    const linkName = text.match(/wowhead\.com\/(?:beta\/)?item=\d+\/?([^?#\s]*)/i);
+    if (linkName?.[1]) return linkName[1].replace(/[-_]+/g, " ").replace(/\s+/g, " ").trim().replace(/\b\w/g, c => c.toUpperCase());
+    if (itemId) return `Item ${itemId}`;
+    return text.slice(0, 80);
+  };
+
+  const inferSimmedSlotFromText = (line) => {
+    const text = normalizeItemKey(simmedReadableNameFromLine(line) || line);
+    const has = (...words) => words.some(w => text.includes(normalizeItemKey(w)));
+    if (has("helm", "helmet", "hood", "cowl", "crown", "cover", "casque", "visage", "mask", "coif", "circlet", "headpiece")) return "head";
+    if (has("amulet", "necklace", "pendant", "choker", "chain", "torque")) return "neck";
+    if (has("shoulder", "shoulders", "mantle", "spaulder", "spaulders", "pauldron", "pauldrons", "epaulet")) return "shoulders";
+    if (has("cloak", "cape", "shroud", "drape", "shawl", "nullcape")) return "back";
+    if (has("chest", "vest", "robe", "robes", "cuirass", "breastplate", "tunic", "jacket", "jerkin", "hauberk", "raiment", "battlegear")) return "chest";
+    if (has("bracer", "bracers", "cuffs", "wrist", "wristguards", "vambrace", "armguards")) return "wrist";
+    if (has("gloves", "gauntlets", "grips", "mitts", "handwraps", "grasps", "fists")) return "hands";
+    if (has("belt", "cinch", "cord", "girdle", "sash", "waistband", "waistwrap")) return "waist";
+    if (has("leggings", "legguards", "pants", "breeches", "legwraps", "trousers", "waders")) return "legs";
+    if (has("boots", "treads", "sabatons", "footwraps", "sandals", "slippers", "shoes", "espadrilles", "stompers")) return "feet";
+    if (has("ring", "band", "seal", "loop", "halo")) return "finger1";
+    if (has("trinket", "idol", "guidon", "box", "ribbon", "stare", "gaze", "emblem", "charm", "talisman")) return "trinket1";
+    if (has("lantern", "tome", "offhand", "off hand", "shield", "bulwark", "reflector")) return "offhand";
+    if (has("staff", "cane", "polearm", "spear", "halberd", "spire", "greataxe")) return "weapon2h";
+    if (has("sword", "blade", "mace", "axe", "dagger", "glaive", "warglaive", "wand", "flail", "bludgeon", "cleaver", "talon")) return "mainhand";
+    return "";
+  };
+
+  const simmedUnresolvedKey = (entry) => String(entry?.itemId || entry?.line || entry || "");
+
+  const makeSimmedUnresolvedEntry = (line, itemId = "") => {
+    const cleanLine = String(line || "").trim();
+    const id = itemId || (cleanLine.match(/(?:item=|id=|\b)(\d{5,})(?:\b|[&#/?]|$)/i)?.[1] || "");
+    return {
+      line: cleanLine.slice(0, 240),
+      itemId: id,
+      itemName: simmedReadableNameFromLine(cleanLine, id),
+      slotHint: inferSimmedSlotFromText(cleanLine),
+    };
+  };
+
+
+  const cleanSimmedUnresolved = (entries) => {
+    const seen = new Set();
+    return (entries || []).map(entry => typeof entry === "string" ? makeSimmedUnresolvedEntry(entry) : entry)
+      .filter(Boolean)
+      .filter(entry => {
+        const key = String(entry?.itemId || normalizeItemKey(entry?.itemName || entry?.line || ""));
+        if (!key || seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      })
+      .slice(0, 20);
+  };
+
+  const fallbackSimmedItemFromEntry = (entry, slotOverride = "") => ({
+    itemId: Number(entry?.itemId || 0) || "",
+    itemName: entry?.itemName || (entry?.itemId ? `Item ${entry.itemId}` : "Imported item"),
+    slotHint: slotOverride || entry?.slotHint || "",
+    slot: slotOverride || entry?.slotHint || "",
+    inventoryType: SLOT_LABELS[slotOverride || entry?.slotHint] || "Imported item",
+    sourceType: "Unknown",
+    sourceId: "sim-import",
+    sourceLabel: "Imported from sim result",
+    bossName: null,
+    raidName: null,
+    dungeonName: null,
+    itemClass: "",
+    itemSubclass: "",
+    quality: "Epic",
+    primaryStats: [],
+    statNames: [],
+    icon: "",
+  });
+
+  const addSimmedItemToData = (item, line, slotOverride = "") => {
+    const slot = slotOverride || slotFromSeasonItem(item, {});
+    if (!slot) return false;
+    const current = data?.[slot] || {};
+    const ranks = [0,1,2].map(i => ({ status: DEFAULT_MANUAL_STATUS[i] || "alt", ...((current.ranks || [])[i] || {}) }));
+    if (ranks.some(r => String(r.itemId || "") === String(item.itemId || "") && String(item.itemId || ""))) return true;
+    const emptyIndex = ranks.findIndex(r => !(r?.name || "").trim());
+    const idx = emptyIndex >= 0 ? emptyIndex : -1;
+    if (idx < 0) {
+      alert(`${SLOT_LABELS[slot] || slot} already has 3 Simmed BiS options.`);
+      return false;
+    }
+    const sourceLabel = item.sourceLabel && item.sourceLabel !== "Unknown" ? item.sourceLabel : "Simmed result";
+    const sourceType = item.sourceType && item.sourceType !== "Unknown" ? item.sourceType : inferSourceType(sourceLabel);
+    const sourceDetail = sourceType === "Crafting" ? "" : inferSourceDetail(sourceLabel, sourceType);
+    ranks[idx] = {
+      name: item.itemName || "",
+      src: buildSourceLabel(sourceType, sourceDetail) || sourceLabel,
+      itemId: String(item.itemId || ""),
+      itemSearch: item.itemName ? seasonItemOptionLabel(item) : "",
+      have: false,
+      status: idx === 0 ? "best" : (idx === 1 ? "equivalent" : "strong"),
+      sourceType,
+      sourceDetail,
+      simValue: simmedValueFromLine(line),
+    };
+    const next = {
+      ...data,
+      [slot]: {
+        name: ranks[0]?.name || "",
+        src: ranks[0]?.src || "",
+        itemId: ranks[0]?.itemId || "",
+        activeRank: 0,
+        ranks,
+        simmed: true,
+      },
+    };
+    setData(next);
+    writeModeData("simmed", next);
+    setBisMode("simmed");
+    try { localStorage.setItem(`bismode-${storageKey}`, "simmed"); } catch {}
+    registerCharacterSave(cls.id, spec.id, charName || "default", "simmed");
+    return true;
+  };
+
+  const placeUnresolvedSimmedItem = (entry) => {
+    const key = simmedUnresolvedKey(entry);
+    const slot = simmedSlotOverrides[key] || entry?.slotHint || "";
+    if (!slot) {
+      alert("Choose a gear slot first.");
+      return;
+    }
+    const item = fallbackSimmedItemFromEntry(entry, slot);
+    if (!addSimmedItemToData(item, entry?.line || entry?.itemName || "", slot)) return;
+    setSimmedImportReport(prev => ({
+      ...prev,
+      unresolved: (prev.unresolved || []).filter(x => simmedUnresolvedKey(x) !== key),
+      matched: (prev.matched || 0) + 1,
+    }));
+  };
+  const importSimmedBis = async () => {
+    const raw = simmedImportText.trim();
+    if (!raw) {
+      alert("Paste a sim result or item list first.");
+      return;
+    }
+    const lines = raw.replace(/\r\n/g, "\n").replace(/\r/g, "\n").split("\n").map(v => v.trim()).filter(Boolean);
+    const used = {};
+    const slotRanks = {};
+    const unresolved = [];
+    const seenUnresolvedKeys = new Set();
+    const addUnresolved = (entry) => {
+      const item = typeof entry === "string" ? makeSimmedUnresolvedEntry(entry) : entry;
+      const key = String(item?.itemId || normalizeItemKey(item?.itemName || item?.line || ""));
+      if (!key || seenUnresolvedKeys.has(key)) return;
+      seenUnresolvedKeys.add(key);
+      unresolved.push(item);
+    };
+    const pushItem = (item, line) => {
+      const slot = slotFromSeasonItem(item, used);
+      if (!slot) {
+        const fallback = makeSimmedUnresolvedEntry(line || item?.itemName || "", item?.itemId || "");
+        if (fallback.slotHint) {
+          const placed = fallbackSimmedItemFromEntry({ ...fallback, itemName: item?.itemName || fallback.itemName }, fallback.slotHint);
+          return pushItem(placed, line || fallback.line);
+        }
+        addUnresolved(fallback);
+        return;
+      }
+      if (!slotRanks[slot]) slotRanks[slot] = [];
+      if (slotRanks[slot].some(r => String(r.itemId) === String(item.itemId))) return;
+      if (slotRanks[slot].length >= 3) return;
+      used[slot] = (used[slot] || 0) + 1;
+      const idx = slotRanks[slot].length;
+      const sourceLabel = item.sourceLabel && item.sourceLabel !== "Unknown" ? item.sourceLabel : "Simmed result";
+      const sourceType = item.sourceType && item.sourceType !== "Unknown" ? item.sourceType : inferSourceType(sourceLabel);
+      const sourceDetail = sourceType === "Crafting" ? "" : inferSourceDetail(sourceLabel, sourceType);
+      slotRanks[slot].push({
+        name: item.itemName || "",
+        src: buildSourceLabel(sourceType, sourceDetail) || sourceLabel,
+        itemId: String(item.itemId || ""),
+        itemSearch: seasonItemOptionLabel(item),
+        have: false,
+        status: idx === 0 ? "best" : (idx === 1 ? "equivalent" : "strong"),
+        sourceType,
+        sourceDetail,
+        simValue: simmedValueFromLine(line),
+      });
+    };
+    for (const line of lines) {
+      const matches = findSeasonItemsInLine(line);
+      const ids = simmedItemIdsFromLine(line);
+      const matchedKeys = new Set(matches.map(item => String(item?.itemId || normalizeItemKey(item?.itemName || ""))));
+      const missingIds = ids.filter(id => !matchedKeys.has(String(id)));
+      for (const id of missingIds) {
+        const onlineItem = await fetchOnlineItemForSim(id);
+        if (onlineItem && slotFromSeasonItem(onlineItem, {})) {
+          matches.push(onlineItem);
+          matchedKeys.add(String(onlineItem.itemId || id));
+        } else {
+          const fallback = makeSimmedUnresolvedEntry(line, id);
+          if (fallback.slotHint) {
+            matches.push(fallbackSimmedItemFromEntry(fallback, fallback.slotHint));
+            matchedKeys.add(String(fallback.itemId || normalizeItemKey(fallback.itemName)));
+          } else {
+            addUnresolved(fallback);
+          }
+        }
+      }
+      if (!matches.length && /item=|id=|wowhead\.com/i.test(line)) addUnresolved(makeSimmedUnresolvedEntry(line));
+      const seenLineItems = new Set();
+      matches.forEach(item => {
+        const key = String(item?.itemId || normalizeItemKey(item?.itemName || ""));
+        if (key && seenLineItems.has(key)) return;
+        if (key) seenLineItems.add(key);
+        pushItem(item, line);
+      });
+    }
+    const next = {};
+    Object.entries(slotRanks).forEach(([slot, ranks]) => {
+      const padded = [0,1,2].map(i => ranks[i] || { status: DEFAULT_MANUAL_STATUS[i] || "alt" });
+      next[slot] = {
+        name: padded[0]?.name || "",
+        src: padded[0]?.src || "",
+        itemId: padded[0]?.itemId || "",
+        activeRank: 0,
+        ranks: padded,
+        simmed: true,
+      };
+    });
+    const foundCount = Object.values(slotRanks).reduce((sum, ranks) => sum + ranks.length, 0);
+    if (!foundCount) {
+      const cleanUnresolved = cleanSimmedUnresolved(unresolved);
+      setSimmedImportReport({ matched: 0, slots: 0, unresolved: cleanUnresolved });
+      alert("No pasted items could be placed yet. Check the import review for items that need a slot selection.");
+      return;
+    }
+    setData(next);
+    writeModeData("simmed", next);
+    setBisMode("simmed");
+    try {
+      localStorage.setItem(`bismode-${storageKey}`, "simmed");
+      localStorage.setItem(`simmed-import-${storageKey}`, raw);
+    } catch {}
+    registerCharacterSave(cls.id, spec.id, charName || "default", "simmed");
+    const slotCount = Object.keys(next).length;
+    const cleanUnresolved = cleanSimmedUnresolved(unresolved);
+    setSimmedImportReport({ matched: foundCount, slots: slotCount, unresolved: cleanUnresolved });
+    const extra = unresolved.length ? ` ${unresolved.length} item${unresolved.length === 1 ? "" : "s"} needs a gear slot selection.` : "";
+    alert(`Imported ${foundCount} simmed item option${foundCount === 1 ? "" : "s"} across ${slotCount} slot${slotCount === 1 ? "" : "s"}.${extra}`);
+  };
+
   useEffect(() => {
     setSaveState('saving');
     const t = setTimeout(() => {
@@ -2745,7 +3081,7 @@ function Tracker({ cls, spec, charName, initialMode = "", onBack, onCharacterRen
       let itemSrc = d?.src;
       let rankBlob = "";
       let activeIdx = 0;
-      if (mode === "custom" && d?.ranks) {
+      if ((mode === "custom" || mode === "simmed") && d?.ranks) {
         activeIdx = d.activeRank ?? 0;
         itemName = d.ranks[activeIdx]?.name || d.name;
         itemSrc = d.ranks[activeIdx]?.src || d.src;
@@ -2775,7 +3111,7 @@ function Tracker({ cls, spec, charName, initialMode = "", onBack, onCharacterRen
       }
     });
     if (!parts.length) {
-      const hasRankedDraft = mode === "custom" && allSlotIds.some(id => (sourceData[id]?.ranks || []).some(r => (r?.name || "").trim().length > 0));
+      const hasRankedDraft = (mode === "custom" || mode === "simmed") && allSlotIds.some(id => (sourceData[id]?.ranks || []).some(r => (r?.name || "").trim().length > 0));
       if (!hasRankedDraft) return null;
     }
     return `WBISMODE=${mode};` + parts.join("|");
@@ -3045,6 +3381,10 @@ function Tracker({ cls, spec, charName, initialMode = "", onBack, onCharacterRen
           Equipped Snapshot
         </button>
         <div className="bis-mode-divider" />
+        <button className={"bis-mode-btn" + (bisMode === "simmed" ? " active" : "")} onClick={() => switchBisMode("simmed")}>
+          Simmed BiS
+        </button>
+        <div className="bis-mode-divider" />
         <button className={"bis-mode-btn" + (bisMode === "custom" ? " active" : "")} onClick={() => switchBisMode("custom")}>
           Manual Builder
         </button>
@@ -3076,11 +3416,66 @@ function Tracker({ cls, spec, charName, initialMode = "", onBack, onCharacterRen
         </div>
       )}
 
+      {bisMode === "simmed" && (
+        <div className="bis-bar" style={{ flexDirection:"column", alignItems:"flex-start", gap:".45rem" }}>
+          <span className="bis-txt" style={{ fontFamily:"Cinzel,serif", letterSpacing:".1em" }}>✦ Simmed BiS</span>
+          <span style={{ fontSize:".8rem", color:"var(--parch-dk)", fontStyle:"italic", lineHeight:1.55 }}>
+            Paste your own sim result, Droptimizer-style item list, Wowhead item links, item IDs, or exact item names. The importer uses the current item pool first, then tries to identify missing item IDs through Blizzard data so it can place them into the right slot. If the pasted result includes a percent or value, it will show beside that option.
+          </span>
+          <div className="no-print" style={{ width:"100%", background:"rgba(201,146,42,.06)", border:"1px solid var(--bdr2)", padding:".75rem" }}>
+            <textarea
+              value={simmedImportText}
+              onChange={e => { setSimmedImportText(e.target.value); try { localStorage.setItem(`simmed-import-${storageKey}`, e.target.value); } catch {} }}
+              placeholder="Paste simmed item results here. Wowhead item links or item IDs work best. One item per line is easiest to rank."
+              style={{ width:"100%", minHeight:"120px", background:"var(--bg2)", border:"1px solid var(--bdr2)", color:"var(--parch)", fontFamily:"monospace", fontSize:".78rem", padding:".55rem", resize:"vertical", outline:"none" }}
+            />
+            <div style={{ display:"flex", gap:".5rem", flexWrap:"wrap", marginTop:".55rem", alignItems:"center" }}>
+              <button className="bis-btn" onClick={importSimmedBis} style={{ background:"rgba(201,146,42,.15)", borderColor:"var(--gold)", color:"var(--gold-lt)" }}>Import Simmed Results</button>
+              <span style={{ fontSize:".72rem", color:"var(--parch-dk)", lineHeight:1.45 }}>Review the imported list before saving. This does not overwrite Wowhead BiS, Equipped Snapshot, or Manual Builder.</span>
+            </div>
+            {(simmedImportReport.matched > 0 || simmedImportReport.unresolved.length > 0) && (
+              <div style={{ marginTop:".65rem", border:"1px solid rgba(201,146,42,.28)", background:"rgba(0,0,0,.22)", padding:".55rem .65rem", width:"100%" }}>
+                <div style={{ fontFamily:"Cinzel,serif", letterSpacing:".1em", color:"var(--gold-lt)", fontSize:".72rem", marginBottom:".35rem" }}>Import Review</div>
+                <div style={{ color:"var(--parch)", fontSize:".75rem", lineHeight:1.45 }}>
+                  Matched {simmedImportReport.matched || 0} item option{simmedImportReport.matched === 1 ? "" : "s"}{simmedImportReport.slots ? ` across ${simmedImportReport.slots} slot${simmedImportReport.slots === 1 ? "" : "s"}` : ""}.
+                </div>
+                {simmedImportReport.unresolved.length > 0 && (
+                  <div style={{ marginTop:".45rem" }}>
+                    <div style={{ color:"var(--gold)", fontSize:".72rem", fontFamily:"Cinzel,serif", letterSpacing:".08em" }}>Needs a slot</div>
+                    <div style={{ color:"var(--parch-dk)", fontSize:".72rem", lineHeight:1.45, marginTop:".25rem" }}>
+                      Choose a slot only for items the importer cannot place automatically.
+                    </div>
+                    <div style={{ display:"grid", gap:".4rem", marginTop:".45rem" }}>
+                      {simmedImportReport.unresolved.map((entry, idx) => {
+                        const item = typeof entry === "string" ? makeSimmedUnresolvedEntry(entry) : entry;
+                        const key = simmedUnresolvedKey(item) || String(idx);
+                        const slotValue = simmedSlotOverrides[key] || item.slotHint || "";
+                        return (
+                          <div key={`${key}-${idx}`} style={{ display:"grid", gridTemplateColumns:"minmax(180px, 1fr) 190px auto", gap:".35rem", alignItems:"center", color:"var(--parch)", fontSize:".72rem" }}>
+                            <span>{item.itemName || summarizeUnmatchedSimLine(item.line || item)}{item.itemId ? ` · ID ${item.itemId}` : ""}</span>
+                            <select className="sf-src" value={slotValue} onChange={e => setSimmedSlotOverrides(prev => ({ ...prev, [key]: e.target.value }))} style={{ background:"#080704", color:"var(--parch)", border:"1px solid var(--bdr2)" }}>
+                              <option value="" style={{ background:"#080704", color:"var(--parch)" }}>Choose slot</option>
+                              {allSlotIds.map(slot => <option key={slot} value={slot} style={{ background:"#080704", color:"var(--parch)" }}>{SLOT_LABELS[slot] || slot}</option>)}
+                            </select>
+                            <button className="bis-mini" type="button" onClick={() => placeUnresolvedSimmedItem(item)}>Place</button>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+          <ManualSourceSummary data={data} />
+        </div>
+      )}
+
       {bisMode === "custom" && (
         <div className="bis-bar" style={{ flexDirection:"column", alignItems:"flex-start", gap:".3rem" }}>
           <span className="bis-txt" style={{ fontFamily:"Cinzel,serif", letterSpacing:".1em" }}>✦ Manual BiS Builder</span>
           <span style={{ fontSize:".8rem", color:"var(--parch-dk)", fontStyle:"italic" }}>
-            Build your own ranked list — up to 3 options per slot. Wowhead BiS, Equipped Snapshot, and Manual Builder now live under one character card with separate mode saves. Tip: click <strong style={{color:"var(--gold-lt)"}}>Load Suggested BiS → Apply All</strong> first to pre-fill a base list, then override individual slots with your own research. Use the item picker source filter to look for <strong style={{color:"var(--gold-lt)"}}>Raid</strong>, <strong style={{color:"var(--gold-lt)"}}>Dungeon / M+</strong>, <strong style={{color:"var(--gold-lt)"}}>Crafting</strong>, or <strong style={{color:"var(--gold-lt)"}}>No Raid</strong> alternatives. Export now includes all saved addon-compatible BiS lists for this spec.
+            Build your own ranked list — up to 3 options per slot. Wowhead BiS, Equipped Snapshot, Simmed BiS, and Manual Builder now live under one character card with separate mode saves. Tip: click <strong style={{color:"var(--gold-lt)"}}>Load Suggested BiS → Apply All</strong> first to pre-fill a base list, then override individual slots with your own research. Use the item picker source filter to look for <strong style={{color:"var(--gold-lt)"}}>Raid</strong>, <strong style={{color:"var(--gold-lt)"}}>Dungeon / M+</strong>, <strong style={{color:"var(--gold-lt)"}}>Crafting</strong>, or <strong style={{color:"var(--gold-lt)"}}>No Raid</strong> alternatives. Export now includes all saved addon-compatible BiS lists for this spec.
           </span>
           <ManualSourceSummary data={data} />
           <div style={{ display:"flex", gap:".5rem", flexWrap:"wrap" }}>
@@ -3382,7 +3777,7 @@ function Tracker({ cls, spec, charName, initialMode = "", onBack, onCharacterRen
           } else {
             alert("Could not save this list in your browser.");
           }
-        }}>{bisMode === 'custom' ? 'Save Manual' : bisMode === 'community' ? 'Save Suggested BiS' : 'Save Snapshot'}</button>
+        }}>{bisMode === 'custom' ? 'Save Manual' : bisMode === 'simmed' ? 'Save Simmed BiS' : bisMode === 'community' ? 'Save Suggested BiS' : 'Save Snapshot'}</button>
         <button className="tbtn sec" onClick={() => {
           const manualData = bisMode === "custom" ? (data || {}) : readModeData("custom");
           const manualErrors = getManualAddonImportErrors(manualData);
@@ -3593,17 +3988,17 @@ function useResetTimer(region) {
 }
 
 
-const SAVE_MODE_ORDER = ["community","custom","simc","scan"];
+const SAVE_MODE_ORDER = ["community","simmed","custom","simc","scan"];
 function splitSaveLabel(charName) {
   const raw = String(charName || "default").trim() || "default";
-  const m = raw.match(/^(.*?)(?:[-_ ](community|custom|simc|scan))?$/i);
+  const m = raw.match(/^(.*?)(?:[-_ ](community|simmed|custom|simc|scan))?$/i);
   let base = (m?.[1] || raw || "default").trim().replace(/[-_ ]+$/, "");
-  base = base.replace(/(?:[-_ ]+(community|custom|simc|scan))+$/i, "").trim() || "default";
+  base = base.replace(/(?:[-_ ]+(community|simmed|custom|simc|scan))+$/i, "").trim() || "default";
   const mode = (m?.[2] || "community").toLowerCase();
   return { base, mode };
 }
 function modeNice(m) {
-  return ({ community:"Wowhead", custom:"Manual", simc:"Equipped Snapshot", scan:"Snapshot" }[m] || m);
+  return ({ community:"Wowhead", simmed:"Simmed", custom:"Manual", simc:"Equipped Snapshot", scan:"Snapshot" }[m] || m);
 }
 function guideSlug(value) {
   return String(value || "")
@@ -3715,7 +4110,7 @@ function getSavedCharacters() {
         if (!rest.startsWith(specPrefix)) continue;
         let tail = rest.slice(specPrefix.length);
         let mode = "community";
-        const mm = tail.match(/^(.*?)-(community|custom|simc|scan)$/i);
+        const mm = tail.match(/^(.*?)-(community|simmed|custom|simc|scan)$/i);
         if (mm) {
           tail = mm[1];
           mode = mm[2].toLowerCase();
@@ -3796,7 +4191,7 @@ function decodeFarmList(str) {
   } catch { return null; }
 }
 
-const FARM_PLAN_MODES = ["community", "custom"];
+const FARM_PLAN_MODES = ["community", "simmed", "custom"];
 
 function GroupPlanner() {
   const [members, setMembers] = useState([{ code:"", name:"" }]);
@@ -3867,7 +4262,7 @@ function GroupPlanner() {
   const activeSpecKey = activeGroup ? (groupSpec[activeGroup.key] || activeSpecBuckets[0]?.spec.id || "") : "";
   const activeSpecBucket = activeGroup ? (activeGroup.specs[activeSpecKey] || activeSpecBuckets[0] || null) : null;
   const activeModeKey = activeGroup && activeSpecBucket ? `${activeGroup.key}||${activeSpecBucket.spec.id}` : "";
-  const activeMode = activeSpecBucket ? (groupMode[activeModeKey] || (activeSpecBucket.saves.community ? "community" : activeSpecBucket.saves.custom ? "custom" : "")) : "";
+  const activeMode = activeSpecBucket ? (groupMode[activeModeKey] || (activeSpecBucket.saves.community ? "community" : activeSpecBucket.saves.simmed ? "simmed" : activeSpecBucket.saves.custom ? "custom" : "")) : "";
   const selectedSaved = activeSpecBucket ? activeSpecBucket.saves[activeMode] : null;
   const myCode = selectedSaved ? encodeFarmList(JSON.parse(localStorage.getItem(selectedSaved.key) || "{}")) : "";
 
@@ -3886,7 +4281,7 @@ function GroupPlanner() {
   return (
     <div style={{ background:"var(--panel)", border:"1px solid var(--bdr)", padding:"1rem 1.25rem", marginBottom:".5rem" }}>
       <div style={{ fontSize:".85rem", color:"var(--parch-dk)", marginBottom:"1rem", lineHeight:1.65 }}>
-        Group Farm Planner uses saved Wowhead BiS or Manual Builder target lists. If you do not see a character here, open that character first, load Suggested BiS or save a Manual Builder plan, then return for the farm code.
+        Group Farm Planner uses saved Wowhead BiS, Simmed BiS, or Manual Builder target lists. If you do not see a character here, open that character first, load Suggested BiS, import Simmed BiS, or save a Manual Builder plan, then return for the farm code.
       </div>
 
       {groupedSaves.length > 0 && (
@@ -3899,7 +4294,7 @@ function GroupPlanner() {
               const chosenSpec = groupSpec[group.key] || defaultSpec;
               const specBucket = group.specs[chosenSpec] || specBuckets[0];
               const modeKey = `${group.key}||${specBucket?.spec?.id || ""}`;
-              const defaultMode = specBucket?.saves?.community ? "community" : specBucket?.saves?.custom ? "custom" : "";
+              const defaultMode = specBucket?.saves?.community ? "community" : specBucket?.saves?.simmed ? "simmed" : specBucket?.saves?.custom ? "custom" : "";
               const active = groupMode[modeKey] || defaultMode;
               const entry = specBucket?.saves?.[active] || specBucket?.saves?.[defaultMode] || null;
               return (
@@ -3944,7 +4339,7 @@ function GroupPlanner() {
 
       {groupedSaves.length === 0 && (
         <div style={{ background:"rgba(201,146,42,.07)", border:"1px solid var(--bdr2)", padding:".75rem .9rem", marginBottom:"1rem", color:"var(--parch-dk)", fontSize:".82rem", lineHeight:1.55 }}>
-          No farm plan saves found yet. Open a character, load Suggested BiS or save a Manual Builder plan, then return here to copy a farm code.
+          No farm plan saves found yet. Open a character, load Suggested BiS, import Simmed BiS, or save a Manual Builder plan, then return here to copy a farm code.
         </div>
       )}
 
@@ -4295,8 +4690,8 @@ function Home({ onSelectClass, onLoadCharacter }) {
                   <div style={{ display:"grid", gap:".65rem" }}>
                     {Object.values(specs).sort((a,b) => a.cls.name.localeCompare(b.cls.name) || a.spec.name.localeCompare(b.spec.name)).map(({ cls, spec, saves }) => {
                       const rowKey = `${base}||${cls.id}||${spec.id}`;
-                      const saveOrder = ["community","custom","simc","scan"].filter(k => saves[k]);
-                      const defaultMode = saveOrder.includes("community") ? "community" : saveOrder[0];
+                      const saveOrder = ["community","simmed","custom","simc","scan"].filter(k => saves[k]);
+                      const defaultMode = saveOrder.includes("community") ? "community" : saveOrder.includes("simmed") ? "simmed" : saveOrder[0];
                       const activeMode = cardMode[rowKey] || defaultMode;
                       const active = saves[activeMode] || saves[defaultMode];
                       const totalAcq = active?.acquired || 0;
