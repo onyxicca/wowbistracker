@@ -3121,10 +3121,12 @@ function Tracker({ cls, spec, charName, initialMode = "", onBack, onCharacterRen
     const liveModeData = data || {};
     const wowheadData = bisMode === "community" ? liveModeData : readModeData("community");
     const customData = bisMode === "custom" ? liveModeData : readModeData("custom");
+    const simmedData = bisMode === "simmed" ? liveModeData : readModeData("simmed");
 
     const sections = [
       serializeAddonMode("community", wowheadData),
       serializeAddonMode("custom", customData),
+      serializeAddonMode("simmed", simmedData),
     ].filter(Boolean);
 
     if (!sections.length) return null;
@@ -3780,21 +3782,25 @@ function Tracker({ cls, spec, charName, initialMode = "", onBack, onCharacterRen
         }}>{bisMode === 'custom' ? 'Save Manual' : bisMode === 'simmed' ? 'Save Simmed BiS' : bisMode === 'community' ? 'Save Suggested BiS' : 'Save Snapshot'}</button>
         <button className="tbtn sec" onClick={() => {
           const manualData = bisMode === "custom" ? (data || {}) : readModeData("custom");
-          const manualErrors = getManualAddonImportErrors(manualData);
-          if (manualErrors.length) {
-            const preview = manualErrors.slice(0, 12).join("\n");
-            const more = manualErrors.length > 12 ? `\n…and ${manualErrors.length - 12} more.` : "";
-            alert(`Manual Builder needs Item IDs before addon export.\n\n${preview}${more}\n\nPrinting can still use names only, but the in-game addon import needs Item IDs so it tracks the exact items.`);
+          const simmedData = bisMode === "simmed" ? (data || {}) : readModeData("simmed");
+          const importErrors = [
+            ...getManualAddonImportErrors(manualData).map(msg => `Manual Builder — ${msg}`),
+            ...getManualAddonImportErrors(simmedData).map(msg => `Simmed BiS — ${msg}`),
+          ];
+          if (importErrors.length) {
+            const preview = importErrors.slice(0, 12).join("\n");
+            const more = importErrors.length > 12 ? `\n…and ${importErrors.length - 12} more.` : "";
+            alert(`Some addon-export items need Item IDs first.\n\n${preview}${more}\n\nThe in-game addon needs Item IDs so it can track exact items. Wowhead links, item IDs, or season-pool matches usually provide them automatically.`);
             return;
           }
           const code = exportForAddon();
-          if (!code) { alert("Nothing exportable found yet. Load Suggested BiS and click Apply All, or save at least one real Wowhead or Manual item before exporting."); return; }
+          if (!code) { alert("Nothing exportable found yet. Load Suggested BiS, import Simmed BiS, or save at least one Manual Builder item before exporting."); return; }
           window.__wowbisExportCode = code;
           const modal = document.createElement("div");
           modal.style.cssText = "position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.85);z-index:9999;display:flex;align-items:center;justify-content:center;";
           const inner = document.createElement("div");
           inner.style.cssText = "background:#150f08;border:1px solid #c9922a;padding:1.5rem;max-width:540px;width:90%;font-family:Cinzel,serif;";
-          inner.innerHTML = `<div style="font-size:.75rem;letter-spacing:.15em;color:#c9922a;margin-bottom:.75rem">EXPORT FOR ADDON</div><div style="font-size:.85rem;color:#c8a96a;margin-bottom:.75rem;font-family:Crimson Pro,serif;line-height:1.6;">Copy this code and paste it into the WoW BiS Tracker addon in-game using the Import BiS button. Manual Builder exports require Item IDs so the addon can track exact items. Rank 1 always counts as BiS. Rank 2 and Rank 3 can be marked as Equivalent, Strong Alternative, or Alternative. If Wowhead BiS and Manual Builder are both saved, one import will load both into the addon.</div>`;
+          inner.innerHTML = `<div style="font-size:.75rem;letter-spacing:.15em;color:#c9922a;margin-bottom:.75rem">EXPORT WEBSITE LIST</div><div style="font-size:.85rem;color:#c8a96a;margin-bottom:.75rem;font-family:Crimson Pro,serif;line-height:1.6;">Copy this code and paste it into the WoW BiS Tracker addon in-game. This export can include saved Wowhead BiS, Manual Builder, and Simmed BiS lists for this spec. Manual and Simmed lists use ranked item options, with Rank 1 as the main target and Rank 2/3 as alternatives.</div>`;
           const ta = document.createElement("textarea");
           ta.readOnly = true;
           ta.value = code;
@@ -3834,7 +3840,7 @@ function Tracker({ cls, spec, charName, initialMode = "", onBack, onCharacterRen
           document.body.appendChild(modal);
           modal.addEventListener("click", e => { if (e.target === modal) modal.remove(); });
           setTimeout(() => ta.select(), 100);
-        }}>🎮 Export for Addon</button>
+        }}>🎮 Export Website List</button>
         <button className="tbtn sec" onClick={() => window.print()} style={{ borderWidth:'2px', boxShadow:'inset 0 0 0 1px rgba(255,255,255,.04)' }}>🖨 Print / PDF</button>
       </div>
 
